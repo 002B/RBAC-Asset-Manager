@@ -1,0 +1,224 @@
+{
+  "ThaiBev": {
+    "member": {
+      "display_name": "Ida Bowen",
+      "password": "member",
+      "role": "member",
+      "branch": ["ThaiBev_1", "ThaiBev_2"]
+    },
+    "smember": {
+      "display_name": "Vera Cook",
+      "password": "smember",
+      "role": "super_member",
+      "branch": ["ThaiBev_1", "ThaiBev_2"]
+    },
+    "thaibev001": {
+      "display_name": "Max Hicks",
+      "password": "password",
+      "role": "member",
+      "branch": ["ThaiBev_1"]
+    },
+    "thaibev002": {
+      "display_name": "Isabella Marsh",
+      "password": "password",
+      "role": "member",
+      "branch": ["ThaiBev_2"]
+    },
+    "thaibev003": {
+      "display_name": "Miguel Rios",
+      "password": "password",
+      "role": "super_member",
+      "branch": ["ThaiBev_1", "ThaiBev_2"]
+    },
+    "thaibev004": {
+      "display_name": "Brian Lindsey",
+      "password": "password",
+      "role": "super_member",
+      "branch": ["ThaiBev_1", "ThaiBev_2"]
+    },
+    "thaibev005": {
+      "display_name": "Gary Roy",
+      "password": "password",
+      "role": "super_member",
+      "branch": ["ThaiBev_1", "ThaiBev_2"]
+    }
+  },
+  "SCB": {
+    "scb001": {
+      "display_name": "Theodore Bryant",
+      "password": "scb001",
+      "role": "member",
+      "branch": ["SCB_1"]
+    },
+    "scb002": {
+      "display_name": "Olivia Burns",
+      "password": "scb002",
+      "role": "super_member",
+      "branch": ["SCB_1", "SCB_2"]
+    },
+    "scb003": {
+      "display_name": "Theodore Bryant",
+      "password": "scb003",
+      "role": "super_member",
+      "branch": ["SCB_1", "SCB_2"]
+    },
+    "scb004": {
+      "display_name": "Olivia Burns",
+      "password": "scb004",
+      "role": "super_member",
+      "branch": ["SCB_1", "SCB_2"]
+    },
+    "scb005": {
+      "display_name": "Larry Bryant",
+      "password": "scb005",
+      "role": "super_member",
+      "branch": ["SCB_1", "SCB_2"]
+    },
+    "scb006": {
+      "display_name": "Sean Farmer",
+      "password": "scb006",
+      "role": "super_member",
+      "branch": ["SCB_1", "SCB_2"]
+    },
+    "scb007": {
+      "display_name": "Miguel Rios",
+      "password": "scb007",
+      "role": "super_member",
+      "branch": ["SCB_1", "SCB_2"]
+    },
+    "scb008": {
+      "display_name": "Zachary Valdez",
+      "password": "scb008",
+      "role": "super_member",
+      "branch": ["SCB_1", "SCB_2"]
+    },
+    "scb009": {
+      "display_name": "Barbara Roberson",
+      "password": "scb009",
+      "role": "super_member",
+      "branch": ["SCB_1", "SCB_2"]
+    }
+  },
+  "Metthier": {
+    "worker": {
+      "display_name": "Mamie George",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker001": {
+      "display_name": "Isabella Marsh",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker002": {
+      "display_name": "Mike White",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker003": {
+      "display_name": "Craig Foster",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker004": {
+      "display_name": "Cody Guzman",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker005": {
+      "display_name": "Bessie Riley",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker006": {
+      "display_name": "Ollie Blair",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker007": {
+      "display_name": "Lily Obrien",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker008": {
+      "display_name": "Lina Hoffman",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker009": {
+      "display_name": "Christian Stone",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "worker010": {
+      "display_name": "Trevor Hoffman",
+      "password": "worker",
+      "role": "worker",
+      "branch": []
+    },
+    "admin": {
+      "display_name": "Dominic McGuire",
+      "password": "admin",
+      "role": "admin",
+      "branch": []
+    },
+    "admin001": {
+      "display_name": "Miguel Rios",
+      "password": "admin",
+      "role": "admin",
+      "branch": []
+    },
+    "admin002": {
+      "display_name": "Rosetta Yates",
+      "password": "admin",
+      "role": "admin",
+      "branch": []
+    },
+    "admin003": {
+      "display_name": "Dean Phillips",
+      "password": "admin",
+      "role": "admin",
+      "branch": []
+    },
+    "admin004": {
+      "display_name": "Justin Kim",
+      "password": "admin",
+      "role": "admin",
+      "branch": []
+    },
+    "admin005": {
+      "display_name": "David Lowe",
+      "password": "admin",
+      "role": "admin",
+      "branch": []
+    },
+    "sadmin": {
+      "display_name": "Leonard Sherman",
+      "password": "sadmin",
+      "role": "super_admin",
+      "branch": []
+    },
+    "sadmin001": {
+      "display_name": "Charlie Simmons",
+      "password": "sadmin",
+      "role": "super_admin",
+      "branch": []
+    },
+    "sadmin002": {
+      "display_name": "Brian Lindsey",
+      "password": "sadmin",
+      "role": "super_admin",
+      "branch": []
+    }
+  }
+}

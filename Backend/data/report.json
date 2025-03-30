@@ -1,0 +1,107 @@
+[
+    {
+      "serial": "FTX=2023-001",
+      "company": "Thaibev",
+      "branch": "Thaibev_1",
+      "problem": "place holder for problem description",
+      "date": "14/11/2022"
+    },
+    {
+      "serial": "FTX=2023-002",
+      "company": "Thaibev",
+      "branch": "Thaibev_1",
+      "problem": "place holder for problem description",
+      "date": "14/11/2022"
+    },
+    {
+      "serial": "FTX=2023-003",
+      "company": "Thaibev",
+      "branch": "Thaibev_1",
+      "problem": "place holder for problem description",
+      "date": "14/11/2022"
+    },
+    {
+      "serial": "FTX=2023-054",
+      "company": "Thaibev",
+      "branch": "Thaibev_2",
+      "problem": "place holder for problem description",
+      "date": "13/11/2022"
+    },
+    {
+      "serial": "FTX=2023-055",
+      "company": "Thaibev",
+      "branch": "Thaibev_2",
+      "problem": "place holder for problem description",
+      "date": "13/11/2022"
+    },
+    {
+      "serial": "FTX=2023-056",
+      "company": "Thaibev",
+      "branch": "Thaibev_2",
+      "problem": "place holder for problem description",
+      "date": "13/11/2022"
+    },
+    {
+      "serial": "FTX=2023-057",
+      "company": "Thaibev",
+      "branch": "Thaibev_2",
+      "problem": "place holder for problem description",
+      "date": "13/11/2022"
+    },
+    {
+      "serial": "FTX=2023-101",
+      "company": "SCB",
+      "branch": "SCB_1",
+      "problem": "place holder for problem description",
+      "date": "12/11/2022"
+    },
+    {
+      "serial": "FTX=2023-102",
+      "company": "SCB",
+      "branch": "SCB_1",
+      "problem": "place holder for problem description",
+      "date": "12/11/2022"
+    },
+    {
+      "serial": "FTX=2023-103",
+      "company": "SCB",
+      "branch": "SCB_1",
+      "problem": "place holder for problem description",
+      "date": "12/11/2022"
+    },
+    {
+      "serial": "FTX=2023-104",
+      "company": "SCB",
+      "branch": "SCB_1",
+      "problem": "place holder for problem description",
+      "date": "12/11/2022"
+    },
+    {
+      "serial": "FTX=2023-155",
+      "company": "SCB",
+      "branch": "SCB_2",
+      "problem": "place holder for problem description",
+      "date": "11/11/2022"
+    },
+    {
+      "serial": "FTX=2023-156",
+      "company": "SCB",
+      "branch": "SCB_2",
+      "problem": "place holder for problem description",
+      "date": "11/11/2022"
+    },
+    {
+      "serial": "FTX=2023-157",
+      "company": "SCB",
+      "branch": "SCB_2",
+      "problem": "place holder for problem description",
+      "date": "11/11/2022"
+    },
+    {
+      "serial": "FTX=2023-158",
+      "company": "SCB",
+      "branch": "SCB_2",
+      "problem": "place holder for problem description",
+      "date": "11/11/2022"
+    }
+]
