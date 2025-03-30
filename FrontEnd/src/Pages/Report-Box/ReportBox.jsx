@@ -3,79 +3,190 @@ import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./ReportBox.css";
 
-const testReport = [];
-
-const getRandomName = () => {
-  const names = [
-    "John Doe",
-    "Jane Smith",
-    "Michael Johnson",
-    "Emily Davis",
-    "Chris Lee",
-    "Olivia Wilson",
-    "William Brown",
-    "Sophia Anderson",
-    "James Taylor",
-    "Ava Martinez",
-    "Benjamin Clark",
-    "Mia Rodriguez",
-    "Ethan Lewis",
-    "Isabella Hall",
-    "Liam Green",
-    "Charlotte Young",
-    "Noah Walker",
-    "Emma Hall",
-  ];
-  return names[Math.floor(Math.random() * names.length)];
-};
-
-const getRandomBoolean = () => Math.random() < 0.5;
-
-const getRandomDate = (start, end) => {
-  const date = new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime())
-  );
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
-const getRandomTime = () => {
-  const hours = String(Math.floor(Math.random() * 24)).padStart(2, "0");
-  const minutes = String(Math.floor(Math.random() * 60)).padStart(2, "0");
-  const seconds = String(Math.floor(Math.random() * 60)).padStart(2, "0");
-  return `${hours}:${minutes}:${seconds}`;
-};
-
-const generateReportData = (count) => {
-  const companies = ["Thaibev", "SCB"];
-
-  for (let i = 0; i < count; i++) {
-    const year = 2023;
-    const serialNumber = `FTX=${year}-${String(
-      Math.floor(Math.random() * 1000)
-    ).padStart(3, "0")}`;
-    const company = companies[Math.floor(Math.random() * companies.length)];
-    const branch = `${company}_1`;
-    const sender = getRandomName();
-    const date = getRandomDate(new Date(2022, 0, 1), new Date());
-    const time = getRandomTime();
-    const hasImg = getRandomBoolean();
-    const hasProblem = getRandomBoolean();
-
-    testReport.push({
-      serial: serialNumber,
-      company: company,
-      branch: branch,
-      sender: sender,
-      date: date,
-      time: time,
-      hasImg: hasImg,
-      hasProblem: hasProblem,
-    });
+const testReport = [
+  {
+    "serial": "FTX=2024-001",
+    "company": "SCB",
+    "branch": "SCB_1",
+    "sender": "Somchai Jaidee",
+    "date": "15/03/2024",
+    "time": "09:30:45",
+    "hasImg": "Yes",
+    "hasProblem": "No",
+    "status": "Accepted"
+  },
+  {
+    "serial": "FTX=2024-002",
+    "company": "ThaiBev",
+    "branch": "ThaiBev_2",
+    "sender": "Siriwan Smith",
+    "date": "22/01/2024",
+    "time": "14:15:22",
+    "hasImg": "No",
+    "hasProblem": "Yes",
+    "status": "Pending"
+  },
+  {
+    "serial": "FTX=2024-003",
+    "company": "SCB",
+    "branch": "SCB_2",
+    "sender": "Prakarn Wongsuwan",
+    "date": "05/02/2024",
+    "time": "11:45:10",
+    "hasImg": "Yes",
+    "hasProblem": "Yes",
+    "status": "Fixing"
+  },
+  {
+    "serial": "FTX=2024-004",
+    "company": "ThaiBev",
+    "branch": "ThaiBev_1",
+    "sender": "Nattapong Srisawat",
+    "date": "18/03/2024",
+    "time": "16:20:33",
+    "hasImg": "No",
+    "hasProblem": "No",
+    "status": "Rejected"
+  },
+  {
+    "serial": "FTX=2024-005",
+    "company": "SCB",
+    "branch": "SCB_1",
+    "sender": "Wanida Chaiyakul",
+    "date": "30/01/2024",
+    "time": "10:05:17",
+    "hasImg": "Yes",
+    "hasProblem": "No",
+    "status": "Accepted"
+  },
+  {
+    "serial": "FTX=2024-006",
+    "company": "ThaiBev",
+    "branch": "ThaiBev_2",
+    "sender": "Thanawat Pongsupa",
+    "date": "12/02/2024",
+    "time": "13:55:41",
+    "hasImg": "Yes",
+    "hasProblem": "Yes",
+    "status": "Pending"
+  },
+  {
+    "serial": "FTX=2024-007",
+    "company": "SCB",
+    "branch": "SCB_2",
+    "sender": "Siriporn Maneewan",
+    "date": "25/03/2024",
+    "time": "08:30:05",
+    "hasImg": "No",
+    "hasProblem": "No",
+    "status": "Accepted"
+  },
+  {
+    "serial": "FTX=2024-008",
+    "company": "ThaiBev",
+    "branch": "ThaiBev_1",
+    "sender": "Kittisak Promsuk",
+    "date": "07/01/2024",
+    "time": "17:40:29",
+    "hasImg": "Yes",
+    "hasProblem": "Yes",
+    "status": "Fixing"
+  },
+  {
+    "serial": "FTX=2024-009",
+    "company": "SCB",
+    "branch": "SCB_1",
+    "sender": "Pimchanok Wongsawan",
+    "date": "19/02/2024",
+    "time": "15:10:55",
+    "hasImg": "No",
+    "hasProblem": "No",
+    "status": "Rejected"
+  },
+  {
+    "serial": "FTX=2024-010",
+    "company": "ThaiBev",
+    "branch": "ThaiBev_2",
+    "sender": "Anucha Ratanaseri",
+    "date": "03/03/2024",
+    "time": "12:25:38",
+    "hasImg": "Yes",
+    "hasProblem": "No",
+    "status": "Accepted"
   }
-};
+]
+
+// const getRandomName = () => {
+//   const names = [
+//     "John Doe",
+//     "Jane Smith",
+//     "Michael Johnson",
+//     "Emily Davis",
+//     "Chris Lee",
+//     "Olivia Wilson",
+//     "William Brown",
+//     "Sophia Anderson",
+//     "James Taylor",
+//     "Ava Martinez",
+//     "Benjamin Clark",
+//     "Mia Rodriguez",
+//     "Ethan Lewis",
+//     "Isabella Hall",
+//     "Liam Green",
+//     "Charlotte Young",
+//     "Noah Walker",
+//     "Emma Hall",
+//   ];
+//   return names[Math.floor(Math.random() * names.length)];
+// };
+
+// const getRandomBoolean = () => Math.random() < 0.5;
+
+// const getRandomDate = (start, end) => {
+//   const date = new Date(
+//     start.getTime() + Math.random() * (end.getTime() - start.getTime())
+//   );
+//   const day = String(date.getDate()).padStart(2, "0");
+//   const month = String(date.getMonth() + 1).padStart(2, "0");
+//   const year = date.getFullYear();
+//   return `${day}/${month}/${year}`;
+// };
+
+// const getRandomTime = () => {
+//   const hours = String(Math.floor(Math.random() * 24)).padStart(2, "0");
+//   const minutes = String(Math.floor(Math.random() * 60)).padStart(2, "0");
+//   const seconds = String(Math.floor(Math.random() * 60)).padStart(2, "0");
+//   return `${hours}:${minutes}:${seconds}`;
+// };
+
+// const generateReportData = (count) => {
+//   const companies = ["Thaibev", "SCB"];
+
+//   for (let i = 0; i < count; i++) {
+//     const year = 2023;
+//     const serialNumber = `FTX=${year}-${String(
+//       Math.floor(Math.random() * 1000)
+//     ).padStart(3, "0")}`;
+//     const company = companies[Math.floor(Math.random() * companies.length)];
+//     const branch = `${company}_1`;
+//     const sender = getRandomName();
+//     const date = getRandomDate(new Date(2022, 0, 1), new Date());
+//     const time = getRandomTime();
+//     const hasImg = getRandomBoolean();
+//     const hasProblem = getRandomBoolean();
+
+//     testReport.push({
+//       serial: serialNumber,
+//       company: company,
+//       branch: branch,
+//       sender: sender,
+//       date: date,
+//       time: time,
+//       hasImg: hasImg,
+//       hasProblem: hasProblem,
+//     });
+//   }
+// };
 
 generateReportData(20);
 

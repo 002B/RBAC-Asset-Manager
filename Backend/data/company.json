@@ -985,196 +985,116 @@
                     "09/09/2022"
                 ]
             ],
-            "report": {
-                "pending": [
-                    [
-                        "Kittipos",
-                        "Thaibev",
-                        "FXT=2023-001",
-                        "10/10/2022",
-                        "Routine check",
-                        "Report1.png"
-                    ],
-                    [
-                        "Nattapon",
-                        "Thaibev",
-                        "FXT=2023-002",
-                        "12/10/2022",
-                        "Maintenance required",
-                        "Report2.png"
-                    ],
-                    [
-                        "Worapat",
-                        "Thaibev",
-                        "FXT=2023-003",
-                        "14/10/2022",
-                        "Inspection preparation",
-                        "Report3.png"
-                    ],
-                    [
-                        "Jirawat",
-                        "Thaibev",
-                        "FXT=2023-004",
-                        "16/10/2022",
-                        "Site evaluation",
-                        "Report4.png"
-                    ],
-                    [
-                        "Suwat",
-                        "Thaibev",
-                        "FXT=2023-005",
-                        "18/10/2022",
-                        "Preliminary check",
-                        "Report5.png"
-                    ],
-                    [
-                        "Pichai",
-                        "Thaibev",
-                        "FXT=2023-006",
-                        "20/10/2022",
-                        "Pre-inspection",
-                        "Report6.png"
-                    ],
-                    [
-                        "Rachata",
-                        "Thaibev",
-                        "FXT=2023-007",
-                        "22/10/2022",
-                        "Routine check",
-                        "Report7.png"
-                    ],
-                    [
-                        "Anucha",
-                        "Thaibev",
-                        "FXT=2023-008",
-                        "24/10/2022",
-                        "General maintenance",
-                        "Report8.png"
-                    ],
-                    [
-                        "Kittipong",
-                        "Thaibev",
-                        "FXT=2023-009",
-                        "26/10/2022",
-                        "Routine inspection",
-                        "Report9.png"
-                    ],
-                    [
-                        "Sakda",
-                        "Thaibev",
-                        "FXT=2023-010",
-                        "28/10/2022",
-                        "Scheduled check",
-                        "Report10.png"
-                    ]
-                ],
-                "accepted": [
-                    [
-                        "Nattapon",
-                        "Thaibev",
-                        "FXT=2023-011",
-                        "05/11/2022",
-                        "Maintenance completed",
-                        "Report11.png"
-                    ],
-                    [
-                        "Worapat",
-                        "Thaibev",
-                        "FXT=2023-012",
-                        "07/11/2022",
-                        "Approved repairs",
-                        "Report12.png"
-                    ]
-                ],
-                "rejected": [
-                    [
-                        "Jirawat",
-                        "Thaibev",
-                        "FXT=2023-013",
-                        "09/11/2022",
-                        "Inspection failed",
-                        "Report13.png"
-                    ],
-                    [
-                        "Pichai",
-                        "Thaibev",
-                        "FXT=2023-014",
-                        "11/11/2022",
-                        "Repair request denied",
-                        "Report14.png"
-                    ]
-                ],
-                "fixing": [
-                    [
-                        "Suwat",
-                        "Thaibev",
-                        "FXT=2023-015",
-                        "13/11/2022",
-                        "Fixing in progress",
-                        "Report15.png"
-                    ],
-                    [
-                        "Rachata",
-                        "Thaibev",
-                        "FXT=2023-016",
-                        "15/11/2022",
-                        "Under repair",
-                        "Report16.png"
-                    ],
-                    [
-                        "Anucha",
-                        "Thaibev",
-                        "FXT=2023-017",
-                        "17/11/2022",
-                        "Fixing task ongoing",
-                        "Report17.png"
-                    ],
-                    [
-                        "Kittipong",
-                        "Thaibev",
-                        "FXT=2023-018",
-                        "19/11/2022",
-                        "Repair in process",
-                        "Report18.png"
-                    ],
-                    [
-                        "Sakda",
-                        "Thaibev",
-                        "FXT=2023-019",
-                        "21/11/2022",
-                        "In repair stage",
-                        "Report19.png"
-                    ]
-                ],
-                "finished": [
-                    [
-                        "Kittipos",
-                        "Thaibev",
-                        "FXT=2023-020",
-                        "23/11/2022",
-                        "Completed task",
-                        "Report20.png"
-                    ],
-                    [
-                        "Jirawat",
-                        "Thaibev",
-                        "FXT=2023-021",
-                        "25/11/2022",
-                        "Maintenance completed",
-                        "Report21.png"
-                    ]
-                ],
-                "reject": [
-                    [
-                        "Suwat",
-                        "Thaibev",
-                        "FXT=2023-022",
-                        "27/11/2022",
-                        "Rejected request",
-                        "Report22.png"
-                    ]
-                ]
-            },
+            "report": [{
+                "serial": "FTX=2024-001",
+                "company": "SCB",
+                "branch": "SCB_1",
+                "sender": "Somchai Jaidee",
+                "date": "15/03/2024",
+                "time": "09:30:45",
+                "hasImg": "Yes",
+                "hasProblem": "No",
+                "status": "Accepted"
+              },
+              {
+                "serial": "FTX=2024-002",
+                "company": "ThaiBev",
+                "branch": "ThaiBev_2",
+                "sender": "Siriwan Smith",
+                "date": "22/01/2024",
+                "time": "14:15:22",
+                "hasImg": "No",
+                "hasProblem": "Yes",
+                "status": "Pending"
+              },
+              {
+                "serial": "FTX=2024-003",
+                "company": "SCB",
+                "branch": "SCB_2",
+                "sender": "Prakarn Wongsuwan",
+                "date": "05/02/2024",
+                "time": "11:45:10",
+                "hasImg": "Yes",
+                "hasProblem": "Yes",
+                "status": "Fixing"
+              },
+              {
+                "serial": "FTX=2024-004",
+                "company": "ThaiBev",
+                "branch": "ThaiBev_1",
+                "sender": "Nattapong Srisawat",
+                "date": "18/03/2024",
+                "time": "16:20:33",
+                "hasImg": "No",
+                "hasProblem": "No",
+                "status": "Rejected"
+              },
+              {
+                "serial": "FTX=2024-005",
+                "company": "SCB",
+                "branch": "SCB_1",
+                "sender": "Wanida Chaiyakul",
+                "date": "30/01/2024",
+                "time": "10:05:17",
+                "hasImg": "Yes",
+                "hasProblem": "No",
+                "status": "Accepted"
+              },
+              {
+                "serial": "FTX=2024-006",
+                "company": "ThaiBev",
+                "branch": "ThaiBev_2",
+                "sender": "Thanawat Pongsupa",
+                "date": "12/02/2024",
+                "time": "13:55:41",
+                "hasImg": "Yes",
+                "hasProblem": "Yes",
+                "status": "Pending"
+              },
+              {
+                "serial": "FTX=2024-007",
+                "company": "SCB",
+                "branch": "SCB_2",
+                "sender": "Siriporn Maneewan",
+                "date": "25/03/2024",
+                "time": "08:30:05",
+                "hasImg": "No",
+                "hasProblem": "No",
+                "status": "Accepted"
+              },
+              {
+                "serial": "FTX=2024-008",
+                "company": "ThaiBev",
+                "branch": "ThaiBev_1",
+                "sender": "Kittisak Promsuk",
+                "date": "07/01/2024",
+                "time": "17:40:29",
+                "hasImg": "Yes",
+                "hasProblem": "Yes",
+                "status": "Fixing"
+              },
+              {
+                "serial": "FTX=2024-009",
+                "company": "SCB",
+                "branch": "SCB_1",
+                "sender": "Pimchanok Wongsawan",
+                "date": "19/02/2024",
+                "time": "15:10:55",
+                "hasImg": "No",
+                "hasProblem": "No",
+                "status": "Rejected"
+              },
+              {
+                "serial": "FTX=2024-010",
+                "company": "ThaiBev",
+                "branch": "ThaiBev_2",
+                "sender": "Anucha Ratanaseri",
+                "date": "03/03/2024",
+                "time": "12:25:38",
+                "hasImg": "Yes",
+                "hasProblem": "No",
+                "status": "Accepted"
+              }],
             "item": [
                 [
                     "item Installed",
@@ -1275,100 +1195,118 @@
             }
         },
         "log": {
-            "report": {
-                "pending": [
-                    [
-                        "Siriwat",
-                        "SCB",
-                        "FXT=2023-101",
-                        "10/11/2022",
-                        "Routine maintenance",
-                        "SCB_Report1.png"
-                    ],
-                    [
-                        "Thanakorn",
-                        "SCB",
-                        "FXT=2023-103",
-                        "12/12/2022",
-                        "Needs immediate service",
-                        "SCB_Report2.png"
-                    ],
-                    [
-                        "Siriwat",
-                        "SCB",
-                        "FXT=2023-102",
-                        "11/11/2022",
-                        "Scheduled check",
-                        "SCB_Report3.png"
-                    ]
-                ],
-                "accepted": [
-                    [
-                        "Siriwat",
-                        "SCB",
-                        "FXT=2023-101",
-                        "10/11/2022",
-                        "Maintenance completed",
-                        "SCB_Report1.png"
-                    ],
-                    [
-                        "Thanakorn",
-                        "SCB",
-                        "FXT=2023-104",
-                        "12/12/2022",
-                        "Approved repairs",
-                        "SCB_Report4.png"
-                    ]
-                ],
-                "rejected": [
-                    [
-                        "Thanakorn",
-                        "SCB",
-                        "FXT=2023-103",
-                        "12/12/2022",
-                        "Inspection failed",
-                        "SCB_Report5.png"
-                    ]
-                ],
-                "fixing": [
-                    [
-                        "Thanakorn",
-                        "SCB",
-                        "FXT=2023-103",
-                        "12/12/2022",
-                        "Needs immediate service",
-                        "SCB_Report2.png"
-                    ]
-                ],
-                "finished": [
-                    [
-                        "Siriwat",
-                        "SCB",
-                        "FXT=2023-101",
-                        "10/11/2022",
-                        "Routine check completed",
-                        "SCB_Report6.png"
-                    ],
-                    [
-                        "Thanakorn",
-                        "SCB",
-                        "FXT=2023-104",
-                        "12/12/2022",
-                        "Maintenance completed",
-                        "SCB_Report7.png"
-                    ]
-                ],
-                "reject": [
-                    [
-                        "Siriwat",
-                        "SCB",
-                        "FXT=2023-102",
-                        "11/11/2022",
-                        "Repair request denied",
-                        "SCB_Report8.png"
-                    ]
-                ]
-            }
+            "report": [
+                {
+                  "serial": "FTX=2024-021",
+                  "company": "SCB",
+                  "branch": "SCB_1",
+                  "sender": "Amarin Chaiyaporn",
+                  "date": "10/06/2024",
+                  "time": "08:15:30",
+                  "hasImg": "Yes",
+                  "hasProblem": "No",
+                  "status": "Finished"
+                },
+                {
+                  "serial": "FTX=2024-022",
+                  "company": "ThaiBev",
+                  "branch": "ThaiBev_2",
+                  "sender": "Bussaba Sawatdee",
+                  "date": "17/06/2024",
+                  "time": "14:22:45",
+                  "hasImg": "No",
+                  "hasProblem": "Yes",
+                  "status": "Pending"
+                },
+                {
+                  "serial": "FTX=2024-023",
+                  "company": "SCB",
+                  "branch": "SCB_2",
+                  "sender": "Chaiwat Pongpanich",
+                  "date": "24/06/2024",
+                  "time": "11:05:18",
+                  "hasImg": "Yes",
+                  "hasProblem": "Yes",
+                  "status": "Fixing"
+                },
+                {
+                  "serial": "FTX=2024-024",
+                  "company": "ThaiBev",
+                  "branch": "ThaiBev_1",
+                  "sender": "Darika Wongwan",
+                  "date": "01/07/2024",
+                  "time": "16:40:55",
+                  "hasImg": "No",
+                  "hasProblem": "No",
+                  "status": "Rejected"
+                },
+                {
+                  "serial": "FTX=2024-025",
+                  "company": "SCB",
+                  "branch": "SCB_1",
+                  "sender": "Ekachai Srisomphong",
+                  "date": "08/07/2024",
+                  "time": "09:30:12",
+                  "hasImg": "Yes",
+                  "hasProblem": "No",
+                  "status": "Finished"
+                },
+                {
+                  "serial": "FTX=2024-026",
+                  "company": "ThaiBev",
+                  "branch": "ThaiBev_2",
+                  "sender": "Fah Saiyud",
+                  "date": "15/07/2024",
+                  "time": "13:18:37",
+                  "hasImg": "Yes",
+                  "hasProblem": "Yes",
+                  "status": "Pending"
+                },
+                {
+                  "serial": "FTX=2024-027",
+                  "company": "SCB",
+                  "branch": "SCB_2",
+                  "sender": "Gun Thonglor",
+                  "date": "22/07/2024",
+                  "time": "10:55:20",
+                  "hasImg": "No",
+                  "hasProblem": "No",
+                  "status": "Accepted"
+                },
+                {
+                  "serial": "FTX=2024-028",
+                  "company": "ThaiBev",
+                  "branch": "ThaiBev_1",
+                  "sender": "Hathaichanok Ratanaprasert",
+                  "date": "29/07/2024",
+                  "time": "17:25:48",
+                  "hasImg": "Yes",
+                  "hasProblem": "Yes",
+                  "status": "Finished"
+                },
+                {
+                  "serial": "FTX=2024-029",
+                  "company": "SCB",
+                  "branch": "SCB_1",
+                  "sender": "Itthipol Maneenuch",
+                  "date": "05/08/2024",
+                  "time": "12:10:33",
+                  "hasImg": "No",
+                  "hasProblem": "No",
+                  "status": "Rejected"
+                },
+                {
+                  "serial": "FTX=2024-030",
+                  "company": "ThaiBev",
+                  "branch": "ThaiBev_2",
+                  "sender": "Jintana Pongsuwan",
+                  "date": "12/08/2024",
+                  "time": "15:45:09",
+                  "hasImg": "Yes",
+                  "hasProblem": "No",
+                  "status": "Finished"
+                }
+              ]
         }
     }
 }
