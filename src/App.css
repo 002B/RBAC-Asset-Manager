@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
+
+
+:root {
+    --primary-color: #FD6E28;
+    --secondary-color: #473366;
+    --light-color:#F2F2E6;
+    --gray-color: #B3B4AD;
+    --green-color: #748D8C;
+    --pink-color: #E8CFCD;
+}
+@font-face {
+    font-family: 'Sukhumvit';
+    src: url(./assets/Font/sukhumvit-set-font-family/SukhumvitSet-Medium.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Sukhumvit';
+    src: url(./assets/Font/sukhumvit-set-font-family/SukhumvitSet-Bold.ttf) format('truetype');
+    font-weight: bold;
+    font-style: bold;
+}
+
+*{
+    font-family: 'Sukhumvit', sans-serif;
+}
+
+h1{
+    font-size: 34px;
+    font-family: 'Unbounded', sans-serif;
+}
+h2{
+    font-size: 24px;
+    font-family: 'Unbounded', sans-serif;
+}
+h3{
+    font-size: 20px;
+    font-family: 'Unbounded', sans-serif;
+}
+h4{
+    font-size: 16px;
+    font-family: 'Sukhumvit', sans-serif;
+}
+p{
+    font-size: 14px;
+    font-family: 'Sukhumvit', sans-serif;
+}
+
+/* Mobile */
+
+@media (max-width: 767px) {
+    h1{
+        font-size: 28px;
+    }
+    h2{
+        font-size: 20px;
+    }
+    h3{
+        font-size: 16px;
+    }
+    h4{
+        font-size: 14px;
+    }
+}
