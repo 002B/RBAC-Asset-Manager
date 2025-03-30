@@ -3,13 +3,14 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
+const getItem = require('./api/getItem.js');
 const test = require('./api/testapi.js');
 
 app.use(cors());
 app.use(express.json());
-
+app.use('/getItem', getItem);
 app.use('/test', test);
 
 app.listen(port, () => {
-    console.log(`Server running at <http://localhost>:port/`);
+    console.log(`Server running at http://localhost:${port}/`);
 });
