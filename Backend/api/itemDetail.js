@@ -30,12 +30,12 @@ function getItemInfo(Com, Bran, ID) {
     }
 }
 
-router.get('/items', (req, res) => {
+router.get('/getAllItem', (req, res) => {
     const items = getAllItem();
     res.json(items);
 });
 
-router.get('/item/:company/:branch/:id', (req, res) => {
+router.get('/getItemInfo/:company/:branch/:id', (req, res) => {
     const { company, branch, id } = req.params;
     const item = getItemInfo(company, branch, id);
     if (item) {

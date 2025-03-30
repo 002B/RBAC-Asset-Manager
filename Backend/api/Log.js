@@ -54,12 +54,12 @@ function getAdminAndWorker() {
     return users.filter(user => user !== null);
 }
 
-router.get('/users', (req, res) => {
+router.get('/getAllUser', (req, res) => {
     const users = getAllUser();
     res.json(users);
 });
 
-router.get('/users/:company', (req, res) => {
+router.get('/getCompanyUser/:company', (req, res) => {
     const { company } = req.params;
     if (user[company]) {
         res.json(getCompanyUser(company));
@@ -68,7 +68,7 @@ router.get('/users/:company', (req, res) => {
     }
 });
 
-router.get('/users/admin-worker', (req, res) => {
+router.get('/getAdminAndWorker', (req, res) => {
     const users = getAdminAndWorker();
     res.json(users);
 });
