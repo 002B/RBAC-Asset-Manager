@@ -188,7 +188,7 @@ const testReport = [
 //   }
 // };
 
-generateReportData(20);
+// generateReportData(20);
 
 const filterList = {
   "Company": [...new Set(testReport.map((report) => report.company))],

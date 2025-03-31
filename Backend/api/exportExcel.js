@@ -1,83 +1,85 @@
-// const express = require("express");
-// const router = express.Router();
-// const fs = require("fs");
-// const path = require("path");
-// const XLSX = require("xlsx");
+const express = require('express');
+const router = express.Router();
+const companyData = require('../data/company.json');
 
-// function ExportExcel(data, res) {
-//     try {
-//         // ตรวจสอบว่ามีข้อมูลหรือไม่
-//         if (!data || data.length === 0) {
-//             throw new Error("No data provided");
-//         }
+function getCompanyBranches(companyName) {
+  if (!companyData[companyName]) {
+    return {
+      success: false,
+      message: `Company '${companyName}' not found`
+    };
+  }
 
-//         // สร้าง worksheet จากข้อมูล
-//         const worksheet = XLSX.utils.json_to_sheet(data);
+  const branches = companyData[companyName].branch;
+  return {
+    success: true,
+    data: Object.keys(branches).map(branchName => ({
+      branchName,
+      ...branches[branchName]
+    }))
+  };
+}
 
-//         // คำนวณความกว้างของคอลัมน์อัตโนมัติ
-//         const columnWidths = Object.keys(data[0]).map((key) => {
-//             const maxContentLength = Math.max(
-//                 key.length,
-//                 ...data.map((row) => (row[key] ? row[key].toString().length : 0))
-//             );
-//             return { wch: maxContentLength + 2 }; // เพิ่ม buffer 2 ตัวอักษร
-//         });
-//         worksheet["!cols"] = columnWidths;
+function getSingleBranch(companyName, branchName) {
+  const company = companyData[companyName];
+  if (!company) {
+    return {
+      success: false,
+      message: `Company '${companyName}' not found`
+    };
+  }
 
-//         // สร้าง workbook
-//         const workbook = XLSX.utils.book_new();
-//         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  const branch = company.branch[branchName];
+  if (!branch) {
+    return {
+      success: false,
+      message: `Branch '${branchName}' not found in company '${companyName}'`
+    };
+  }
 
-//         // สร้าง Excel ใน memory
-//         const excelBuffer = XLSX.write(workbook, {
-//             bookType: "xlsx",
-//             type: "buffer"
-//         });
+  return {
+    success: true,
+    data: {
+      branchName,
+      ...branch
+    }
+  };
+}
 
-//         // ตั้งค่า header สำหรับการดาวน์โหลดไฟล์
-//         res.setHeader("Content-Disposition", "attachment; filename=ItemLists.xlsx");
-//         res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        
-//         // ส่งไฟล์
-//         res.send(excelBuffer);
+function getAllBranches() {
+  const result = {};
+  
+  Object.keys(companyData).forEach(companyName => {
+    result[companyName] = Object.keys(companyData[companyName].branch).map(branchName => ({
+      branchName,
+      ...companyData[companyName].branch[branchName]
+    }));
+  });
 
-//     } catch (error) {
-//         console.error("Error generating Excel:", error);
-//         res.status(500).json({ 
-//             error: "Failed to generate Excel file",
-//             details: error.message 
-//         });
-//     }
-// }
+  return result;
+}
 
-// router.post("/", (req, res) => {
-//     try {
-//         // ตรวจสอบข้อมูลที่ได้รับ
-//         if (!req.body.data || !Array.isArray(req.body.data)) {
-//             return res.status(400).json({ 
-//                 error: "Invalid data format",
-//                 message: "Please provide an array of data objects" 
-//             });
-//         }
+router.get('/:companyName', (req, res) => {
+  const result = getCompanyBranches(req.params.companyName);
+  if (result.success) {
+    res.json(result.data);
+  } else {
+    res.status(404).json({ error: result.message });
+  }
+});
 
-//         // ตรวจสอบว่าแต่ละแถวมีข้อมูล
-//         if (req.body.data.some(item => typeof item !== 'object' || item === null)) {
-//             return res.status(400).json({ 
-//                 error: "Invalid data content",
-//                 message: "All items in data array must be objects" 
-//             });
-//         }
+router.get('/:companyName/:branchName', (req, res) => {
+  const result = getSingleBranch(req.params.companyName, req.params.branchName);
+  if (result.success) {
+    res.json(result.data);
+  } else {
+    res.status(404).json({ error: result.message });
+  }
+});
 
-//         // สร้างและส่งไฟล์ Excel
-//         ExportExcel(req.body.data, res);
 
-//     } catch (error) {
-//         console.error("Route handler error:", error);
-//         res.status(500).json({ 
-//             error: "Server error",
-//             details: error.message 
-//         });
-//     }
-// });
+router.get('/', (req, res) => {
+  res.json(getAllBranches());
+});
 
-// module.exports = router;
+module.exports = router;

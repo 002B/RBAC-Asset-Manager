@@ -10,12 +10,14 @@ const excel = require('./api/exportExcel.js');
 const log = require('./api/Log.js');
 const item = require('./api/itemDetail.js');
 const user = require('./api/userapi.js');
+const branch = require('./api/exportExcel.js');
 
 app.use(cors());
 app.use(express.json());
 app.use('/getItem', getItem);
 app.use('/test', test);
 app.use('/getUser', getUser);
+app.use('/branch', branch);
 
 app.use('/export', excel);
 
