@@ -1,76 +1,87 @@
 const express = require('express');
 const router = express.Router();
-const company = require('../data/company.json'); 
-const user = require('../data/permission.json'); 
+const CompanyModel = require('./DB/companyModal.js');
 
-
-function getAllUser() {
-    return Object.entries(user).map(([key, value]) => {
-        return Object.entries(value).map(([keys, values]) => {
-            return {
-                username: keys,
-                display_name: values["display_name"],
-                branch: values["branch"],
-            };
-        });
-    }).flat(2);
-}
-
-
-function getCompanyUser(Com) {
-    return Object.entries(user[Com]).map(([key, value]) => {
-        return {
-            username: key,
-            display_name: value["display_name"],
-            branch: value["branch"],
-        };
-    });
-}
-
-function getAdminAndWorker() {
-    const users = Object.entries(user).map(([key, value]) => {
-        return Object.entries(value).map(([keys, values]) => {
-            if (values["role"] === "admin" || values["role"] === "worker") {
-                switch (values["role"]) {
-                    case "admin":
-                        values["display_role"] = "Admin";
-                        break;
-                    case "worker":
-                        values["display_role"] = "Worker";
-                        break;
-                }
-                return {
-                    display_name: values["display_name"],
-                    user: keys,
-                    company: key,
-                    role: values["role"],
-                    display_role: values["display_role"],
-                    branch: values["branch"]
-                };
-            }
-            return null; 
-        });
-    }).flat(2);
-    return users.filter(user => user !== null);
-}
-
-router.get('/getAllUser', (req, res) => {
-    const users = getAllUser();
-    res.json(users);
-});
-
-router.get('/getCompanyUser/:company', (req, res) => {
-    const { company } = req.params;
-    if (user[company]) {
-        res.json(getCompanyUser(company));
-    } else {
-        res.status(404).json({ message: 'Company not found' });
+async function getLogReport(Com) {
+    try {
+        const documents = await CompanyModel.find({});
+        return documents[0][Com].log.report;
+    } catch (error) {
+        console.error(error);
+        return [];
     }
+}
+
+async function getLogLogin(Com) {
+    try {
+        const documents = await CompanyModel.find({});
+        return documents[0][Com].log.login;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+async function getLogItem(Com) {
+    try {
+        const documents = await CompanyModel.find({});
+        return documents[0][Com].log.item;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+async function getNextCheck(Com, Bran) {
+    try {
+        const documents = await CompanyModel.find({});
+        return documents[0][Com].branch[Bran].check.next_check;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+async function getLastCheck(Com, Bran) {
+    try {
+        const documents = await CompanyModel.find({});
+        return documents[0][Com].branch[Bran].check.last_check;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+router.get('/getLogReport/:company', async (req, res) => {
+    const { company } = req.params;
+    const report =  await getLogReport(company);
+    
+    res.json(report);
 });
 
-router.get('/getAdminAndWorker', (req, res) => {
-    const users = getAdminAndWorker();
-    res.json(users);
+router.get('/getLogLogin/:company', async (req, res) => {
+    const { company } = req.params;
+    const loginHistory = await getLogLogin(company);
+    
+    res.json(loginHistory);
+});
+
+router.get('/getLogItem/:company', async (req, res) => {
+    const { company } = req.params;
+    const itemHistory = await getLogItem(company);
+    res.json(itemHistory);
+});
+
+router.get('/getNextCheck/:company/:branch', async (req, res) => {
+    const { company, branch } = req.params;
+    const nextCheck = await getNextCheck(company, branch);
+    res.json(nextCheck);
+});
+
+router.get('/getLastCheck/:company/:branch', async (req, res) => {
+    const { company, branch } = req.params;
+    const lastCheck = await getLastCheck(company, branch);
+    res.json(lastCheck);
 });
 
 module.exports = router;

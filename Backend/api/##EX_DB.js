@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const router = express.Router();
 const Modal = require('./DB/companyModal.js');
 
@@ -16,6 +15,7 @@ async function TEST() { //ฟังก์ชั่นอะไรก็ได้
 
 
 router.get('/TEST', async (req, res) => {
+    TEST()
 });
 
 

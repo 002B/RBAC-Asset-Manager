@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const company = require('../data/company.json');
 const CompanyModel = require('./DB/companyModal.js');
 
 async function getAllItems() {
@@ -20,7 +19,7 @@ async function getAllItems() {
                 });
             });
         });
-        
+
         return transformedData;
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -28,16 +27,30 @@ async function getAllItems() {
     }
 }
 
-function getItemInfo(Com, Bran, ID) {
-    if (company[Com] && company[Com].branch[Bran] && company[Com].branch[Bran].item[ID]) {
+async function getItemInfo(companyName, branchName, itemId) {
+    try {
+        const document = await CompanyModel.findOne({
+            [`${companyName}.branch.${branchName}.item.${itemId}`]: { $exists: true }
+        });
+
+        if (!document) {
+            return null;
+        }
+
+        const docObject = document.toObject();
+        const companyData = docObject[companyName];
+        const branchData = companyData.branch[branchName];
+        const itemData = branchData.item[itemId];
+
         return {
-            Com,
-            Bran,
-            ID,
-            ...company[Com].branch[Bran].item[ID]
+            company: companyName,
+            branch: branchName,
+            id: itemId,
+            ...itemData
         };
-    } else {
-        return null;
+    } catch (error) {
+        console.error('Error fetching item details:', error);
+        throw error;
     }
 }
 
@@ -46,27 +59,34 @@ router.get('/getAllItem', async (req, res) => {
         const items = await getAllItems();
         res.json(items);
     } catch (error) {
-        res.status(500).json({ 
+        res.status(500).json({
             message: 'Error fetching items',
-            error: error.message 
+            error: error.message
         });
     }
 });
 
-router.get('/getItemInfo/:company/:branch/:id', (req, res) => {
-    const { company, branch, id } = req.params;
-    const item = getItemInfo(company, branch, id);
-    
-    if (item) {
-        res.json(item);
-    } else {
-        res.status(404).json({ 
-            message: 'Item not found',
-            details: {
-                company: company,
-                branch: branch,
-                id: id
-            }
+router.get('/getItemInfo/:company/:branch/:id', async (req, res) => {
+    try {
+        const { company, branch, id } = req.params;
+        const item = await getItemInfo(company, branch, id);
+
+        if (item) {
+            res.json(item);
+        } else {
+            res.status(404).json({
+                message: 'Item not found',
+                details: {
+                    company: company,
+                    branch: branch,
+                    id: id
+                }
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error fetching item details',
+            error: error.message
         });
     }
 });
