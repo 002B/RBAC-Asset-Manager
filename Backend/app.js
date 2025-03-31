@@ -9,6 +9,7 @@ const getUser = require('./api/getUser.js');
 const excel = require('./api/exportExcel.js');
 const log = require('./api/Log.js');
 const item = require('./api/itemDetail.js');
+const itemDoc = require('./api/api-doc/itemDetail-Doc.js');
 const user = require('./api/userapi.js');
 const branch = require('./api/exportExcel.js');
 
@@ -18,11 +19,10 @@ app.use('/getItem', getItem);
 app.use('/test', test);
 app.use('/getUser', getUser);
 app.use('/branch', branch);
-
 app.use('/export', excel);
-
 app.use('/log', log);
 app.use('/item', item);
+app.use('/itemDoc', itemDoc);
 app.use('/user', user);
 app.use('/reportbox', require('./api/reportlogapi.js'));
 
