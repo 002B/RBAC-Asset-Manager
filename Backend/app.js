@@ -9,7 +9,6 @@ connectDB();
 
 const getItem = require('./api/getItem');
 const getUser = require('./api/getUser');
-const excel = require('./api/exportExcel');
 const log = require('./api/Log');
 const item = require('./api/itemDetail');
 const user = require('./api/userapi');
@@ -23,7 +22,6 @@ app.use(express.json());
 app.use('/getItem', getItem);
 app.use('/getUser', getUser);
 app.use('/branch', branch);
-app.use('/export', excel);
 app.use('/log', log);
 app.use('/item', item);
 app.use('/user', user);

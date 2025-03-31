@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const COLLECTION_NAME = 'permissionModal';
+const COLLECTION_NAME = 'permission';
 
 const Schema = new mongoose.Schema({}, { strict: false });
 
