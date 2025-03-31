@@ -1,19 +1,10 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const router = express.Router();
 const company = require('../data/company.json');
-const COLLECTION_NAME = 'company';
-
-
-const CompanyModel = mongoose.model(
-    COLLECTION_NAME,
-    new mongoose.Schema({}, { strict: false }),
-    COLLECTION_NAME
-);
+const CompanyModel = require('./DB/companyModal.js');
 
 async function getAllItems() {
     try {
-
         const documents = await CompanyModel.find({});
 
         const transformedData = documents.flatMap(doc => {
@@ -37,7 +28,6 @@ async function getAllItems() {
     }
 }
 
-
 function getItemInfo(Com, Bran, ID) {
     if (company[Com] && company[Com].branch[Bran] && company[Com].branch[Bran].item[ID]) {
         return {
@@ -51,7 +41,6 @@ function getItemInfo(Com, Bran, ID) {
     }
 }
 
-
 router.get('/getAllItem', async (req, res) => {
     try {
         const items = await getAllItems();
@@ -63,7 +52,6 @@ router.get('/getAllItem', async (req, res) => {
         });
     }
 });
-
 
 router.get('/getItemInfo/:company/:branch/:id', (req, res) => {
     const { company, branch, id } = req.params;
