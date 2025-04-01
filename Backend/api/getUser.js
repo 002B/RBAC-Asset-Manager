@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const PermissionModel = require('./DB/permissionModal.js');
+const PermissionModel = require('./DB/userModel.js');
 
 async function getUserCount(companyName) {
     try {
