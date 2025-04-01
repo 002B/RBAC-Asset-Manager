@@ -1,29 +1,30 @@
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./api/DB/DB');
-// const Test = require('./api/DB/test_schema');
 const app = express();
 const port = 3000;
 
 connectDB();
-// async function test() {
+// const Test = require('./api/DB/companyModal');
+// async function test(Com) {
 //   try {
-//     const documents = await Test.find({}, {'ThaiBev.branch.ThaiBev_1.item': 1});
-//     console.log(JSON.stringify(documents, null, 2));
-//     return 
-//   } catch (error) {
-//     console.error(error);
-//     return [];
-//   }
+//     const result = await Test.findOne(
+//         { [`${Com}`]: { $exists: true } },
+//         { [`${Com}`]: 1, _id: 0 }
+//     ).lean();
+
+//     console.log(Object.keys(result[Com]["branch"]));
+// } catch (error) {
+//     console.error('Error fetching log reports:', error);
+//     return 0;
 // }
-
-
-// test();
+// }
+// test("ThaiBev");
 
 const getItem = require('./api/getItem');
 const getUser = require('./api/getUser');
-const log = require('./api/Log');
-const item = require('./api/itemDetail');
+const log = require('./api/log');
+const item = require('./api/getItemDetail');
 const user = require('./api/userapi');
 const branch = require('./api/exportExcel');
 

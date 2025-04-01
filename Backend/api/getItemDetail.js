@@ -2,9 +2,15 @@ const express = require('express');
 const router = express.Router();
 const CompanyModel = require('./DB/companyModal.js');
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
 async function getAllItems() {
     try {
-        const documents = await CompanyModel.find({}).lean()
+        const documents = await CompanyModel.find({},{_id : 0}).lean()
+        // console.log(documents);
+        
         const transformedData = documents.flatMap(doc => {
             return Object.entries(doc).flatMap(([key, value]) => {
                 if (key === '_id' || !value || typeof value !== 'object' || !value.branch) {
@@ -58,14 +64,17 @@ async function getItemInfo(Com, Bran, Id) {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
 router.get('/getAllItem', async (req, res) => {
     try {
         const items = await getAllItems();
         res.json(items);
     } catch (error) {
         res.status(500).json({
-            message: 'Error fetching items',
-            error: error.message
+            message: 'Error fetching items'
         });
     }
 });
@@ -89,8 +98,7 @@ router.get('/getItemInfo/:company/:branch/:id', async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({
-            message: 'Error fetching item details',
-            error: error.message
+            message: 'Error fetching item details'
         });
     }
 });

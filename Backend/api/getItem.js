@@ -1,18 +1,15 @@
 const express = require('express');
-const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
 const router = express.Router();
-const app = express();
-const port = 3000;
 const Modal = require('./DB/companyModal.js');
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
-// กำหนดพาธของไฟล์ JSON
-async function getAllItems() {
+async function getAllItemCount() {
+    let totalCount = 0;
     try {
-        const documents = await Modal.find({}).lean(); // ดึงข้อมูลทุกบริษัท
-        let totalCount = 0;
+        const documents = await Modal.find({}).lean();
 
         documents.forEach(company => {
             Object.values(company).forEach(companyData => {
@@ -26,72 +23,80 @@ async function getAllItems() {
             });
         });
 
-        return totalCount;    
+        return totalCount;
     } catch (error) {
-        console.error('❌ Error fetching total item count:', error);
-        throw error;
+        console.error('Error fetching total item count:', error);
+        return 0;
     }
 }
 
-async function getItemCompanyCount(Com) { 
+async function getItemCompanyCount(Com) {
     let count = 0;
-        try {
-            const documents = await Modal.find({}); //ข้อมูลในCollection
-            console.log(documents[0][Com]["branch"]);
-            Object.entries(documents[0][Com]["branch"]).map(([key, value]) => {
-                console.log(value.item);
-                count += Object.entries(value.item).length;
-            })
-            return count;    
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            throw error;
+    try {
+        const documents = await Modal.find({ [`${Com}`]: { $exists: true } }, { [`${Com}`]: 1, _id: 0 }).lean();
+        Object.entries(documents[Com]["branch"]).map(([key, value]) => {
+            count += Object.entries(value.item).length;
+        })
+        return count;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return 0;
+    }
+}
+
+
+async function getItemBranchCount(Com, Bran) {
+    let count = 0;
+    try {
+        const documents = await Modal.find({ [`${Com}.branch.${Bran}`]: { $exists: true } }, { [`${Com}.branch.${Bran}`]: 1, _id: 0 }).lean();
+
+        if (documents[Com] && documents[Com].branch[Bran]) {
+            count = Object.keys(documents[Com].branch[Bran].item || {}).length;
         }
 
+        return count;
+    } catch (error) {
+        console.error('Error fetching branch item count:', error);
+        return 0
     }
+}
 
-
-    async function getItemBranchCount(Com, Bran) { 
-        try {
-            const documents = await Modal.find({}).lean(); // ดึงข้อมูลจาก MongoDB
-            let count = 0;
-    
-            if (documents[0][Com] && documents[0][Com].branch[Bran]) {
-                count = Object.keys(documents[0][Com].branch[Bran].item || {}).length;
-            }
-    
-            return count;    
-        } catch (error) {
-            console.error('❌ Error fetching branch item count:', error);
-            throw error;
-        }
-    }
-
-// โหลดข้อมูลจากไฟล์ JSON
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
 router.get('/', async (req, res) => {
-        
-
-        // Object.entries(filedata).map(([key, value]) => {
-        //     count += getItemCompanyCount(key);
-        // });
-        const count = await getAllItems();
-        res.json({count});
-
+    try {
+        const count = await getAllItemCount();
+        res.json({ count });
+    } catch (error) {
+        console.error('Error fetching all items:', error);
+        res.status(500).json({ message: 'Error fetching item details' });
+    }
 });
 
 router.get('/:Com', async (req, res) => {
     const Com = req.params.Com;
-    const count = await getItemCompanyCount(Com);
-    res.json({count})
-    
+    try {
+        const count = await getItemCompanyCount(Com);
+        res.json({ count })
+    } catch (error) {
+        console.error('Error fetching item company count:', error);
+        res.status(500).json({ message: 'Error fetching item details' });
+    }
+
 })
 
 
-router.get('/:Com/:Bran', async (req, res) => { 
+router.get('/:Com/:Bran', async (req, res) => {
     const { Com, Bran } = req.params;
-    const count = await getItemBranchCount(Com, Bran);
-    res.json({ branchItemCount: count });
+    try {
+        const count = await getItemBranchCount(Com, Bran);
+        res.json({ branchItemCount: count });
+    } catch (error) {
+        console.error('Error fetching item branch count:', error);
+        res.status(500).json({ message: 'Error fetching item details' });
+    }
 });
 
 module.exports = router;

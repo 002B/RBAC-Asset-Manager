@@ -2,81 +2,8 @@ const mongoose = require('mongoose');
 
 const COLLECTION_NAME = 'company';
 
-const checkSchema = new mongoose.Schema({
-    next_check: String,
-    last_check: [String]
-});
-
-const itemLogSchema = new mongoose.Schema({
-    Install: String
-});
-
-const itemSchema = new mongoose.Schema({
-    brand: String,
-    type: String,
-    capacity: String,
-    install_by: String,
-    install_date: String,
-    exp_date: String,
-    location: String,
-    color: String,
-    next_check: String,
-    last_check: String,
-    status: String,
-    log: itemLogSchema
-});
-
-const branchSchema = new mongoose.Schema({
-    check: checkSchema,
-    item: { type: Map, of: itemSchema }
-});
-
-const loginLogSchema = new mongoose.Schema({
-    user: String,
-    date: String
-});
-
-const reportLogSchema = new mongoose.Schema({
-    serial: String,
-    company: String,
-    branch: String,
-    sender: String,
-    date: String,
-    time: String,
-    hasImg: String,
-    hasProblem: String,
-    status: String
-});
-
-const itemActivitySchema = new mongoose.Schema({
-    action: String,
-    date: String
-});
-
-const companyLogSchema = new mongoose.Schema({
-    login: [[String]],
-    report: [reportLogSchema],
-    item: [[String]]
-});
-
 const companySchema = new mongoose.Schema({
-    ThaiBev: {
-        branch: {
-            ThaiBev_1: branchSchema,
-            ThaiBev_2: branchSchema
-        },
-        log: companyLogSchema
-    },
-    SCB: {
-        branch: {
-            SCB_1: branchSchema,
-            SCB_2: branchSchema
-        },
-        log: {
-            report: [reportLogSchema]
-        }
-    }
-}, { collection: COLLECTION_NAME });
+    }, { collection: COLLECTION_NAME });
 
 const Company = mongoose.model('Company', companySchema);
 
