@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-const COLLECTION_NAME = 'company';
-
 const checkSchema = new mongoose.Schema({
     next_check: String,
     last_check: [String]
@@ -9,7 +7,7 @@ const checkSchema = new mongoose.Schema({
 
 const itemLogSchema = new mongoose.Schema({
     Install: String
-});
+}, { _id: false });
 
 const itemSchema = new mongoose.Schema({
     brand: String,
@@ -24,12 +22,16 @@ const itemSchema = new mongoose.Schema({
     last_check: String,
     status: String,
     log: itemLogSchema
-});
+}, { _id: false });
 
 const branchSchema = new mongoose.Schema({
     check: checkSchema,
-    item: { type: Map, of: itemSchema }
-});
+    item: { 
+        type: Map, 
+        of: itemSchema,
+        default: () => new Map()
+    }
+}, { _id: false });
 
 const reportLogSchema = new mongoose.Schema({
     serial: String,
@@ -41,26 +43,30 @@ const reportLogSchema = new mongoose.Schema({
     hasImg: String,
     hasProblem: String,
     status: String
-});
+}, { _id: false });
 
 const companyLogSchema = new mongoose.Schema({
     login: [[String]],
     report: [reportLogSchema],
     item: [[String]]
-});
+}, { _id: false });
+
+const companyDataSchema = new mongoose.Schema({
+    branch: {
+        type: Map,
+        of: branchSchema,
+        default: () => new Map()
+    },
+    log: companyLogSchema
+}, { _id: false });
+
 
 const companySchema = new mongoose.Schema({
-    companies: {
-        type: Map,
-        of: new mongoose.Schema({
-            branch: {
-                type: Map,
-                of: branchSchema
-            },
-            log: companyLogSchema
-        })
-    }
-}, { collection: COLLECTION_NAME });
+    companyDataSchema
+}, { 
+    collection: 'company',
+    strict: false,
+});
 
 const Company = mongoose.model('Company', companySchema);
 
