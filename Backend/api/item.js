@@ -161,7 +161,7 @@ async function updateItemLog(Com, Bran, Id, Name, Data) {
 async function deleteItem(Com, Bran, Id) {
     try {
         const doc = await CompanyModel.findOne({ [`${Com}`] : { $exists: true } });
-        delete doc.SCB.branch[Bran].item[Id];
+        delete doc[Com].branch[Bran].item[Id];
         doc.markModified(Com); 
         await doc.save();
         return true
@@ -169,6 +169,7 @@ async function deleteItem(Com, Bran, Id) {
         return false
     }
 }
+
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
