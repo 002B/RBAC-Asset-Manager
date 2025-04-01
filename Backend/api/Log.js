@@ -4,57 +4,97 @@ const CompanyModel = require('./DB/companyModal.js');
 
 async function getLogReport(Com) {
     try {
-        const documents = await CompanyModel.find({});
-        return documents[0][Com].log.report;
+        const result = await CompanyModel.findOne(
+            { [`${Com}.log.report`]: { $exists: true } },
+            { [`${Com}.log.report`]: 1, _id: 0 }
+        ).lean();
+
+        if (!result || !result[Com]?.log?.report) {
+            return [];
+        }
+
+        return result[Com].log.report;
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching log reports:', error);
         return [];
     }
 }
 
 async function getLogLogin(Com) {
     try {
-        const documents = await CompanyModel.find({});
-        return documents[0][Com].log.login;
+        const result = await CompanyModel.findOne(
+            { [`${Com}.log.login`]: { $exists: true } },
+            { [`${Com}.log.login`]: 1, _id: 0 }
+        ).lean();
+
+        if (!result || !result[Com]?.log?.login) {
+            return [];
+        }
+
+        return result?.[Com]?.log?.login || [];
     } catch (error) {
-        console.error(error);
+        console.error(`Error fetching login logs for ${Com}:`, error);
         return [];
     }
 }
 
 async function getLogItem(Com) {
     try {
-        const documents = await CompanyModel.find({});
-        return documents[0][Com].log.item;
+        const result = await CompanyModel.findOne(
+            { [`${Com}.log.item`]: { $exists: true } },
+            { [`${Com}.log.item`]: 1, _id: 0 }
+        ).lean();
+
+        if (!result || !result[Com]?.log?.item) {
+            return [];
+        }
+
+        return result?.[Com]?.log?.item || [];
     } catch (error) {
-        console.error(error);
+        console.error(`Error fetching item logs for ${Com}:`, error);
         return [];
     }
 }
 
 async function getNextCheck(Com, Bran) {
     try {
-        const documents = await CompanyModel.find({});
-        return documents[0][Com].branch[Bran].check.next_check;
+        const result = await CompanyModel.findOne(
+            { [`${Com}.branch.${Bran}.check.next_check`]: { $exists: true } },
+            { [`${Com}.branch.${Bran}.check.next_check`]: 1, _id: 0 }
+        ).lean();
+        if (!result || !result[Com]?.branch?.[Bran]?.check?.next_check) {
+            return null;
+        }
+
+        return result?.[Com]?.branch?.[Bran]?.check?.next_check || null;
     } catch (error) {
-        console.error(error);
-        return [];
+        console.error(`Error fetching next check for ${Com}/${Bran}:`, error);
+        return null;
     }
 }
 
 async function getLastCheck(Com, Bran) {
     try {
-        const documents = await CompanyModel.find({});
-        return documents[0][Com].branch[Bran].check.last_check;
+        const result = await CompanyModel.findOne(
+            { [`${Com}.branch.${Bran}.check.last_check`]: { $exists: true } },
+            { [`${Com}.branch.${Bran}.check.last_check`]: 1, _id: 0 }
+        ).lean();
+
+        if (!result || !result[Com]?.branch?.[Bran]?.check?.last_check) {
+            return [];
+        }
+
+
+        return result?.[Com]?.branch?.[Bran]?.check?.last_check || [];
     } catch (error) {
-        console.error(error);
+        console.error(`Error fetching last check for ${Com}/${Bran}:`, error);
         return [];
     }
 }
 
 router.get('/getLogReport/:company', async (req, res) => {
     const { company } = req.params;
-    const report =  await getLogReport(company);
+    const report = await getLogReport(company);
     res.json(report);
 });
 

@@ -1,11 +1,24 @@
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./api/DB/DB');
+// const Test = require('./api/DB/test_schema');
 const app = express();
 const port = 3000;
 
 connectDB();
+// async function test() {
+//   try {
+//     const documents = await Test.find({}, {'ThaiBev.branch.ThaiBev_1.item': 1});
+//     console.log(JSON.stringify(documents, null, 2));
+//     return 
+//   } catch (error) {
+//     console.error(error);
+//     return [];
+//   }
+// }
 
+
+// test();
 
 const getItem = require('./api/getItem');
 const getUser = require('./api/getUser');

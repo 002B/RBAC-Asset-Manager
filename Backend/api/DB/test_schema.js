@@ -28,7 +28,11 @@ const itemSchema = new mongoose.Schema({
 
 const branchSchema = new mongoose.Schema({
     check: checkSchema,
-    item: { type: Map, of: itemSchema }
+    items: { 
+        type: Map, 
+        of: itemSchema,
+        default: new Map() 
+    }
 });
 
 const loginLogSchema = new mongoose.Schema({
@@ -48,33 +52,42 @@ const reportLogSchema = new mongoose.Schema({
     status: String
 });
 
-const itemActivitySchema = new mongoose.Schema({
-    action: String,
-    date: String
+const companyLogSchema = new mongoose.Schema({
+    logins: {
+        type: [loginLogSchema],
+        default: []
+    },
+    reports: {
+        type: [reportLogSchema],
+        default: []
+    },
+    itemActivities: {
+        type: [{
+            action: String,
+            date: String,
+            itemId: String
+        }],
+        default: []
+    }
 });
 
-const companyLogSchema = new mongoose.Schema({
-    login: [[String]],
-    report: [reportLogSchema],
-    item: [[String]]
+const companyGroupSchema = new mongoose.Schema({
+    branches: {
+        type: Map,
+        of: branchSchema,
+        default: new Map()
+    },
+    log: {
+        type: companyLogSchema,
+        default: () => ({})
+    }
 });
 
 const companySchema = new mongoose.Schema({
-    ThaiBev: {
-        branch: {
-            ThaiBev_1: branchSchema,
-            ThaiBev_2: branchSchema
-        },
-        log: companyLogSchema
-    },
-    SCB: {
-        branch: {
-            SCB_1: branchSchema,
-            SCB_2: branchSchema
-        },
-        log: {
-            report: [reportLogSchema]
-        }
+    companies: {
+        type: Map,
+        of: companyGroupSchema,
+        default: new Map()
     }
 }, { collection: COLLECTION_NAME });
 

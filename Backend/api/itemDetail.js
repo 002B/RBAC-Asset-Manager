@@ -4,17 +4,18 @@ const CompanyModel = require('./DB/companyModal.js');
 
 async function getAllItems() {
     try {
-        const documents = await CompanyModel.find({});
-
+        const documents = await CompanyModel.find({}).lean()
         const transformedData = documents.flatMap(doc => {
-            return Object.entries(doc.toObject()).flatMap(([companyName, companyData]) => {
-                if (companyName === '_id') return [];
-                return Object.entries(companyData.branch).flatMap(([branchName, branchData]) => {
+            return Object.entries(doc).flatMap(([key, value]) => {
+                if (key === '_id' || !value || typeof value !== 'object' || !value.branch) {
+                    return [];
+                }
+                return Object.entries(value.branch).flatMap(([branchName, branchData]) => {
                     return Object.entries(branchData.item).map(([itemId, itemData]) => ({
                         id: itemId,
-                        company: companyName,
+                        company: key,
                         branch: branchName,
-                        ...itemData
+                        ...(itemData || {})
                     }));
                 });
             });
@@ -30,12 +31,21 @@ async function getAllItems() {
 
 async function getItemInfo(Com, Bran, Id) {
     try {
-        const documents = await CompanyModel.find({});
+        const result = await CompanyModel.aggregate([
+            { $match: { [`${Com}.branch.${Bran}.item.${Id}`]: { $exists: true } } },
+            { $project: { 
+                itemData: `$${Com}.branch.${Bran}.item.${Id}`,
+                _id: 0
+            }}
+        ]);
 
-        const companyData = documents[0][Com];
-        const branchData = companyData.branch[Bran];
-        const itemData = branchData.item[Id];
+        if (result.length === 0) {
+            console.log('Item not found');
+            return null;
+        }
 
+        const itemData = result[0].itemData;
+        
         return {
             company: Com,
             branch: Bran,
@@ -44,7 +54,7 @@ async function getItemInfo(Com, Bran, Id) {
         };
     } catch (error) {
         console.error('Error fetching item details:', error);
-        throw error;
+        return null;
     }
 }
 
