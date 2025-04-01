@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const COLLECTION_NAME = 'reportModal';
+const COLLECTION_NAME = 'report';
 
 const Schema = new mongoose.Schema({}, { strict: false });
 

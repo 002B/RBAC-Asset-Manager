@@ -1,37 +1,55 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
+const PermissionModel = require('./DB/permissionModal.js');
 
-const user = require('../data/permission.json');
-
-function getUserCount(Com) { 
-    if (user[Com]) {
-        return Object.entries(user[Com]).length;
-    } else {
-        return 0;
+async function getUserCount(companyName) {
+    try {
+        const document = await PermissionModel.findOne({});
+        if (!document || !document[companyName]) {
+            return 0;
+        }
+        return Object.keys(document[companyName]).length;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
     }
 }
 
-router.get('/:Com', (req, res) => {
-    const Com = req.params.Com;
-    const count = getUserCount(Com);
-    res.json({ count });
-});
+async function getAllUserCount() {
+    try {
+        const document = await PermissionModel.findOne({});
+        if (!document) return 0;
 
-
-function getAllUserCount() {
-    let count = 0;
-    Object.entries(user).map(([key, value]) => {
-        count += Object.entries(value).length;
-    });
-    return count;
+        let count = 0;
+        for (const company in document) {
+            if (Object.prototype.hasOwnProperty.call(document, company)) {
+                count += Object.keys(document[company]).length;
+            }
+        }
+        return count;
+    } catch (error) {
+        console.error('Error fetching all user counts:', error);
+        throw error;
+    }
 }
 
-router.get('/', (req, res) => {
-    const count = getAllUserCount();
-    res.json({ count });
+router.get('/:company', async (req, res) => {
+    try {
+        const companyName = req.params.company;
+        const count = await getUserCount(companyName);
+        res.json({ company: companyName, userCount: count });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
 });
 
+router.get('/', async (req, res) => {
+    try {
+        const count = await getAllUserCount();
+        res.json({ totalUserCount: count });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
 
 module.exports = router;
