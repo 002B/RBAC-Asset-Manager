@@ -68,8 +68,6 @@ const company = require('./api/company');
 // addFireExtinguisherToSCB2();
 app.use(cors());
 app.use(express.json());
-//
-//
 
 app.use('/getUser', getUser);
 app.use('/company', company);
