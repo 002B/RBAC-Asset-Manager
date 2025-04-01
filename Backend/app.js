@@ -69,6 +69,7 @@ const company = require('./api/company');
 app.use(cors());
 app.use(express.json());
 //
+//
 
 app.use('/getUser', getUser);
 app.use('/company', company);
