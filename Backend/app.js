@@ -5,21 +5,6 @@ const app = express();
 const port = 3000;
 
 connectDB();
-// const Test = require('./api/DB/companyModal');
-// async function test(Com) {
-//   try {
-//     const result = await Test.findOne(
-//         { [`${Com}`]: { $exists: true } },
-//         { [`${Com}`]: 1, _id: 0 }
-//     ).lean();
-
-//     console.log(Object.keys(result[Com]["branch"]));
-// } catch (error) {
-//     console.error('Error fetching log reports:', error);
-//     return 0;
-// }
-// }
-// test("ThaiBev");
 
 const getItem = require('./api/getItem');
 const getUser = require('./api/getUser');
