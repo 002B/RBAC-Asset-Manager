@@ -55,14 +55,12 @@ async function getLastCheck(Com, Bran) {
 router.get('/getLogReport/:company', async (req, res) => {
     const { company } = req.params;
     const report =  await getLogReport(company);
-    
     res.json(report);
 });
 
 router.get('/getLogLogin/:company', async (req, res) => {
     const { company } = req.params;
     const loginHistory = await getLogLogin(company);
-    
     res.json(loginHistory);
 });
 

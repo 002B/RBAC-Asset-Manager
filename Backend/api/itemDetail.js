@@ -23,29 +23,23 @@ async function getAllItems() {
         return transformedData;
     } catch (error) {
         console.error('Error fetching data:', error);
-        throw error;
+        return [];
     }
 }
 
-async function getItemInfo(companyName, branchName, itemId) {
+
+async function getItemInfo(Com, Bran, Id) {
     try {
-        const document = await CompanyModel.findOne({
-            [`${companyName}.branch.${branchName}.item.${itemId}`]: { $exists: true }
-        });
+        const documents = await CompanyModel.find({});
 
-        if (!document) {
-            return null;
-        }
-
-        const docObject = document.toObject();
-        const companyData = docObject[companyName];
-        const branchData = companyData.branch[branchName];
-        const itemData = branchData.item[itemId];
+        const companyData = documents[0][Com];
+        const branchData = companyData.branch[Bran];
+        const itemData = branchData.item[Id];
 
         return {
-            company: companyName,
-            branch: branchName,
-            id: itemId,
+            company: Com,
+            branch: Bran,
+            id: Id,
             ...itemData
         };
     } catch (error) {
