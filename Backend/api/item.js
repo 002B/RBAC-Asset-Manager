@@ -147,10 +147,21 @@ async function createItem(Com, Bran, Id, Data) {
     }
 }
 
-async function updateItemLog(Com, Bran, Id, Name, Data) {
+async function updateItem(Com, Bran, Id, Data) {
     try {
         const doc = await CompanyModel.findOne({ [`${Com}`] : { $exists: true } });
-        doc.set(`${Com}.branch.${Bran}.item.${Id}.log.${Name}`, Data);
+        doc.set(`${Com}.branch.${Bran}.item.${Id}`, Data);
+        await doc.save();
+        return true
+    } catch (error) {
+        return false
+    }
+}
+
+async function updateItemLog(Com, Bran, Id, Data) {
+    try {
+        const doc = await CompanyModel.findOne({ [`${Com}.branch.${Bran}.item.${Id}`] : { $exists: true } });
+        doc.set(`${Com}.branch.${Bran}.item.${Id}`, Data);
         await doc.save();
         return true
     } catch (error) {
@@ -274,6 +285,19 @@ router.post('/createItem/:company/:branch/:id', async (req, res) => {
     } catch (error) {
         res.status(500).json({
             message: 'Error creating item'
+        });
+    }
+});
+
+router.put('/updateItem/:company/:branch/:id', async (req, res) => {
+    try {
+        const { company, branch, id } = req.params;
+        const data = req.body;
+        const item = await updateItem(company, branch, id, data);
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error updating item'
         });
     }
 });

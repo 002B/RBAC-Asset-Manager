@@ -3,7 +3,7 @@ import SweetAlert from "sweetalert2";
 import "boxicons";
 import './CreateForm.css'
 
-function Confirm() {
+async function Confirm() {
   SweetAlert.fire({
     title: "Are you sure?",
     text: "You need to send report?",
@@ -14,6 +14,24 @@ function Confirm() {
     confirmButtonText: "Send",
   }).then((result) => {
     if (result.isConfirmed) {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        message: "test"
+      });
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+      };
+
+      fetch("http://localhost:3000/log/createLogReport/SCB/SCB_2/test", requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
       SweetAlert.fire({
         title: "Your report has been send!",
         text: "Wait for confirm by Admin",
@@ -77,10 +95,12 @@ const ImageUploadPreview = ({ name }) => {
   );
 };
 
-function CreateForm({ data, placeholderData }) {
-  if (!placeholderData){
+function CreateForm({ data, placeholderData, array, status }) {
+  if (!placeholderData) {
     placeholderData = {}
   }
+  console.log(status);
+  console.log(array.selectedData.branch);
 
   return (
     <div className="absolute p-8 border-2 w-1/2 h-fit border-secondary rounded-lg min-w-[380px] bg-white shadow-md">
@@ -91,48 +111,48 @@ function CreateForm({ data, placeholderData }) {
         </span>
       </div>
       <div className="p-2 border-2 border-secondary rounded-lg">
-      <div className="flex col-or-row items-center justify-between">
-      <div className="flex w-full flex-col gap-2">
-        {data?.map((item) =>
-          item !== "File" && item !== "Submit" ? (
-            <label key={item} htmlFor={item} className="block">
-              <span className="text-gray-700 font-bold">{item}</span>
-              <input
-                id={item}
-                value={placeholderData[item] ? placeholderData[item] : null}
-                name={item}
-                type="text"
-                className="mt-1 block w-full border-secondary border-2 rounded-lg shadow-sm focus:border-primary p-[4px]"
-                />
-            </label>
-          ) : null
-        )}
-      </div>
-      <div className="flex justify-center items-center p-4 h-full">
-        {data?.map((item) =>
-          item === "File" ? (
-            <div className="flex justify-center items-center">
-              <ImageUploadPreview key={item} name={item} />
-            </div>
-          ) : null
-        )}
-      </div>
-      </div>
-      {data?.map((item) =>
-      ( item === "Submit" ? (
-        <div key={item} className="w-full flex justify-center items-center p-2">
-          <button
-            key={item}
-            onClick={() => Confirm()}
-            type="submit"
-            className="flex justify-center items-center bg-secondary text-white font-bold gap-2 py-2 px-4 rounded w-fit hover:brightness-110"
-          >
-            <box-icon name="send" color="white"></box-icon>
-            Send
-          </button>
-        </div> ) : null
-      ))}
+        <div className="flex col-or-row items-center justify-between">
+          <div className="flex w-full flex-col gap-2">
+            {data?.map((item) =>
+              item !== "File" && item !== "Submit" ? (
+                <label key={item} htmlFor={item} className="block">
+                  <span className="text-gray-700 font-bold">{item}</span>
+                  <input
+                    id={item}
+                    value={placeholderData[item] ? placeholderData[item] : null}
+                    name={item}
+                    type="text"
+                    className="mt-1 block w-full border-secondary border-2 rounded-lg shadow-sm focus:border-primary p-[4px]"
+                  />
+                </label>
+              ) : null
+            )}
+          </div>
+          <div className="flex justify-center items-center p-4 h-full">
+            {data?.map((item) =>
+              item === "File" ? (
+                <div className="flex justify-center items-center">
+                  <ImageUploadPreview key={item} name={item} />
+                </div>
+              ) : null
+            )}
+          </div>
         </div>
+        {data?.map((item) =>
+        (item === "Submit" ? (
+          <div key={item} className="w-full flex justify-center items-center p-2">
+            <button
+              key={item}
+              onClick={() => Confirm()}
+              type="submit"
+              className="flex justify-center items-center bg-secondary text-white font-bold gap-2 py-2 px-4 rounded w-fit hover:brightness-110"
+            >
+              <box-icon name="send" color="white"></box-icon>
+              Send
+            </button>
+          </div>) : null
+        ))}
+      </div>
     </div>
   );
 }

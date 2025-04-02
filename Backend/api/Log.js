@@ -61,6 +61,19 @@ async function getLogReportCount(Com, status) {
         return 0;
     }
 }
+
+async function createLogReport(Com, Bran, Data) {
+    try {
+        await CompanyModel.updateOne(
+            { [`${Com}`]: { $exists: true } },
+            { $push: { [`${Com}.branch.${Bran}.log.report`]: Data } }
+        );
+        return true
+    } catch (error) {
+        return false
+    }
+}
+
 /************************************************************* */
 async function getLogLogin(Com) {
     try {
@@ -157,6 +170,19 @@ router.get('/getLogReportCount/:company/:status?', async (req, res) => {
     } catch (error) {
         console.error(`Error fetching log report count for ${company}:`, error);
         res.status(500).json({ message: 'Error fetching log report count' });
+    }
+});
+
+router.post('/createLogReport/:company/:id', async (req, res) => {
+    const { company } = req.params;
+    const data = req.body; 
+    
+    try {
+        const reportCreated = await createLogReport(company , data);
+        res.json(reportCreated);
+    } catch (error) {
+        console.error('Error creating log report:', error);
+        res.status(500).json({ message: 'Error creating log report' });
     }
 });
 

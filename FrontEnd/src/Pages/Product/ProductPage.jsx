@@ -10,11 +10,19 @@ import "boxicons";
 const ProductPage = ({ company, branch, id }) => {
   const [show, setShow] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
+const requestOptions = {
+  method: "GET",
+  redirect: "follow"
+};
 
   useEffect(() => {
-    setSelectedData(getItemInfo(company, branch, id));
-  }, []);
-
+    fetch(`http://localhost:3000/item/getItemInfo/${company}/${branch}/${id}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => setSelectedData(result))
+      .catch((error) => console.error(error));
+  }, [company, branch, id]);
+  console.log(selectedData);
+  
   if (!selectedData) {
     return (
       <div className="flex flex-col bg-light min-h-screen justify-center items-center">
@@ -69,7 +77,7 @@ const ProductPage = ({ company, branch, id }) => {
                               <td>{value}</td>
                             </tr>
                           );
-                        case "ID":
+                        case "id":
                           return (
                             <tr key={key}>
                               <td className="font-bold">Serial Number</td>
@@ -192,7 +200,10 @@ const ProductPage = ({ company, branch, id }) => {
       {show && (
         <div className="w-full absolute h-full flex justify-center items-center">
           <CreateForm
-            data={["Name ", "Serial Number", "Problem", "File", "Submit"]}
+            data={["Name", "Serial Number", "Problem", "File", "Submit"]}
+            placeholderData={{ "Serial Number": selectedData.id }}
+            array = {{selectedData}}
+            status = {"report"}
           />
           <div
             className="w-full h-full flex justify-center items-center"
