@@ -1,8 +1,9 @@
 import { useState } from "react";
 
-const AddItemForm = ({ company, branch, id, user, onClose, onSubmit }) => {
-  //expdate = new Date() + 5 years
-  //next_check = new Date() + 3 months
+const AddItemForm = ({ onClose, onSubmit }) => {
+  const [company, setCompany] = useState("ThaiBev");
+  const [branch, setBranch] = useState("ThaiBev_1");
+  const [id, setId] = useState("");
   const today = new Date();
   const expDate = new Date(
     today.getFullYear() + 5,
@@ -23,7 +24,7 @@ const AddItemForm = ({ company, branch, id, user, onClose, onSubmit }) => {
     brand: "SafetyPlus",
     type: "Foam",
     capacity: "3kg",
-    install_by: user,
+    install_by: "admin",
     install_date: formattedToday,
     exp_date: formattedExpDate,
     location: "",
@@ -52,6 +53,20 @@ const AddItemForm = ({ company, branch, id, user, onClose, onSubmit }) => {
         [name]: value,
       });
     }
+  };
+
+  const handleCompanyChange = (e) => {
+    setCompany(e.target.value);
+    // Reset branch when company changes
+    setBranch(e.target.value === "ThaiBev" ? "ThaiBev_1" : "SCB_1");
+  };
+
+  const handleBranchChange = (e) => {
+    setBranch(e.target.value);
+  };
+
+  const handleIdChange = (e) => {
+    setId(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -85,6 +100,56 @@ const AddItemForm = ({ company, branch, id, user, onClose, onSubmit }) => {
         <h2 className="text-xl font-bold text-primary mb-4">Add New Item</h2>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Company
+              </label>
+              <select
+                name="company"
+                value={company}
+                onChange={handleCompanyChange}
+                className="border-2 border-primary rounded w-full p-2"
+              >
+                <option value="ThaiBev">ThaiBev</option>
+                <option value="SCB">SCB</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Branch
+              </label>
+              <select
+                name="branch"
+                value={branch}
+                onChange={handleBranchChange}
+                className="border-2 border-primary rounded w-full p-2"
+              >
+                {company === "ThaiBev" ? (
+                  <>
+                    <option value="ThaiBev_1">ThaiBev_1</option>
+                    <option value="ThaiBev_2">ThaiBev_2</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="SCB_1">SCB_1</option>
+                    <option value="SCB_2">SCB_2</option>
+                  </>
+                )}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Serial Number
+              </label>
+              <input
+                type="text"
+                name="id"
+                value={id}
+                onChange={handleIdChange}
+                className="border-2 border-primary rounded w-full p-2"
+                required
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Brand

@@ -4,6 +4,7 @@ import CreateForm from "../CreateForm";
 import "boxicons";
 import ExportExcel from "../ExcelExport";
 import AddItemForm from "../addItemForm";
+import EditItemForm from "../editItemForm";
 
 const DataTable = ({
   tIcon,
@@ -19,12 +20,15 @@ const DataTable = ({
   formPlaceholder = {},
   hasExport = false,
   hasAddItem = false,
+  hasEdit = false,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showAddItemForm, setShowAddItemForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
   const itemsPerPage = itemPerPage || 10;
   const headerHeight = 32;
@@ -32,15 +36,35 @@ const DataTable = ({
   const minTableHeight = rowHeight * itemsPerPage + headerHeight;
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-
   function addItem() {
     setShowAddItemForm(true);
   }
 
   const handleSubmitSuccess = () => {
-    // Refresh data or show success message
-    console.log("Item added successfully");
     setShowAddItemForm(false);
+  };
+
+  const handleEditClick = (rowData) => {
+    setEditingItem({
+      id: rowData[0],
+      company: rowData[12] || "ThaiBev", // Add company (assuming it's at index 12)
+      branch: rowData[13] || "ThaiBev_1", // Add branch (assuming it's at index 13)
+      brand: rowData[1],
+      type: rowData[2],
+      capacity: rowData[3],
+      install_by: rowData[4],
+      install_date: rowData[5],
+      exp_date: rowData[6],
+      location: rowData[7],
+      color: rowData[8],
+      next_check: rowData[9],
+      last_check: rowData[10],
+      status: rowData[11],
+      log: {
+        Install: rowData[5],
+      },
+    });
+    setShowEditForm(true);
   };
 
   const sortedData = [...data]
@@ -122,52 +146,52 @@ const DataTable = ({
           {tName ? <h2 className="p-2 text-secondary">{tName}</h2> : null}
         </div>
         <div className="flex gap-2 justify-center items-center">
-        {hasExport && (
-          <button
-            className="border-2 border-primary bg-white rounded flex h-full w-full p-1 transition-all duration-300 ease-in-out hover:bg-secondary"
-            onClick={() => ExportExcel(data)}
-          >
-            <box-icon name="export" color="#FD6E28"></box-icon>
-            <span className="px-1 text-primary text-center ">Export</span>
-          </button>
-        )}
-        {hasSearch && (
-          <div className="search-bar flex gap-2">
-            <button className="flex justify-center items-center w-fit h-fit">
-              <box-icon
-                name="filter"
-                type="regular"
-                size="sm"
-                color="#FD6E28"
-              ></box-icon>
+          {hasExport && (
+            <button
+              className="border-2 border-primary bg-white rounded flex h-full w-full p-1 transition-all duration-300 ease-in-out hover:bg-secondary"
+              onClick={() => ExportExcel(data)}
+            >
+              <box-icon name="export" color="#FD6E28"></box-icon>
+              <span className="px-1 text-primary text-center ">Export</span>
             </button>
-            <input
-              type="text"
-              name={tName + "-search"}
-              className="search-input"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button className="flex justify-center items-center w-fit h-fit">
-              <box-icon
-                name="search"
-                type="regular"
-                size="sm"
-                color="#FD6E28"
-              ></box-icon>
+          )}
+          {hasSearch && (
+            <div className="search-bar flex gap-2">
+              <button className="flex justify-center items-center w-fit h-fit">
+                <box-icon
+                  name="filter"
+                  type="regular"
+                  size="sm"
+                  color="#FD6E28"
+                ></box-icon>
+              </button>
+              <input
+                type="text"
+                name={tName + "-search"}
+                className="search-input"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button className="flex justify-center items-center w-fit h-fit">
+                <box-icon
+                  name="search"
+                  type="regular"
+                  size="sm"
+                  color="#FD6E28"
+                ></box-icon>
+              </button>
+            </div>
+          )}
+          {hasAddItem && (
+            <button
+              className="border-2 border-primary bg-white rounded flex h-full w-full p-1 transition-all duration-300 ease-in-out hover:bg-secondary"
+              onClick={() => addItem()}
+            >
+              <box-icon name="plus" color="#FD6E28"></box-icon>
+              <span className="px-1 text-primary text-center ">Add</span>
             </button>
-          </div>
-        )}
-        {hasAddItem && (
-          <button
-          className="border-2 border-primary bg-white rounded flex h-full w-full p-1 transition-all duration-300 ease-in-out hover:bg-secondary"
-          onClick={() => addItem()}
-        >
-          <box-icon name="plus" color="#FD6E28"></box-icon>
-          <span className="px-1 text-primary text-center ">Add</span>
-        </button>
-        )}
+          )}
         </div>
       </div>
       <div
@@ -248,6 +272,21 @@ const DataTable = ({
                 {title.map((_, colIndex) => (
                   <td key={colIndex}>{row[colIndex] || "-"}</td>
                 ))}
+                {hasEdit ? (
+                <td className="bg-white sticky -right-1">
+                  <button
+                    onClick={() => handleEditClick(row)}
+                    className="flex justify-center items-center"
+                  >
+                    <box-icon
+                      type="regular"
+                      name="edit"
+                      size="sm"
+                      color="#FD6E28"
+                    ></box-icon>
+                  </button>
+                </td>
+              ) : null}
                 {hasButton ? (
                   <td className="bg-white sticky -right-1">
                     <button
@@ -313,14 +352,17 @@ const DataTable = ({
       )}
       {showAddItemForm && (
         <AddItemForm
-          company={"ThaiBev"}
-          branch={"ThaiBev_1"}
-          id={`FTX=2025-002`}
-          user={"User Name"}
           onClose={() => setShowAddItemForm(false)}
           onSubmit={handleSubmitSuccess}
         />
       )}
+      {showEditForm && (
+  <EditItemForm
+    onClose={() => setShowEditForm(false)}
+    onSubmit={handleSubmitSuccess}
+    initialData={editingItem}
+  />
+)}
     </div>
   );
 };

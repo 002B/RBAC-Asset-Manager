@@ -73,6 +73,7 @@ const InventoryAdmin = () => {
           hasExport={true}
           hasButton={false}
           hasAddItem={true}
+          hasEdit={true}
         />
       </div>
     </div>
