@@ -3,6 +3,8 @@ import "./DataTable.css";
 import CreateForm from "../CreateForm";
 import "boxicons";
 import ExportExcel from "../ExcelExport";
+import AddItemForm from "../addItemForm";
+
 const DataTable = ({
   tIcon,
   tName,
@@ -15,11 +17,13 @@ const DataTable = ({
   hasSearch = true,
   formData = [],
   formPlaceholder = {},
-  hasExport = false
+  hasExport = false,
+  hasAddItem = false,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showAddItemForm, setShowAddItemForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const itemsPerPage = itemPerPage || 10;
@@ -27,6 +31,17 @@ const DataTable = ({
   const rowHeight = 40;
   const minTableHeight = rowHeight * itemsPerPage + headerHeight;
   const totalPages = Math.ceil(data.length / itemsPerPage);
+
+
+  function addItem() {
+    setShowAddItemForm(true);
+  }
+
+  const handleSubmitSuccess = () => {
+    // Refresh data or show success message
+    console.log("Item added successfully");
+    setShowAddItemForm(false);
+  };
 
   const sortedData = [...data]
     .filter((row) =>
@@ -143,6 +158,15 @@ const DataTable = ({
               ></box-icon>
             </button>
           </div>
+        )}
+        {hasAddItem && (
+          <button
+          className="border-2 border-primary bg-white rounded flex h-full w-full p-1 transition-all duration-300 ease-in-out hover:bg-secondary"
+          onClick={() => addItem()}
+        >
+          <box-icon name="plus" color="#FD6E28"></box-icon>
+          <span className="px-1 text-primary text-center ">Add</span>
+        </button>
         )}
         </div>
       </div>
@@ -286,6 +310,16 @@ const DataTable = ({
           ></div>
           <CreateForm data={formData} placeholderData={formPlaceholder} />
         </div>
+      )}
+      {showAddItemForm && (
+        <AddItemForm
+          company={"ThaiBev"}
+          branch={"ThaiBev_1"}
+          id={`FTX=2025-002`}
+          user={"User Name"}
+          onClose={() => setShowAddItemForm(false)}
+          onSubmit={handleSubmitSuccess}
+        />
       )}
     </div>
   );

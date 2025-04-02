@@ -31,6 +31,7 @@ const InventoryWorker = () => {
           ]}
           data={inventory}
           hasExport={true}
+          hasAddItem={true}
         />
       </div>
     </div>

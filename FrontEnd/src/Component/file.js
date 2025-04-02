@@ -1,28 +1,43 @@
 import company from "../json/company.json";
 
-function getAllItem() {
-    return Object.entries(company).map(([key, value]) => {
-        return Object.entries(value.branch).map(([branchKey, branchValue]) => {
-            return Object.entries(branchValue.item).map(([itemKey, itemValue]) => {
-                return [
-                    itemKey,
-                    itemValue.brand,
-                    itemValue.type,
-                    itemValue.capacity,
-                    itemValue.install_by,
-                    itemValue.install_date,
-                    itemValue.exp_date,
-                    itemValue.location,
-                    itemValue.color,
-                    itemValue.next_check,
-                    itemValue.last_check,
-                    itemValue.status,
-                    itemValue.log
-                ];
-            });
-        });
-    }).flat(2);
-}
+async function getAllItem() {
+    try {
+      const response = await fetch('http://localhost:3000/item/getAllItem');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const company = await response.json();
+      console.log('Fetched items:', company);
+      return company;
+    } catch (error) {
+      console.error('Error fetching items:', error);
+      return []; // Return empty array in case of error
+    }
+  }
+
+// function getAllItem() {
+//     return Object.entries(company).map(([key, value]) => {
+//         return Object.entries(value.branch).map(([branchKey, branchValue]) => {
+//             return Object.entries(branchValue.item).map(([itemKey, itemValue]) => {
+//                 return [
+//                     itemKey,
+//                     itemValue.brand,
+//                     itemValue.type,
+//                     itemValue.capacity,
+//                     itemValue.install_by,
+//                     itemValue.install_date,
+//                     itemValue.exp_date,
+//                     itemValue.location,
+//                     itemValue.color,
+//                     itemValue.next_check,
+//                     itemValue.last_check,
+//                     itemValue.status,
+//                     itemValue.log
+//                 ];
+//             });
+//         });
+//     }).flat(2);
+// }
 
 function getItemCompany(Com){
     if(company[Com]){
