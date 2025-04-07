@@ -9,7 +9,7 @@ connectDB();
 const getUser = require('./api/getUser');
 const user = require('./api/userapi');
 
-const log = require('./api/log');
+const log = require('./api/Log');
 const item = require('./api/item');
 const company = require('./api/company');
 // const Test = require('./api/DB/companyModal');
