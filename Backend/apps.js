@@ -1,4 +1,4 @@
-const connectDB = require('./api/DB_TEST/db');
+const connectDB = require('./api/DB/db');
 
 connectDB();
 

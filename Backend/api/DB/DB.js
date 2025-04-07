@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const connectionString = `mongodb+srv://kittiposmek:LndCpxVUjFvxIYjK@fireextinguisher-db.wepn9uj.mongodb.net/FEMS?retryWrites=true&w=majority`;
+const connectionString = `mongodb+srv://kittiposmek:LndCpxVUjFvxIYjK@fireextinguisher-db.wepn9uj.mongodb.net/FEMS-New?retryWrites=true&w=majority`;
 
 const connectDB = async () => {
   try {
