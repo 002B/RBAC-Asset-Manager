@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const COLLECTION_NAME = 'client';
+const COLLECTION_NAME = 'activity_log';
 
 const Schema = new mongoose.Schema({}, { strict: false });
 

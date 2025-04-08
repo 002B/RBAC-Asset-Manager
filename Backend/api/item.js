@@ -143,6 +143,19 @@ async function createItem(company, branch, data) {
         return false;
     }
 }
+router.post('/createItem/:company/:branch/:id', async (req, res) => {
+    try {
+        const { company, branch, id } = req.params;
+        const data = req.body;
+        const item = await createItem(company, branch, id, data);
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error creating item'
+        });
+    }
+});
+
 
 
 /*
@@ -198,8 +211,30 @@ async function updateItem(id, data) {
         await doc.save();
         return true;
     } catch (error) {
-        console.error("Error adding new item:", error);
-        return false;
+        return false
+    }
+}
+router.put('/updateItem/:company/:branch/:id', async (req, res) => {
+    try {
+        const { company, branch, id } = req.params;
+        const data = req.body;
+        const item = await updateItem(company, branch, id, data);
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error updating item'
+        });
+    }
+});
+
+async function updateItemLog(Com, Bran, Id, Data) {
+    try {
+        const doc = await CompanyModel.findOne({ [`${Com}.branch.${Bran}.item.${Id}`] : { $exists: true } });
+        doc.set(`${Com}.branch.${Bran}.item.${Id}`, Data);
+        await doc.save();
+        return true
+    } catch (error) {
+        return false
     }
 }
 

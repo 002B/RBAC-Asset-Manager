@@ -12,6 +12,8 @@ const log = require('./api/log');
 const item = require('./api/itemAPI');
 const company = require('./api/company');
 const report = require('./api/reportAPI');
+const activityLog = require('./api/activity_log');
+// const Test = require('./api/DB/companyModal');
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +23,7 @@ app.use('/log', log);
 app.use('/item', item);
 app.use('/user', user);
 app.use('/report', report);
+app.use('/activitylog', activityLog);
 
 
 app.listen(port, () => {
