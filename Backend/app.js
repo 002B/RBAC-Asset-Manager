@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./api/DB/DB');
+const connectDB = require('./api/DB/db');
 const app = express();
 const port = 3000;
 
@@ -9,7 +9,7 @@ connectDB();
 const getUser = require('./api/getUser');
 const user = require('./api/userapi');
 
-const log = require('./api/log');
+const log = require('./api/Log');
 const item = require('./api/item');
 const company = require('./api/company');
 const activityLog = require('./api/activity_log');
