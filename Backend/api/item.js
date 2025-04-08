@@ -1,24 +1,27 @@
-const express = require('express');
-const router = express.Router();
 const itemModel = require('./DB/item.js');
 
-///////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
 
+async function updateStatus(id,status) {
+}
+
+
+/*
+​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
+*/
 async function getAllItems() {
     try {
         const doc = await itemModel.find({}, { _id: 0 }).lean()
-        const data = doc.flatMap(doc => {
-            return doc
-        })
-        return data;
+        return doc;
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
     }
 }
 
+
+/*
+​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
+*/
 async function getAllItemCount() {
     try {
         const doc = await itemModel.find({}, { _id: 0 }).lean();
@@ -29,9 +32,13 @@ async function getAllItemCount() {
     }
 }
 
-async function getItemCompany(Com) {
+
+/*
+​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
+*/
+async function getItemCompany(company) {
     try {
-        const doc = await itemModel.find({ "item_client": Com }, { _id: 0 }).lean();
+        const doc = await itemModel.find({ "client_id": company }, { _id: 0 }).lean();
         if (doc.length > 0) {
             return doc;
         }
@@ -42,9 +49,13 @@ async function getItemCompany(Com) {
     }
 }
 
-async function getItemCompanyCount(Com) {
+
+/*
+​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
+*/
+async function getItemCompanyCount(company) {
     try {
-        const doc = await itemModel.find({ "item_client": Com }, { _id: 0 }).lean();
+        const doc = await itemModel.find({ "client_id": company }, { _id: 0 }).lean();
         if (doc.length > 0) {
             return doc.length;
         }
@@ -55,9 +66,13 @@ async function getItemCompanyCount(Com) {
     }
 }
 
-async function getItemCompanyBranch(Com, Bran) {
+
+/*
+​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
+*/
+async function getItemCompanyBranch(company, branch) {
     try {
-        const doc = await itemModel.find({ "item_client": Com, "item_client_branch": Bran }, { _id: 0 }).lean();
+        const doc = await itemModel.find({ "client_id": company, "client_branch_id": branch }, { _id: 0 }).lean();
         if (doc.length > 0) {
             return doc;
         }
@@ -68,9 +83,13 @@ async function getItemCompanyBranch(Com, Bran) {
     }
 }
 
-async function getItemBranchCount(Com, Bran) {
+
+/*
+​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
+*/
+async function getItemBranchCount(company, branch) {
     try {
-        const doc = await itemModel.find({ "item_client": Com, "item_client_branch": Bran }, { _id: 0 }).lean();
+        const doc = await itemModel.find({ "client_id": company, "client_branch_id": branch }, { _id: 0 }).lean();
         if (doc.length > 0) {
             return doc.length;
         }
@@ -81,56 +100,100 @@ async function getItemBranchCount(Com, Bran) {
     }
 }
 
-async function getItemInfo(Com, Bran, Id) {
+
+/*
+​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
+*/
+async function getItemInfo(id) {
     try {
-        const doc = await itemModel.find({ "item_client": Com, "item_client_branch": Bran, "item_id": Id }, { _id: 0 }).lean();
+        const doc = await itemModel.findOne({ "item_id": id }, { _id: 0 }).lean();
+        if (!doc) {
+            return null;
+        }
         return doc;
-
     } catch (error) {
         console.error('Error fetching item details:', error);
         return null;
     }
 }
 
-async function createItem(Data) {
-    try {
-        const lastItem = await itemModel.findOne().sort({ item_id: -1 }).lean();
-        if (!lastItem) return "TH-2025-0000001";
-        const lastNumber = parseInt(lastItem.item_id.split('-').pop());
-        const newItem = {
-            "item_id": `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
-            "item_client": Data.item_client || "ThaiBev",
-            "item_client_branch": Data.item_client_branch || "ThaiBev_1",
-            "item_brand": Data.item_brand || "Chubb",
-            "item_capacity": Data.item_capacity || "9kg",
-            "item_color": Data.item_color || "red",
-            "item_type": Data.item_type || "foam",
-            "item_class": Data.item_class || "ABC"
-        };
-        await itemModel.create(newItem);
-        return true;
 
+/*
+​‌‌‍‍⁡⁣⁣⁢‍POST⁡​ ⁡⁣⁣⁡⁣⁣⁢(𝗖𝗿𝗲𝗮𝘁𝗲 𝗜𝘁𝗲𝗺‍‍)⁡
+*/
+async function createItem(company, branch, data) {
+    try {
+        const lastItem = await itemModel.find({}).lean();
+        if (lastItem.length === 0) return "TH-2025-0000001";
+        const lastNumber = parseInt(lastItem[lastItem.length - 1].item_id.split('-').pop());
+
+        await itemModel.create({
+            "item_id": `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
+            "client_id": company,
+            "client_branch_id": branch,
+            "item_brand": data.item_brand,
+            "item_capacity": data.item_capacity,
+            "item_color": data.item_color,
+            "item_type": data.item_type,
+            "item_class": data.item_class
+        });
+        return `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`;
     } catch (error) {
         console.error("Error adding new item:", error);
         return false;
     }
 }
 
-async function updateItem(Id, Data) {
+
+/*
+​‌‌‍‍‍⁡⁣⁣⁢POST​ (Create Many Item)⁡
+*/
+async function createManyItem(company, branch, data, count) {
     try {
-        const doc = await itemModel.findOne({ "item_id": Id });
+        const lastItem = await itemModel.find({}).lean();
+        if (lastItem.length === 0) return "TH-2025-0000001";
+        let lastNumber = parseInt(lastItem[lastItem.length - 1].item_id.split('-').pop());
+        for (let i = 0; i < count; i++) {
+            lastNumber++;
+            await itemModel.create({
+                "item_id": `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
+                "client_id": company,
+                "client_branch_id": branch,
+                "item_brand": data.item_brand,
+                "item_capacity": data.item_capacity,
+                "item_color": data.item_color,
+                "item_type": data.item_type,
+                "item_class": data.item_class,
+                "item_status": "Available" //Good Report Bad Fix
+            });
+        }
+        return true;
+    } catch (error) {
+        console.error("Error adding new item:", error);
+        return false;
+    }
+}
+
+
+/*
+⁡⁣⁢⁣​‌‌‍PUT​ (𝗨𝗽𝗱𝗮𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
+*/
+async function updateItem(id, data) {
+    try {
+        const doc = await itemModel.findOne({ "item_id": id });
         if (!doc) {
             return false;
         }
         doc.set({
             "item_id": doc["item_id"],
-            "item_client": doc["item_client"],
-            "item_client_branch": doc["item_client_branch"],
-            "item_brand": Data.item_brand || doc["item_brand"],
-            "item_capacity": Data.item_capacity || doc["item_capacity"],
-            "item_color": Data.item_color || doc["item_color"],
-            "item_type": Data.item_type || doc["item_type"],
-            "item_class": Data.item_class || doc["item_class"]
+            "client_id": doc["item_client"],
+            "client_branch_id": doc["item_client_branch"],
+            "item_brand": data.item_brand || doc["item_brand"],
+            "item_capacity": data.item_capacity || doc["item_capacity"],
+            "item_color": data.item_color || doc["item_color"],
+            "item_type": data.item_type || doc["item_type"],
+            "item_class": data.item_class || doc["item_class"],
+            "item_status": data.item_status
         });
         await doc.save();
         return true;
@@ -140,161 +203,19 @@ async function updateItem(Id, Data) {
     }
 }
 
-async function deleteItem(Com, Bran, Id) {
+/*
+​‌‌‍⁡⁢⁣⁢‍DELETE⁡​ ⁡⁢⁣⁢(𝗗𝗲𝗹𝗲𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
+*/
+async function deleteItem(id) {
     try {
-        const doc = await CompanyModel.findOne({ [`${Com}`]: { $exists: true } });
-        delete doc[Com].branch[Bran].item[Id];
-        doc.markModified(Com);
-        await doc.save();
+        const doc = await itemModel.deleteOne({ "item_id": id });
+        if (doc.deletedCount === 0) {
+            return false;
+        }
         return true
     } catch (error) {
         return false
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
-
-router.get('/getAllItem', async (req, res) => {
-    try {
-        const items = await getAllItems();
-        res.json(items);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error fetching items'
-        });
-    }
-});
-
-router.get('/getAllItem/count', async (req, res) => {
-    try {
-        const count = await getAllItemCount();
-        res.json({ count });
-    } catch (error) {
-        console.error('Error fetching all items:', error);
-        res.status(500).json({ message: 'Error fetching item details' });
-    }
-});
-
-router.get('/getItemList/:Com', async (req, res) => {
-    const Com = req.params.Com;
-    try {
-        const items = await getItemCompany(Com);
-        res.json(items);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error fetching items'
-        });
-    }
-})
-
-router.get('/getItemList/count/:Com', async (req, res) => {
-    const Com = req.params.Com;
-    try {
-        const count = await getItemCompanyCount(Com);
-        res.json({ count })
-    } catch (error) {
-        console.error('Error fetching item company count:', error);
-        res.status(500).json({ message: 'Error fetching item details' });
-    }
-})
-
-router.get('/getItemList/:Com/:Bran', async (req, res) => {
-    const { Com, Bran } = req.params;
-    try {
-        const items = await getItemCompanyBranch(Com, Bran);
-        res.json(items);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error fetching items'
-        });
-    }
-})
-
-router.get('/getItemList/count/:Com/:Bran', async (req, res) => {
-    const { Com, Bran } = req.params;
-    try {
-        const count = await getItemBranchCount(Com, Bran);
-        res.json({ branchItemCount: count });
-    } catch (error) {
-        console.error('Error fetching item branch count:', error);
-        res.status(500).json({ message: 'Error fetching item details' });
-    }
-});
-
-
-router.get('/getItemInfo/:company/:branch/:id', async (req, res) => {
-    try {
-        const { company, branch, id } = req.params;
-        const item = await getItemInfo(company, branch, id);
-        if (item) {
-            res.json(item);
-        } else {
-            res.status(404).json({
-                message: 'Item not found',
-                details: {
-                    company: company,
-                    branch: branch,
-                    id: id
-                }
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error fetching item details'
-        });
-    }
-});
-
-router.post('/createItem/:company/:branch/:id', async (req, res) => {
-    try {
-        const { company, branch, id } = req.params;
-        const data = req.body;
-        const item = await createItem(company, branch, id, data);
-        res.json(item);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error creating item'
-        });
-    }
-});
-
-router.put('/updateItem/:company/:branch/:id', async (req, res) => {
-    try {
-        const { company, branch, id } = req.params;
-        const data = req.body;
-        const item = await updateItem(company, branch, id, data);
-        res.json(item);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error updating item'
-        });
-    }
-});
-
-router.put('/updateItemLog/:company/:branch/:id/:name/:data', async (req, res) => {
-    try {
-        const { company, branch, id, name, data } = req.params;
-        const item = await updateItemLog(company, branch, id, name, data);
-        res.json(item);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error updating item'
-        });
-    }
-});
-
-router.delete('/deleteItem/:company/:branch/:id', async (req, res) => {
-    try {
-        const { company, branch, id } = req.params;
-        const item = await deleteItem(company, branch, id);
-        res.json(item);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error deleting item'
-        });
-    }
-});
-
-module.exports = router;
+module.exports = { getAllItems, getAllItemCount, getItemCompany, getItemCompanyCount, getItemCompanyBranch, getItemBranchCount, getItemInfo, createItem, createManyItem, updateItem, deleteItem };

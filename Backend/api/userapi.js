@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require('./DB/userModel.js');
+const User = require('./DB/! FOR TEST !/userModel.js');
 
 const getDisplayRole = (role) => {
   switch(role) {

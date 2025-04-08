@@ -1,10 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const CompanyModel = require('./DB/companyModal.js');
-
-///////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
+const logModel = require('./DB/logItem.js');
 
 
 function filterByStatus(report, status) {
@@ -26,7 +22,7 @@ function filterByStatus(report, status) {
 
 async function getLogReport(Com, status) {
     try {
-        const result = await CompanyModel.findOne(
+        const result = await logModel.findOne(
             { [`${Com}.log.report`]: { $exists: true } },
             { [`${Com}.log.report`]: 1, _id: 0 }
         ).lean();
@@ -45,7 +41,7 @@ async function getLogReport(Com, status) {
 
 async function getLogReportCount(Com, status) {
     try {
-        const result = await CompanyModel.findOne(
+        const result = await logModel.findOne(
             { [`${Com}.log.report`]: { $exists: true } },
             { [`${Com}.log.report`]: 1, _id: 0 }
         ).lean();
@@ -64,7 +60,7 @@ async function getLogReportCount(Com, status) {
 
 async function createLogReport(Com, Bran, Data) {
     try {
-        await CompanyModel.updateOne(
+        await logModel.updateOne(
             { [`${Com}`]: { $exists: true } },
             { $push: { [`${Com}.branch.${Bran}.log.report`]: Data } }
         );
@@ -77,7 +73,7 @@ async function createLogReport(Com, Bran, Data) {
 /************************************************************* */
 async function getLogLogin(Com) {
     try {
-        const result = await CompanyModel.findOne(
+        const result = await logModel.findOne(
             { [`${Com}.log.login`]: { $exists: true } },
             { [`${Com}.log.login`]: 1, _id: 0 }
         ).lean();
@@ -95,7 +91,7 @@ async function getLogLogin(Com) {
 /************************************************************* */
 async function getLogItem(Com) {
     try {
-        const result = await CompanyModel.findOne(
+        const result = await logModel.findOne(
             { [`${Com}.log.item`]: { $exists: true } },
             { [`${Com}.log.item`]: 1, _id: 0 }
         ).lean();
@@ -113,7 +109,7 @@ async function getLogItem(Com) {
 
 async function getNextCheck(Com, Bran) {
     try {
-        const result = await CompanyModel.findOne(
+        const result = await logModel.findOne(
             { [`${Com}.branch.${Bran}.check.next_check`]: { $exists: true } },
             { [`${Com}.branch.${Bran}.check.next_check`]: 1, _id: 0 }
         ).lean();
@@ -131,7 +127,7 @@ async function getNextCheck(Com, Bran) {
 
 async function getLastCheck(Com, Bran) {
     try {
-        const result = await CompanyModel.findOne(
+        const result = await logModel.findOne(
             { [`${Com}.branch.${Bran}.check.last_check`]: { $exists: true } },
             { [`${Com}.branch.${Bran}.check.last_check`]: 1, _id: 0 }
         ).lean();
