@@ -5,7 +5,6 @@ const CompanyModel = require('./DB/companyModal.js');
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
-
 async function getAllItems() {
     try {
         const documents = await CompanyModel.find({}, { _id: 0 }).lean()
@@ -33,6 +32,17 @@ async function getAllItems() {
         return [];
     }
 }
+
+router.get('/getAllItem', async (req, res) => {
+    try {
+        const items = await getAllItems();
+        res.json(items);
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error fetching items'
+        });
+    }
+}); //
 
 async function getAllItemCount() {
     let totalCount = 0;
@@ -146,6 +156,19 @@ async function createItem(Com, Bran, Id, Data) {
         return false
     }
 }
+router.post('/createItem/:company/:branch/:id', async (req, res) => {
+    try {
+        const { company, branch, id } = req.params;
+        const data = req.body;
+        const item = await createItem(company, branch, id, data);
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error creating item'
+        });
+    }
+});
+
 
 async function updateItem(Com, Bran, Id, Data) {
     try {
@@ -157,6 +180,18 @@ async function updateItem(Com, Bran, Id, Data) {
         return false
     }
 }
+router.put('/updateItem/:company/:branch/:id', async (req, res) => {
+    try {
+        const { company, branch, id } = req.params;
+        const data = req.body;
+        const item = await updateItem(company, branch, id, data);
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error updating item'
+        });
+    }
+});
 
 async function updateItemLog(Com, Bran, Id, Data) {
     try {
@@ -181,20 +216,22 @@ async function deleteItem(Com, Bran, Id) {
     }
 }
 
+router.delete('/deleteItem/:company/:branch/:id', async (req, res) => {
+    try {
+        const { company, branch, id } = req.params;
+        const item = await deleteItem(company, branch, id);
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error deleting item'
+        });
+    }
+});
+
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
-router.get('/getAllItem', async (req, res) => {
-    try {
-        const items = await getAllItems();
-        res.json(items);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error fetching items'
-        });
-    }
-}); //
 
 router.get('/getAllItem/count', async (req, res) => {
     try {
@@ -276,31 +313,8 @@ router.get('/getItemInfo/:company/:branch/:id', async (req, res) => {
     }
 }); //
 
-router.post('/createItem/:company/:branch/:id', async (req, res) => {
-    try {
-        const { company, branch, id } = req.params;
-        const data = req.body;
-        const item = await createItem(company, branch, id, data);
-        res.json(item);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error creating item'
-        });
-    }
-});
 
-router.put('/updateItem/:company/:branch/:id', async (req, res) => {
-    try {
-        const { company, branch, id } = req.params;
-        const data = req.body;
-        const item = await updateItem(company, branch, id, data);
-        res.json(item);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error updating item'
-        });
-    }
-});
+
 
 router.put('/updateItemLog/:company/:branch/:id/:name/:data', async (req, res) => {
     try {
@@ -310,18 +324,6 @@ router.put('/updateItemLog/:company/:branch/:id/:name/:data', async (req, res) =
     } catch (error) {
         res.status(500).json({
             message: 'Error updating item'
-        });
-    }
-});
-
-router.delete('/deleteItem/:company/:branch/:id', async (req, res) => {
-    try {
-        const { company, branch, id } = req.params;
-        const item = await deleteItem(company, branch, id);
-        res.json(item);
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error deleting item'
         });
     }
 });

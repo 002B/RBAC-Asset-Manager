@@ -12,6 +12,7 @@ const user = require('./api/userapi');
 const log = require('./api/log');
 const item = require('./api/item');
 const company = require('./api/company');
+const activityLog = require('./api/activity_log');
 // const Test = require('./api/DB/companyModal');
 
 // async function addFireExtinguisherToSCB2() {
@@ -75,6 +76,7 @@ app.use('/log', log);
 app.use('/item', item);
 app.use('/user', user);
 app.use('/reportbox', require('./api/reportlogapi'));
+app.use('/activitylog', activityLog);
 
 
 app.get('/api/items', async (req, res) => {
