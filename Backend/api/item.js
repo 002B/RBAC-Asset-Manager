@@ -1,8 +1,6 @@
 const itemModel = require('./DB/item.js');
 
 
-async function updateStatus(id,status) {
-}
 
 
 /*
@@ -119,6 +117,23 @@ async function getItemInfo(id) {
 
 
 /*
+​‌‌‍‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
+*/
+async function checkItemExist(id) {
+    try {
+        const doc = await itemModel.findOne({ "item_id": id }, { _id: 0 }).lean();
+        if (!doc) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('Error fetching item details:', error);
+        return false;
+    }
+}
+
+
+/*
 ​‌‌‍‍⁡⁣⁣⁢‍POST⁡​ ⁡⁣⁣⁡⁣⁣⁢(𝗖𝗿𝗲𝗮𝘁𝗲 𝗜𝘁𝗲𝗺‍‍)⁡
 */
 async function createItem(company, branch, data) {
@@ -194,7 +209,7 @@ async function updateItem(id, data) {
             "item_color": data.item_color || doc["item_color"],
             "item_type": data.item_type || doc["item_type"],
             "item_class": data.item_class || doc["item_class"],
-            "item_status": data.item_status
+            "item_status": doc["item_class"]
         });
         await doc.save();
         return true;
@@ -203,17 +218,6 @@ async function updateItem(id, data) {
     }
 }
 
-
-async function updateItemLog(Com, Bran, Id, Data) {
-    try {
-        const doc = await CompanyModel.findOne({ [`${Com}.branch.${Bran}.item.${Id}`] : { $exists: true } });
-        doc.set(`${Com}.branch.${Bran}.item.${Id}`, Data);
-        await doc.save();
-        return true
-    } catch (error) {
-        return false
-    }
-}
 
 /*
 ​‌‌‍⁡⁢⁣⁢‍DELETE⁡​ ⁡⁢⁣⁢(𝗗𝗲𝗹𝗲𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
@@ -230,4 +234,36 @@ async function deleteItem(id) {
     }
 }
 
-module.exports = { getAllItems, getAllItemCount, getItemCompany, getItemCompanyCount, getItemCompanyBranch, getItemBranchCount, getItemInfo, createItem, createManyItem, updateItem, deleteItem };
+async function updateStatus(id,status) {
+    //1ok 2reporting 3bad 4fix
+    try {
+        const doc = await itemModel.findOne({ "item_id": id });
+        if (!doc) {
+            return false;
+        }
+        let item_status 
+        if(status == 1) item_status = "Ok";
+        if(status == 2) item_status = "Reporting";
+        if(status == 3) item_status = "Bad";
+        if(status == 4) item_status = "Fix";
+
+        doc.set({
+            "item_id": doc["item_id"],
+            "client_id": doc["client_id"],
+            "client_branch_id": doc["client_branch_id"],
+            "item_brand": doc["item_brand"],
+            "item_capacity": doc["item_capacity"],
+            "item_color": doc["item_color"],
+            "item_type": doc["item_type"],
+            "item_class": doc["item_class"],
+            "item_status": item_status
+        });
+        await doc.save();
+        return item_status;
+    } catch (error) {
+        console.error('Error fetching item details:', error);
+        return false;
+    }
+}
+
+module.exports = { getAllItems, getAllItemCount, getItemCompany, getItemCompanyCount, getItemCompanyBranch, getItemBranchCount, getItemInfo,checkItemExist, createItem, createManyItem, updateItem, deleteItem, updateStatus};
