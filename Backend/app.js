@@ -21,7 +21,7 @@ app.use('/company', company);
 app.use('/log', log);
 app.use('/item', item);
 app.use('/report', report);
-app.use('/activitylog', activityLog);
+// app.use('/activitylog', activityLog);
 
 
 app.listen(port, () => {
