@@ -104,13 +104,12 @@ async function getReportByStatus(status) {
 }
 
 
-// !ยังไม่เสร็จ
+
 async function createReport(company, branch, id, data) {
     try {
         const lastItem = await reportModel.find({}).lean();
         if (lastItem.length === 0) return "RP-2025-0000001";
         const lastNumber = parseInt(lastItem[lastItem.length - 1].item_id.split('-').pop());
-
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
             "item_id": id,
@@ -119,7 +118,7 @@ async function createReport(company, branch, id, data) {
             "createAt": new Date().toISOString(),
             "status": "Pending",
             "assigner": "None",
-            "problem": "for TEST"
+            "problem": data.problem
         });
         return true;
     } catch (error) {

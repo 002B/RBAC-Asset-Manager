@@ -4,7 +4,7 @@ const itemFunc = require('./item');
 
 
 /*
-​‌‌‍⁡⁢⁢⁢𝗚𝗘𝗧⁡​
+ ‌‌‍⁡⁢⁢⁢𝗚𝗘𝗧⁡​
 */
 router.get('/getAllItem', async (req, res) => {
     try {
@@ -36,9 +36,9 @@ router.get('/getAllItem/count', async (req, res) => {
 ⁡⁢⁢⁢​‌‌‍𝗚𝗘𝗧​⁡
 */
 router.get('/getItemList/:company', async (req, res) => {
-    const company = req.params.company;
     try {
-        if(!company) return res.status(404).json({ message: 'Company not found' });
+        const company = req.params.company;
+        if (!company) return res.status(404).json({ message: 'Company not found' });
 
 
 
@@ -59,9 +59,9 @@ router.get('/getItemList/:company', async (req, res) => {
 ⁡⁢⁢⁢​‌‌‍𝗚𝗘𝗧​⁡
 */
 router.get('/getItemList/count/:company', async (req, res) => {
-    const company = req.params.company;
     try {
-        if(!company) return res.status(404).json({ message: 'Company not found' });
+        const company = req.params.company;
+        if (!company) return res.status(404).json({ message: 'Company not found' });
 
 
 
@@ -78,13 +78,13 @@ router.get('/getItemList/count/:company', async (req, res) => {
 
 
 /*
-​‌‌‍⁡⁢⁢⁢𝗚𝗘𝗧⁡​
+ ‌‌‍⁡⁢⁢⁢𝗚𝗘𝗧⁡​
 */
 router.get('/getItemList/:company/:branch', async (req, res) => {
-    const { company, branch } = req.params;
     try {
-        if(!company) return res.status(404).json({ message: 'Company not found' });
-        if(!branch) return res.status(404).json({ message: 'Branch not found' });
+        const { company, branch } = req.params;
+        if (!company) return res.status(404).json({ message: 'Company not found' });
+        if (!branch) return res.status(404).json({ message: 'Branch not found' });
 
 
 
@@ -102,13 +102,13 @@ router.get('/getItemList/:company/:branch', async (req, res) => {
 
 
 /*
-​‌‌‍⁡⁢⁢⁢𝗚𝗘𝗧⁡​
+ ‌‌‍⁡⁢⁢⁢𝗚𝗘𝗧⁡​
 */
 router.get('/getItemList/count/:company/:branch', async (req, res) => {
-    const { company, branch } = req.params;
     try {
-        if(!company) return res.status(404).json({ message: 'Company not found' });
-        if(!branch) return res.status(404).json({ message: 'Branch not found' });
+        const { company, branch } = req.params;
+        if (!company) return res.status(404).json({ message: 'Company not found' });
+        if (!branch) return res.status(404).json({ message: 'Branch not found' });
 
 
 
@@ -128,8 +128,8 @@ router.get('/getItemList/count/:company/:branch', async (req, res) => {
 ⁡⁢⁢⁢​‌‌‍𝗚𝗘𝗧​⁡
 */
 router.get('/getItemInfo/:id', async (req, res) => {
-    const id = req.params.id;
     try {
+        const id = req.params.id;
         if (!id) return res.status(404).json({ message: 'ID not found' });
 
 
@@ -148,16 +148,16 @@ router.get('/getItemInfo/:id', async (req, res) => {
 
 
 /*
-​‌‌‍⁡⁣⁣⁢‍POST​​⁡ ⁡⁣⁣⁡⁣⁣⁢(𝗖𝗿𝗲𝗮𝘁𝗲 𝗜𝘁𝗲𝗺‍‍)⁡
+ ‌‌‍⁡⁣⁣⁢‍POST​​⁡ ⁡⁣⁣⁡⁣⁣⁢(𝗖𝗿𝗲𝗮𝘁𝗲 𝗜𝘁𝗲𝗺‍‍)⁡
 */
 router.post('/createItem/:company/:branch', async (req, res) => {
-    const { company, branch } = req.params;
-    const data = req.body;
-        try {
-        if(!company) return res.status(404).json({ message: 'Company not found' });
-        if(!branch) return res.status(404).json({ message: 'Branch not found' });
-        if(!data) return res.status(404).json({ message: 'Data not found' });
-        if(!data.item_client || !data.item_client_branch || !data.item_brand || !data.item_capacity || !data.item_color || !data.item_type || !data.item_class) return res.status(404).json({ message: 'Incomplete data' });
+    try {
+        const { company, branch } = req.params;
+        const data = req.body;
+        if (!company) return res.status(404).json({ message: 'Company not found' });
+        if (!branch) return res.status(404).json({ message: 'Branch not found' });
+        if (!data) return res.status(404).json({ message: 'Data not found' });
+        if (!data.item_client || !data.item_client_branch || !data.item_brand || !data.item_capacity || !data.item_color || !data.item_type || !data.item_class) return res.status(404).json({ message: 'Incomplete data' });
 
 
 
@@ -172,17 +172,17 @@ router.post('/createItem/:company/:branch', async (req, res) => {
 
 
 /*
-​‌‌‍⁡⁣⁣⁢POST​ (Create Many Item)⁡
+ ‌‌‍⁡⁣⁣⁢POST​ (Create Many Item)⁡
 */
 router.post('/createItem/:company/:branch/:count', async (req, res) => {
-    const { company, branch , count} = req.params;
-    const data = req.body;
-        try {
-        if(!company) return res.status(404).json({ message: 'Company not found' });
-        if(!branch) return res.status(404).json({ message: 'Branch not found' });
-        if(!count) return res.status(404).json({ message: 'Count not found' });
-        if(!data) return res.status(404).json({ message: 'Data not found' });
-        if(!data.item_client || !data.item_client_branch || !data.item_brand || !data.item_capacity || !data.item_color || !data.item_type || !data.item_class) return res.status(404).json({ message: 'Incomplete data' });
+    try {
+        const { company, branch, count } = req.params;
+        const data = req.body;
+        if (!company) return res.status(404).json({ message: 'Company not found' });
+        if (!branch) return res.status(404).json({ message: 'Branch not found' });
+        if (!count) return res.status(404).json({ message: 'Count not found' });
+        if (!data) return res.status(404).json({ message: 'Data not found' });
+        if (!data.item_client || !data.item_client_branch || !data.item_brand || !data.item_capacity || !data.item_color || !data.item_type || !data.item_class) return res.status(404).json({ message: 'Incomplete data' });
 
 
 
@@ -200,18 +200,18 @@ router.post('/createItem/:company/:branch/:count', async (req, res) => {
 ⁡⁣⁢⁣​‌‌‍PUT​ (𝗨𝗽𝗱𝗮𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
 */
 router.put('/updateItem/:company/:branch/:id', async (req, res) => {
-    const { company, branch, id } = req.params;
-    const data = req.body;
     try {
-        if(!company) return res.status(404).json({ message: 'Company not found' });
-        if(!branch) return res.status(404).json({ message: 'Branch not found' });
-        if(!id) return res.status(404).json({ message: 'ID not found' });
-        if(!data) return res.status(404).json({ message: 'Data not found' });
+        const { company, branch, id } = req.params;
+        const data = req.body;
+        if (!company) return res.status(404).json({ message: 'Company not found' });
+        if (!branch) return res.status(404).json({ message: 'Branch not found' });
+        if (!id) return res.status(404).json({ message: 'ID not found' });
+        if (!data) return res.status(404).json({ message: 'Data not found' });
 
 
 
         const items = await itemFunc.updateItem(company, branch, id, data);
-        if(!items) return res.status(404).json({ message: 'Item not found' });
+        if (!items) return res.status(404).json({ message: 'Item not found' });
         res.json(items);
     } catch (error) {
         res.status(500).json({
@@ -225,14 +225,16 @@ router.put('/updateItem/:company/:branch/:id', async (req, res) => {
 ⁡⁣⁢⁣​‌‌‍𝗣𝗨𝗧​ (𝗨𝗽𝗱𝗮𝘁𝗲 𝗦𝘁𝗮𝘁𝘂𝘀)⁡
 */
 router.put('/updateStatus/:id', async (req, res) => {
-    const { id } = req.params;
-    const data = req.body;
     try {
-        if(!id) return res.status(404).json({ message: 'ID not found' });
-        if(!data) return res.status(404).json({ message: 'Data not found' });
+        const { id } = req.params;
+        const data = req.body;
+        if (!id) return res.status(404).json({ message: 'ID not found' });
+        if (!data) return res.status(404).json({ message: 'Data not found' });
+
+
 
         const items = await itemFunc.updateItemById(id, data);
-        if(!items) return res.status(404).json({ message: 'Item not found' });
+        if (!items) return res.status(404).json({ message: 'Item not found' });
         res.json(items);
     } catch (error) {
         res.status(500).json({
@@ -245,9 +247,9 @@ router.put('/updateStatus/:id', async (req, res) => {
 ⁡⁢⁣⁢​‌‌‍DELETE​⁡ ⁡⁢⁣⁢(𝗗𝗲𝗹𝗲𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
 */
 router.delete('/deleteItem/:id', async (req, res) => {
-    const { id } = req.params;
     try {
-        if(!id) return res.status(404).json({ message: 'ID not found' });
+        const { id } = req.params;
+        if (!id) return res.status(404).json({ message: 'ID not found' });
 
         const items = await itemFunc.deleteItem(id);
         res.json(items);
