@@ -20,6 +20,89 @@ async function getAllReportCount() {
     }
 }
 
+//get report by company
+async function getReportByCom(company) {
+    try{
+        const doc = await reportModel.find({ "client_id": company }, { _id: 0 }).lean()
+        return doc
+    }catch(error){
+        console.error('Error fetching data:', error);
+        return [];
+    }
+    
+}
+//get report by company count
+async function getReportByComCount(company) {
+    try{
+        const doc = await reportModel.find({ "client_id": company }, { _id: 0 }).lean()
+        return doc.length
+    }catch{
+        console.error('Error ComCount fetching data:', error);
+        return 0;
+    }
+}
+//get report by branch
+async function getReportByBranch(company, branch) {
+    try{
+        const doc = await reportModel.find({"client_id": company, "client_branch_id": branch }, { _id: 0 }).lean()
+        return doc
+    }catch(error){
+        console.error('Error fetching data:', error);
+        return [];
+    }
+}
+//get report by branch count
+async function getReportByBranchCount(company,branch) {
+    try{
+        const doc = await reportModel.find({"client_id": company, "client_branch_id": branch }, { _id: 0 }).lean()
+        return doc.length
+    }catch(error){
+        console.error('Error fetching data:', error);
+        return 0;
+    }
+}
+
+//get report by id
+async function getReportById(id) {
+    try {
+        // ตรวจสอบว่า id ไม่เป็นค่าว่าง
+        if (!id || id.trim() === "") {
+            throw new Error("ID must not be empty");
+        }
+        const doc = await reportModel.find({ "report_id": id }, { _id: 0 }).lean();
+        
+        if (!doc || doc.length === 0) {
+            return null; // หรือ throw new Error("Report not found");
+        }
+        
+        return doc;
+    } catch(error) {
+        console.error('Error fetching data:', error);
+        throw error; // ส่ง error ต่อไปให้ route จัดการ
+    }
+}
+//get report by user
+async function getReportByUser(user) {
+    try{
+        const doc = await reportModel.find({ "assigner": user }, { _id: 0 }).lean()
+        return doc
+    }catch(error){
+        console.error('Error fetching  data:', error);
+        return [];   
+    }
+}
+
+//get report by status (pending/accepted/rejected/fixing/done)
+async function getReportByStatus(status) {
+    try{
+        const doc = await reportModel.find({ "status": status }, { _id: 0 }).lean()
+        return doc
+    }catch(error){
+     console.error('Error fetching  data:', error);
+     return [];   
+    }
+}
+
 
 
 async function createReport(company, branch, id, data) {
@@ -67,4 +150,4 @@ async function updateStatus(id, status) {
     }
 }
 
-module.exports = {getAllReport, getAllReportCount, createReport, updateStatus}
+module.exports = {getAllReport, getAllReportCount, createReport, updateStatus, getReportByCom,getReportByComCount,getReportByBranch , getReportByBranchCount , getReportById ,getReportByUser , getReportByStatus}
