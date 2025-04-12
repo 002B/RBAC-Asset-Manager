@@ -51,7 +51,7 @@ async function getReportByBranch(company, branch) {
         return [];
     }
 }
-//get report by branch count
+
 async function getReportByBranchCount(company,branch) {
     try{
         const doc = await reportModel.find({"client_id": company, "client_branch_id": branch }, { _id: 0 }).lean()
@@ -62,17 +62,16 @@ async function getReportByBranchCount(company,branch) {
     }
 }
 
-//get report by id
+
 async function getReportById(id) {
     try {
-        // ตรวจสอบว่า id ไม่เป็นค่าว่าง
         if (!id || id.trim() === "") {
             throw new Error("ID must not be empty");
         }
         const doc = await reportModel.find({ "report_id": id }, { _id: 0 }).lean();
         
         if (!doc || doc.length === 0) {
-            return null; // หรือ throw new Error("Report not found");
+            return null;
         }
         
         return doc;

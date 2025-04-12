@@ -235,7 +235,6 @@ async function deleteItem(id) {
 }
 
 async function updateStatus(id,status) {
-    //1ok 2reporting 3bad 4fix
     try {
         const doc = await itemModel.findOne({ "item_id": id });
         if (!doc) {
