@@ -1,0 +1,5 @@
+Create -> OK
+Report -> Pending/Reporting --> Accept -> Accepted/BAD --> Fixing -> Fixing/Fix
+		    	            --> Reject -> Rejected/OK
+Fixed -> Done/OK
+

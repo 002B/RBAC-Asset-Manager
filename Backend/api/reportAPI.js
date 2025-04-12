@@ -57,7 +57,7 @@ router.post('/createReport/:company/:branch/:id', async(req, res) => {
 
 
         const report = await reportFunc.createReport(company, branch, id, data)
-        const itemStatus = await itemFunc.updateStatus(id, 2)
+        await itemFunc.updateStatus(id, "reporting")
         res.json(report);
     } catch (error) {
         res.status(500).json({ message: 'Error creating report' });
@@ -67,4 +67,35 @@ router.post('/createReport/:company/:branch/:id', async(req, res) => {
 });
 
 //update report status (Accept/Reject/Fixing/Done)
+router.put('/updateReport/:id/:status', async (req, res) => {
+    try {
+        const { id, status } = req.params
+        if(!id) return res.status(404).json({ message: 'Id not found' });
+        if(!status) return res.status(404).json({ message: 'Status not found' });
+
+
+        switch (status.toLowerCase()) {
+            case "accept":
+                console.log("accept");
+                await reportFunc.updateStatus(id, "accepted")
+                break;
+            case "reject":
+                await reportFunc.updateStatus(id, "rejected")
+                break;
+            case "fixing":
+                await reportFunc.updateStatus(id, "fixing")
+                status = "fixing"
+                break;
+            case "done":
+                await reportFunc.updateStatus(id, "done")
+                status = "done"
+                break;
+            default:
+                res.status(404).json({ message: 'Status not found' });
+                break;
+        }
+    } catch (error) {
+        
+    }
+})
 module.exports = router;

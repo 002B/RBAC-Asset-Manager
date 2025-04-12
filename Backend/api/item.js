@@ -241,12 +241,6 @@ async function updateStatus(id,status) {
         if (!doc) {
             return false;
         }
-        let item_status 
-        if(status == 1) item_status = "Ok";
-        if(status == 2) item_status = "Reporting";
-        if(status == 3) item_status = "Bad";
-        if(status == 4) item_status = "Fix";
-
         doc.set({
             "item_id": doc["item_id"],
             "client_id": doc["client_id"],
@@ -256,7 +250,7 @@ async function updateStatus(id,status) {
             "item_color": doc["item_color"],
             "item_type": doc["item_type"],
             "item_class": doc["item_class"],
-            "item_status": item_status
+            "item_status": status
         });
         await doc.save();
         return item_status;

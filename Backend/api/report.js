@@ -44,4 +44,27 @@ async function createReport(company, branch, id, data) {
     }
 }
 
-module.exports = {getAllReport, getAllReportCount, createReport}
+async function updateStatus(id, status) {
+    try {
+        const doc = await reportModel.findOne({ "report_id": id });
+        if (!doc) {
+            return false;
+        }
+        doc.set({
+            "report_id": doc["report_id"],
+            "item_id": doc["item_id"],
+            "client_id": doc["client_id"],
+            "client_branch_id": doc["client_branch_id"],
+            "status": status,
+            "assigner": doc["assigner"],
+            "problem": doc["problem"]
+        });
+        await doc.save();
+        return true;
+    } catch (error) {
+        console.error("Error updating item status:", error);
+        return false;
+    }
+}
+
+module.exports = {getAllReport, getAllReportCount, createReport, updateStatus}
