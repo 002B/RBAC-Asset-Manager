@@ -24,7 +24,7 @@ router.get('/getAllItem', async (req, res) => {
 router.get('/getAllItem/count', async (req, res) => {
     try {
         const count = await itemFunc.getAllItemCount();
-        res.json({ count });
+        res.json( count );
     } catch (error) {
         console.error('Error fetching all items:', error);
         res.status(500).json({ message: 'Error fetching item details' });

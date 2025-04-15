@@ -37,10 +37,7 @@ async function getAllItemCount() {
 async function getItemCompany(company) {
     try {
         const doc = await itemModel.find({ "client_id": company }, { _id: 0 }).lean();
-        if (doc.length > 0) {
-            return doc;
-        }
-        return [];
+        return doc;
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
@@ -71,10 +68,7 @@ async function getItemCompanyCount(company) {
 async function getItemCompanyBranch(company, branch) {
     try {
         const doc = await itemModel.find({ "client_id": company, "client_branch_id": branch }, { _id: 0 }).lean();
-        if (doc.length > 0) {
-            return doc;
-        }
-        return [];
+        return doc;
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];

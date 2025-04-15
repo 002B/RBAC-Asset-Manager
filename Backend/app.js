@@ -8,7 +8,7 @@ connectDB();
 
 const log = require('./api/log');
 const item = require('./api/itemAPI');
-const company = require('./api/company');
+const company = require('./api/companyAPI');
 const report = require('./api/reportAPI');
 const activityLog = require('./api/activity_log');
 const users = require('./api/usersAPI');
