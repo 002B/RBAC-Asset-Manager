@@ -14,8 +14,11 @@ router.get('/getAllCompany', async (req, res) => {
 router.get('/getAllBranch/:company', async (req, res) => {
     const { company } = req.params;
     try {
-        const count = await companyFunc.getBranchList(company);
-        res.json( count );
+        const branch = await companyFunc.getBranchList(company);
+        if (branch.length === 0) {
+            return res.status(404).json(branch);
+        }
+        res.json( branch );
     } catch (error) {
         res.status(500).json({ message: 'Error fetching branch'});
     }
