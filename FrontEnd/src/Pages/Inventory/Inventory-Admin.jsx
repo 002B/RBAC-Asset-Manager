@@ -9,75 +9,84 @@ const InventoryAdmin = () => {
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  function convertItemsToArray(items) {
-    return items.map(item => [
-      item.id,
-      item.brand,
-      item.type,
-      item.capacity,
-      item.install_by,
-      item.install_date,
-      item.exp_date,
-      item.location,
-      item.color,
-      item.next_check,
-      item.last_check,
-      item.status
-    ]);
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllItem();
-        
-        setInventory(convertItemsToArray(data));
+        const requestOptions = {
+          method: "GET",
+          redirect: "follow",
+        };
+        const response = await fetch(
+          `http://localhost:3000/item/getAllItem`,
+          requestOptions
+        );
+        const data = await response.json();
+        const formattedData = data.map((item) => [
+          item.item_id,
+          item.client_branch_id,
+          item.client_id,
+          item.item_brand,
+          item.item_capacity,
+          item.item_color,
+          item.item_type,
+          item.item_class,
+          item.item_status,
+        ]);
+        setInventory(formattedData);
       } catch (error) {
-        console.error("Error fetching inventory:", error);
-        setInventory([]); // Fallback to empty array
+        console.error("Error fetching inventory data:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [user.company, user.selectedBranch]);
 
   if (loading) {
-    return <div>Loading...</div>; // Or your preferred loading state
+    return <div>Loading...</div>;
   }
 
   return (
-    <div className="flex flex-col w-full drop-shadow rounded-[8px] gap-2">
-      <div>{Status(user.role)}</div>
-      <div className="bg-white p-1 rounded-[8px] drop-shadow">
+    <div className="flex flex-col w-full drop-shadow rounded-[8px]">
+      <div className="bg-white rounded-[8px] drop-shadow">
+        {Status(user.role, user.company, user.selectedBranch)}
+      </div>
+      <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
         <DataTable
+          tIcon={"spray-can"}
           colIcon={"spray-can"}
-          tIcon="spray-can"
           tName="Fire Extinguisher List"
           title={[
-            "Serial Number",
-            "Brand",
-            "Type",
-            "Weight",
-            "Install By",
-            "Install Date",
-            "Exp Date",
-            "Location",
-            "Color",
-            "Next Check",
-            "Last Check",
-            "Status",
+            "item_id",
+            "client_branch_id",
+            "client_id",
+            "item_brand",
+            "item_capacity",
+            "item_color",
+            "item_type",
+            "item_class",
+            "item_status",
           ]}
           data={inventory}
           hasExport={true}
-          hasButton={false}
-          hasAddItem={true}
-          hasEdit={true}
+          formData={[
+            "Company",
+            "Branch",
+            "Name",
+            "Serial Number",
+            "Problem",
+            "File",
+            "Submit",
+          ]}
+          formPlaceholder={{
+            Company: user.company,
+            Branch: user.selectedBranch,
+            Name: user.display_name,
+          }}
         />
       </div>
     </div>
   );
-};
-
+}
 export default InventoryAdmin;
