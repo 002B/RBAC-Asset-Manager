@@ -150,7 +150,7 @@ router.get('/getReportByStatus/:status', async (req, res) => {
     try {
         const data = await reportFunc.getReportByStatus(status);
         if (!data || data.length === 0) {
-            return res.status(404).json({ message: "No reports found with given status" });
+            return res.status(404).json([]);
         }
         res.json(data);
     } catch (error) {

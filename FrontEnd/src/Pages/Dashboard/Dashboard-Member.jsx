@@ -1,96 +1,45 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import DataTable from "../../Component/DataTable/DataTable";
 import CreateForm from "../../Component/CreateForm";
 import Status from "../../Component/Status/Status";
 import { useAuth } from "../../Auth/AuthProvider";
 import { getItemBranch } from "../../Component/file";
+const fetchInbox = async (user) => {
+  try {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+    const response = await fetch(
+      `http://localhost:3000/report/getReportByBranch/${user.company}/${user.selectedBranch}`,
+      requestOptions
+    );
+    const data = await response.json();
+    const formattedData = data.map((item) => [
+      item.item_id,
+      item.createAt
+    ]);
+    return formattedData;
+  } catch (error) {
+    return []
+  }
+}
+
 const DashboardMember = () => {
   const {user} = useAuth();
   const [showCreateForm, setShowCreateForm] = useState(false);
-
+  const [testActivity, setTestActivity] = useState([]);
+    useEffect(() => {
+      (async () => {
+        user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
+        setTestActivity(await fetchInbox(user));
+      })()
+    }, [user.company, user.selectedBranch])
   const handleButtonClick = () => {
     // setShowCreateForm(!showCreateForm);
     setShowCreateForm(true);
   };
-
-  const testActivity = [
-    [
-      "Install",
-      "22/11/2022",
-      "14:32:45",
-    ],
-    [
-      "Install",
-      "22/11/2022",
-      "14:31:45",
-    ],
-    [
-      "Uninstall",
-      "22/11/2022",
-      "14:30:45",
-    ],
-    [
-      "Change",
-      "22/11/2022",
-      "14:29:45",
-    ],
-    [
-      "Change",
-      "22/11/2022",
-      "14:22:45",
-    ],
-    [
-      "Install",
-      "22/11/2022",
-      "13:32:45",
-    ],
-    [
-      "Uninstall",
-      "22/11/2022",
-      "12:32:45",
-    ],
-    [
-      "Change",
-      "22/11/2022",
-      "14:24:45",
-    ],
-  ];
-
-  const testInbox = [
-    [
-      "New Changes",
-      "22/11/2022",
-    ],
-    [
-      "Report Accepted",
-      "22/11/2022",
-    ],
-    [
-      "Report Accepted",
-      "15/11/2022",
-    ],
-    [
-      "Report Accepted",
-      "08/11/2022",
-    ],
-    [
-      "New Changes",
-      "22/11/2022",
-    ],
-    [
-      "New Changes",
-      "22/11/2022",
-    ],
-    [
-      "Report Accepted",
-      "08/11/2022",
-    ],
-    [
-      "Report Accepted",
-      "08/11/2022",
-    ],
-  ];
 
   const rawInventory = getItemBranch(user.company, user.selectedBranch);
 
@@ -134,25 +83,14 @@ const DashboardMember = () => {
               tIcon="revision"
               tName={"Recent Activity"}
               colIcon= {"import"}
-              title={["Activity", "Date", "Time"]}
+              title={["Activity", "Date"]}
               data={testActivity}
               hasButton={false}
               itemPerPage={4}
               hasSearch={false}
             ></DataTable>
           </div>
-          <div className="small-item h-fit">
-            <DataTable
-              tIcon="message"
-              colIcon={"news"}
-              tName={"Inbox"}
-              title={["Notes", "Time"]}
-              data={testInbox}
-              hasButton={false}
-              itemPerPage={4}
-              hasSearch={false}
-            ></DataTable>
-          </div>
+
           </div>
           <div className="small-item-wrapper">
           <div className="small-item">
@@ -176,19 +114,7 @@ const DashboardMember = () => {
               hasSearch={false}
             />
           </div>
-          <div className="small-item flex flex-col justify-center items-center gap-4">
-            <span className="report-icon">
-                <box-icon name="comment-error" size="6rem" color="#f16e3d" ></box-icon>
-            </span>
-            <div className="flex flex-col justify-center items-center">
-                <h2>Send Request</h2>
-                <span className="text-gray">Having problems with our product?</span>
-                <span className="text-gray">Send us request for an action</span>
-            </div>
-            <div>
-                <button className="send-button flex justify-center items-center bg-secondary p-2" onClick={handleButtonClick}><span className="mr-2 text-white">Send </span><box-icon color="white" name="send"></box-icon></button>
-            </div>
-          </div>
+
           </div>
         </div>
         <div className="long-item">

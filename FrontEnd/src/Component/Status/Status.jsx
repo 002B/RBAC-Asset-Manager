@@ -11,7 +11,6 @@ import {
   getUserCount,
   getBranchCount,
   getItemBranchCount,
-  getLogReportAcceptedCount,
   getCompanyCount
 } from "../Count.js";
 import { getBadItemBranch, getItemBranch, getNextCheck } from "../file.js";

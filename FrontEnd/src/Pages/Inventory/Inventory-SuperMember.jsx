@@ -16,7 +16,7 @@ const InventorySuperMember = () => {
           redirect: "follow",
         };
         const response = await fetch(
-          `http://localhost:3000/item/getItemList/${user.company}`,
+          `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch === "All Branches" ? "" : user.selectedBranch}`,
           requestOptions
         );
         const data = await response.json();
