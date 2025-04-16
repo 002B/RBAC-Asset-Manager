@@ -26,14 +26,37 @@ const fetchInbox = async (user) => {
   }
 }
 
+const fetchInventory = async (user) => {
+  try {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+    const response = await fetch(
+      `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`,
+      requestOptions
+    );
+    const data = await response.json();
+    const formattedData = data.map((item) => [
+      item.item_id,
+      item.item_brand,
+      item.item_status,
+    ]);
+    return formattedData;
+  } catch (error) {
+    return []
+  }
+}
 const DashboardMember = () => {
   const {user} = useAuth();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [testActivity, setTestActivity] = useState([]);
+  const [inventory, setInventory] = useState([]);
     useEffect(() => {
       (async () => {
         user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
         setTestActivity(await fetchInbox(user));
+        setInventory(await fetchInventory(user));
       })()
     }, [user.company, user.selectedBranch])
   const handleButtonClick = () => {
@@ -41,15 +64,7 @@ const DashboardMember = () => {
     setShowCreateForm(true);
   };
 
-  const rawInventory = getItemBranch(user.company, user.selectedBranch);
 
-  const inventory = Object.entries(rawInventory).map(([key, details]) => {
-    return [
-      key,
-      details.location,
-      details.status,
-    ];
-  });
 
   const testCheckUp = [
     [
@@ -146,7 +161,7 @@ const DashboardMember = () => {
             tIcon={"spray-can"}
             tName={"Inventory"}
             colIcon={"spray-can"}
-            title={["Serial Number", "Location", "Status"]}
+            title={["Serial Number", "Brand", "Status"]}
             data={inventory}
             hasButton={false}
             itemPerPage={10}

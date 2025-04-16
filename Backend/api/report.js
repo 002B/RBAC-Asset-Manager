@@ -126,23 +126,30 @@ async function createReport(company, branch, id, data) {
     }
 }
 
-async function updateStatus(id, status) {
+async function updateStatus(ids, status, assigner) {
     try {
-        const doc = await reportModel.findOne({ "report_id": id });
-        if (!doc) {
-            return false;
+        // ค้นหาหลายๆ รายการตาม id ที่ส่งมา
+        const docs = await reportModel.find({ "report_id": { $in: ids } });
+
+        if (!docs.length) {
+            return false; // ถ้าไม่เจอรายการใดๆ
         }
-        doc.set({
-            "report_id": doc["report_id"],
-            "item_id": doc["item_id"],
-            "client_id": doc["client_id"],
-            "client_branch_id": doc["client_branch_id"],
-            "status": status,
-            "assigner": doc["assigner"],
-            "problem": doc["problem"]
-        });
-        await doc.save();
-        return true;
+
+        // อัปเดตข้อมูลทุกๆ รายการใน docs
+        for (let doc of docs) {
+            doc.set({
+                "report_id": doc["report_id"],
+                "item_id": doc["item_id"],
+                "client_id": doc["client_id"],
+                "client_branch_id": doc["client_branch_id"],
+                "status": status,
+                "assigner": assigner ? assigner : doc["assigner"],
+                "problem": doc["problem"]
+            });
+            await doc.save(); // บันทึกการเปลี่ยนแปลง
+        }
+
+        return true; // อัปเดตเสร็จเรียบร้อย
     } catch (error) {
         console.error("Error updating item status:", error);
         return false;

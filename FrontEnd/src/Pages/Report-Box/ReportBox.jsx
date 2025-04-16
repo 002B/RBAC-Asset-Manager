@@ -130,8 +130,6 @@ const ReportBox = () => {
             <div className="min-w-fit w-full text-center font-bold">Branch</div>
             <div className="min-w-fit w-full text-center font-bold col-span-2">Sender Name</div>
             <div className="min-w-fit w-full text-center font-bold">Date</div>
-            <div className="min-w-fit w-full text-center font-bold">Time</div>
-            <div className="min-w-fit w-full text-center font-bold">Image</div>
             <div className="min-w-fit w-full text-center font-bold">Problem</div>
           </div>
           <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-primary gap-1 pt-1 pb-1">
@@ -146,8 +144,7 @@ const ReportBox = () => {
                 <span className="min-w-fit w-full text-center">{report.client_branch_id}</span>
                 <span className="min-w-fit w-full text-center col-span-2">{report.assigner}</span>
                 <span className="min-w-fit w-full text-center">{report.createAt}</span>
-                <span className="min-w-fit w-full text-center">-</span>
-                <span className="min-w-fit w-full text-center">{report.problem ? "Yes" : "No"}</span>
+                <span className="min-w-fit w-full break-words">{report.problem}</span>
               </div>
             ))}
           </div>

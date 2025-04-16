@@ -51,6 +51,20 @@
   background-color: var(--primary-color);
   color: white;
 }
+.report-box-list-item span.min-w-fit.w-full.break-words {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  line-height: 1.4; /* Add line-height for better readability */
+  padding: 4px; /* Optional padding for text spacing */
+  max-height: 100px; /* Limit height if you need to trim long descriptions */
+  overflow: hidden; /* Hide overflow if the description is too long */
+}
+
+.report-box-list-item span.min-w-fit.w-full.break-words:hover {
+  max-height: none; /* Allow full description to show on hover */
+  overflow: visible; /* Show full text */
+}
 
 .report-box-list-bar {
   border: 2px solid white;
