@@ -114,7 +114,31 @@ const DashboardMember = () => {
               hasSearch={false}
             />
           </div>
-
+          <div className="small-item flex flex-col justify-center items-center gap-4">
+              <span className="report-icon">
+                <box-icon
+                  name="comment-error"
+                  size="6rem"
+                  color="#f16e3d"
+                ></box-icon>
+              </span>
+              <div className="flex flex-col justify-center items-center">
+                <h2>Send Request</h2>
+                <span className="text-gray">
+                  Having problems with our product?
+                </span>
+                <span className="text-gray">Send us request for an action</span>
+              </div>
+              <div>
+                <button
+                  className="send-button flex justify-center items-center bg-secondary p-2"
+                  onClick={handleButtonClick}
+                >
+                  <span className="mr-2 text-white">Send </span>
+                  <box-icon color="white" name="send"></box-icon>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div className="long-item">

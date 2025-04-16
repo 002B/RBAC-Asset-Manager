@@ -143,18 +143,6 @@ const DashboardSuperMember = () => {
                 hasSearch={false}
               ></DataTable>
             </div>
-            <div className="small-item h-fit">
-              <DataTable
-                tIcon="message"
-                colIcon={"receipt"}
-                tName={"Inbox"}
-                title={["Notes", "Date"]}
-                data={testInbox}
-                hasButton={false}
-                itemPerPage={4}
-                hasSearch={false}
-              ></DataTable>
-            </div>
           </div>
           <div className="small-item-wrapper">
             <div className="small-item">
