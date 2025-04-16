@@ -1,10 +1,9 @@
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./Member-Management.css";
-import { getAllUsers} from "../../Auth/User";
-import { getBranchList } from "../../Component/Count";
+// import { getBranchList } from "../../Component/Count";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 function Confirm() {
   SweetAlert.fire({
     title: "Are you sure?",
@@ -27,10 +26,33 @@ function Confirm() {
   });
 }
 
+async function getBranchList(company) {
+  try {
+    const response = await fetch(`http://localhost:3000/company/getAllBranch/${company}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching branches:", error);
+    return [];
+  }
+}
+
+async function getAllUsers() {
+  try {
+    const data = fetch("http://localhost:3000/users/getAllUsers");
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const MemberManagementAdmin = () => {
   const filterBoxRef = useRef();
   const [showUserCard, setShowUserCard] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [testUsers, setTestUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState({
     display_name: "",
     user: "",
@@ -39,6 +61,15 @@ const MemberManagementAdmin = () => {
     display_role: "",
     branch: [""],
   });
+
+  useEffect(() => {
+    getAllUsers()
+      .then((response) => response.json())
+      .then((data) => {
+        setTestUsers(data);
+      });
+  }, []);
+  console.log(testUsers);
 
   function ConfirmUpdate(userName) {
     SweetAlert.fire({
@@ -50,8 +81,13 @@ const MemberManagementAdmin = () => {
       cancelButtonColor: "#B3B4AD",
       confirmButtonText: "Yes",
       reverseButtons: true,
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
+        // Refresh user data after update
+        const updatedUsers = await getAllUsers()
+          .then((response) => response.json());
+        setTestUsers(updatedUsers);
+        
         SweetAlert.fire({
           title: "Change Updated! ",
           text: "User has been updated!",
@@ -59,11 +95,9 @@ const MemberManagementAdmin = () => {
           confirmButtonColor: "#FD6E28",
         });
       }
-      return setShowUserCard(false);
+      setShowUserCard(false);
     });
   }
-
-  const testUsers = getAllUsers();
 
   const itemsPerPage = 8;
 
@@ -96,7 +130,7 @@ const MemberManagementAdmin = () => {
     user.img = "https://picsum.photos/id/" + (1080 - index) + "/128/128";
   });
   const filterList = {
-    Branch: [...new Set(testUsers.map((user) => user.company))],
+    Branch: [...new Set(testUsers.map((user) => user.client))],
   };
 
   const toggleFilterBox = () => {
@@ -109,11 +143,70 @@ const MemberManagementAdmin = () => {
   };
 
   const UserCardEdit = ({ user }) => {
+    const [branches, setBranches] = useState([]);
+    const [formData, setFormData] = useState({
+      display_name: user.display_name,
+      username: user.username,
+      role: user.role,
+      client_access: [...user.client_access]
+    });
+  
+    const roleOptions = ["Member", "Super Member", "Worker", "Admin", "Super Admin"];
+  
+    useEffect(() => {
+      const fetchBranches = async () => {
+        try {
+          const response = await getBranchList(user.client);
+          const branchNames = response.map(branch => branch.client_branch_id);
+          setBranches(branchNames);
+        } catch (error) {
+          console.error("Error fetching branches:", error);
+        }
+      };
+  
+      fetchBranches();
+    }, [user.client]);
+  
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+    };
+  
+    const handleBranchChange = (branch, isChecked) => {
+      setFormData(prev => {
+        const newAccess = isChecked 
+          ? [...prev.client_access, branch]
+          : prev.client_access.filter(b => b !== branch);
+        return { ...prev, client_access: newAccess };
+      });
+    };
+  
+    const handleSubmit = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/users/updateUser/${user.username}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to update user');
+        }
+  
+        return true;
+      } catch (error) {
+        console.error("Error updating user:", error);
+        return false;
+      }
+    };
+  
     return (
       <div className="w-fit h-fit">
         <div
           className="rounded-lg user-card-edit flex flex-col justify-center items-center
-        bg-white flex-1 drop-shadow-lg gap-2 p-4 w-[400px] h-fit border-2 border-secondary"
+          bg-white flex-1 drop-shadow-lg gap-2 p-4 w-[400px] h-fit border-2 border-secondary"
         >
           <div className="user-card-detail flex flex-col w-full h-full gap-2">
             <div className="user-card-header flex flex-col justify-center items-center">
@@ -126,18 +219,16 @@ const MemberManagementAdmin = () => {
                 />
               </div>
             </div>
-            <div className="user-card-body  flex flex-col justify-center items-start gap-2">
-              <label
-                className="flex flex-col w-full"
-                htmlFor="user-display-name"
-              >
+            <div className="user-card-body flex flex-col justify-center items-start gap-2">
+              <label className="flex flex-col w-full" htmlFor="user-display-name">
                 <span className="text-sm">Full Name : </span>
                 <input
                   className="p-1 border-2 outline-secondary rounded hover:border-primary focus:outline-primary"
                   type="text"
                   id="user-display-name"
-                  name="user-display-name"
-                  defaultValue={user.display_name}
+                  name="display_name"
+                  value={formData.display_name}
+                  onChange={handleInputChange}
                 />
               </label>
               <label className="flex flex-col w-full" htmlFor="user-username">
@@ -146,25 +237,40 @@ const MemberManagementAdmin = () => {
                   className="p-1 border-2 outline-secondary rounded hover:border-primary focus:outline-primary"
                   type="text"
                   id="user-username"
-                  name="user-username"
-                  defaultValue={user.user}
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  disabled
                 />
               </label>
-              {user.branch.length > 0 && (
+              <label className="flex flex-col w-full" htmlFor="user-role">
+                <span className="text-sm">Role : </span>
+                <select
+                  className="p-1 border-2 outline-secondary rounded hover:border-primary focus:outline-primary w-full"
+                  id="user-role"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                >
+                  {roleOptions.map(role => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
+              </label>
+              {branches.length > 0 && (
                 <label className="flex flex-col w-full rounded">
                   <span className="text-sm">
-                    Branch Assigned : <b>{user.branch.length}</b>
+                    Branch Assigned : <b>{formData.client_access.length}</b>
                   </span>
-                  <div className=" border-secondary border-2 hover:border-primary flex w-full p-1 rounded flex-col ">
-                    {getBranchList(user.company).map((branch, index) => (
-                      <label className="flex gap-2" key={index} htmlFor="">
+                  <div className="border-secondary border-2 hover:border-primary flex w-full p-1 rounded flex-col max-h-40 overflow-y-auto">
+                    {branches.map((branch, index) => (
+                      <label className="flex gap-2" key={index}>
                         <input
                           type="checkbox"
-                          name={user.user + user.branch}
-                          id={user.branch + index}
-                          defaultChecked={
-                            user.branch.includes(branch) ? true : false
-                          }
+                          name={`branch_${branch}`}
+                          id={`branch_${index}`}
+                          checked={formData.client_access.includes(branch)}
+                          onChange={(e) => handleBranchChange(branch, e.target.checked)}
                         />
                         <span>{branch}</span>
                       </label>
@@ -184,7 +290,19 @@ const MemberManagementAdmin = () => {
             </button>
             <button
               className="bg-green-600 flex w-full justify-center items-center text-white p-1 rounded-lg"
-              onClick={() => ConfirmUpdate(user.display_name)}
+              onClick={async () => {
+                const success = await handleSubmit();
+                if (success) {
+                  ConfirmUpdate(user.display_name);
+                } else {
+                  SweetAlert.fire({
+                    title: "Error!",
+                    text: "Failed to update user",
+                    icon: "error",
+                    confirmButtonColor: "#FD6E28",
+                  });
+                }
+              }}
             >
               <box-icon name="check" color="white"></box-icon>
               Save
@@ -294,7 +412,7 @@ const MemberManagementAdmin = () => {
                   <h3 className="text-secondary text-nowrap">
                     {user.display_name}
                   </h3>
-                  <h4>ID : {user.user}</h4>
+                  <h4>{user.username}</h4>
                 </div>
                 <div className="user-card-footer flex flex-col w-full gap-1 py-1">
                   <div className="flex items-center gap-2 justify-center ">
@@ -303,7 +421,7 @@ const MemberManagementAdmin = () => {
                       type="regular"
                       color="#FD6E28"
                     ></box-icon>
-                    <span className="font-bold">{user.company}</span>
+                    <span className="font-bold">{user.client || "System"}</span>
                   </div>
                   <div className="flex items-center gap-2  justify-center">
                     <box-icon
@@ -311,7 +429,7 @@ const MemberManagementAdmin = () => {
                       type="regular"
                       color="#FD6E28"
                     ></box-icon>{" "}
-                    <span>{user.display_role}</span>
+                    <span>{user.role}</span>
                   </div>
                 </div>
               </div>

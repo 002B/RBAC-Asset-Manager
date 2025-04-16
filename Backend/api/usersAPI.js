@@ -112,9 +112,13 @@ router.post("/login", async (req, res) => {
 router.put("/updateUser/:username", async (req, res) => {
   const { username } = req.params;
   try {
-    const data = await updateUser(username, req.body);
-    res.json(data);
+    const updatedUser = await updateUser(username, req.body);
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(updatedUser);
   } catch (error) {
+    console.error("Error updating user:", error);
     res.status(500).json({ message: "Error updating user" });
   }
 });

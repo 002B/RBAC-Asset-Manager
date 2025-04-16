@@ -143,16 +143,17 @@ async function login(username, password) {
 
 
 
-async function updateUser(username, data){
+async function updateUser(username, updateData) {  // Changed parameter name to updateData
     try {
-        const data = await userModel.findOneAndUpdate(
+        const updatedUser = await userModel.findOneAndUpdate(
             { username: username },
-            data,
+            updateData,  // Using the renamed parameter
             { new: true }
         );
-        return data;
+        return updatedUser;
     } catch (error) {
         console.log(error);
+        throw error;  // Make sure to re-throw the error so it can be caught in the route handler
     }
 }
 
