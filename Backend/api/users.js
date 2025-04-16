@@ -30,6 +30,17 @@ async function getOperatorUser(){
     }
 }
 
+async function getWorkerUser(){
+    try {
+        const data = await userModel.find({
+            role: "Worker",
+        });
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 async function getAllUsersCount(){
     try {
         const count = await userModel.countDocuments();
@@ -165,5 +176,6 @@ module.exports = {
     login,
     updateUser,
     deleteUser,
+    getWorkerUser
 };
 

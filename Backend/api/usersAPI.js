@@ -5,6 +5,7 @@ const {
   getAllUsersCount,
   getClientUser,
   getOperatorUser,
+  getWorkerUser,
   getUser,
   getUsersCount,
   createUser,
@@ -40,7 +41,14 @@ router.get("/getOperatorUser", async (req, res) => {
     res.status(500).json({ message: "Error fetching user details" });
   }
 });
-
+router.get("/getWorkerUser", async (req, res) => {
+  try {
+    const data = await getWorkerUser();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user details" });
+  }
+})
 router.get("/getAllUsersCount", async (req, res) => {
   try {
     const count = await getAllUsersCount();

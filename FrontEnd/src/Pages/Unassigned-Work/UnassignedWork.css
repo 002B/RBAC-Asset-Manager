@@ -29,6 +29,14 @@
   background-color: var(--primary-color);
   color: white;
 }
+.unassigned-work-list-container {
+  height: 552px;  /* Fixed height */
+
+}
+
+.unassigned-work-list-container > .unassigned-work-list-item {
+  overflow: hidden; /* Ensure no child elements are overflowing */
+}
 
 .unassigned-work-select-all {
   color: var(--primary-color);
