@@ -35,12 +35,18 @@ const DataTable = ({
   const rowHeight = 40;
   const minTableHeight = rowHeight * itemsPerPage + headerHeight;
 
-  const isObjectData = typeof data[0] === "object" && !Array.isArray(data[0]);
+  const normalizedData = useMemo(() => {
+    if (Array.isArray(data)) return data;
+    if (typeof data === "object" && data !== null) return Object.values(data);
+    return [];
+  }, [data]);
 
-  const totalPages = useMemo(() => Math.ceil(data.length / itemsPerPage), [data.length, itemsPerPage]);
+  const isObjectData = typeof normalizedData[0] === "object" && !Array.isArray(normalizedData[0]);
+
+  const totalPages = useMemo(() => Math.ceil(normalizedData.length / itemsPerPage), [normalizedData.length, itemsPerPage]);
 
   const sortedData = useMemo(() => {
-    return [...data]
+    return [...normalizedData]
       .filter((row) => {
         const value = isObjectData ? row[title[0]] : row[0];
         return value?.toString().toLowerCase().includes(searchQuery.toLowerCase());
@@ -55,7 +61,7 @@ const DataTable = ({
           ? itemA?.toString().localeCompare(itemB)
           : itemB?.toString().localeCompare(itemA);
       });
-  }, [data, sortConfig, searchQuery, title, isObjectData]);
+  }, [normalizedData, sortConfig, searchQuery, title, isObjectData]);
 
   const currentData = useMemo(() => {
     return sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -208,3 +214,4 @@ const DataTable = ({
 };
 
 export default DataTable;
+
