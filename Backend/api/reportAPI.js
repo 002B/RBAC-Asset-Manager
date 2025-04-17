@@ -68,6 +68,22 @@ router.get('/getReportByComCount/:company', async (req, res) => {
     }
 });
 
+router.get('/getReportByBranch/:company/:branch', async (req, res) => {
+    const { company, branch } = req.params;
+    if (!validateParams({ company, branch }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportByBranch(company, branch);
+        if (!data || data.length === 0) {
+            res.status(404).json({ message: 'Branch or company not found' });
+        } else {
+            res.json(data);
+        }
+    } catch (error) {
+        handleError(res, 'Error fetching reports by branch', error);
+    }
+});
+
 router.get('/getReportById/:id', async (req, res) => {
     const { id } = req.params;
     if (!validateParams({ id }, res)) return;
