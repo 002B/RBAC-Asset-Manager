@@ -91,7 +91,8 @@ async function getReportByStatus(status) {
 async function createReport(company, branch, id, data) {
     try {
         const lastItem = await reportModel.find({}).lean();
-        const lastNumber = lastItem.length ? parseInt(lastItem[lastItem.length - 1].item_id.split('-').pop()) : 0;
+        const lastNumber = lastItem.length;
+        
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
             "item_id": id,
@@ -104,7 +105,6 @@ async function createReport(company, branch, id, data) {
         });
         return true;
     } catch (error) {
-        console.error("Error adding new item:", error);
         return false;
     }
 }

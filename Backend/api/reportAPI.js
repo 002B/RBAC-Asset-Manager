@@ -41,9 +41,6 @@ router.get('/getReportByCom/:company', async (req, res) => {
 
     try {
         const data = await reportFunc.getReportByCom(company);
-        if (!data || data.length === 0) {
-            return res.status(404).json({ message: 'Company not found' });
-        }
         res.json(data);
     } catch (error) {
         handleError(res, 'Error fetching reports by company', error);
@@ -56,9 +53,6 @@ router.get('/getReportByComCount/:company', async (req, res) => {
 
     try {
         const count = await reportFunc.getReportByComCount(company);
-        if (!count) {
-            return res.status(404).json({ message: 'Company not found or has no reports' });
-        }
         res.json(count);
     } catch (error) {
         handleError(res, 'Error fetching report count by company', error);
@@ -71,9 +65,6 @@ router.get('/getReportByBranch/:company/:branch', async (req, res) => {
 
     try {
         const data = await reportFunc.getReportByBranch(company, branch);
-        if (!data || data.length === 0) {
-            return res.status(404).json({ message: 'Branch or company not found' });
-        }
         res.json(data);
     } catch (error) {
         handleError(res, 'Error fetching reports by branch', error);
@@ -86,20 +77,30 @@ router.get('/getReportById/:id', async (req, res) => {
 
     try {
         const data = await reportFunc.getReportById(id);
-        if (!data) {
-            return res.status(404).json({ error: 'Report not found' });
-        }
         res.json(data);
     } catch (error) {
         handleError(res, 'Internal server error', error);
     }
 });
 
-router.post('/createReport/:company/:branch/:id', async (req, res) => {
-    const { company, branch, id } = req.params;
+router.get('/getReportByUser/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    if (!userId) {
+        return res.status(400).json({ message: "User ID must not be empty" });
+    }
+    try {
+        const data = await reportFunc.getReportByUser(userId);
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by user', error);
+    }
+});
+
+router.post('/createReport/:id', async (req, res) => {
+    const { id } = req.params;
     const { data } = req.body;
 
-    if (!validateParams({ company, branch, id }, res) || !data || !data.problem) {
+    if (!validateParams({ id }, res) || !data || !data.problem) {
         return res.status(400).json({ message: 'Incomplete data' });
     }
 
@@ -108,9 +109,8 @@ router.post('/createReport/:company/:branch/:id', async (req, res) => {
         if (!item) {
             return res.status(404).json({ message: 'Item not found' });
         }
-
-        const report = await reportFunc.createReport(company, branch, id, data);
-        await itemFunc.updateStatus(id, 'reporting');
+        const report = await reportFunc.createReport(item.client_id, item.client_brancg_id, id, data);
+        await itemFunc.updateStatus([id], 'reporting');
         res.json(report);
     } catch (error) {
         handleError(res, 'Error creating report', error);
@@ -124,9 +124,6 @@ router.get('/getReportByStatus/:status', async (req, res) => {
     }
     try {
         const data = await reportFunc.getReportByStatus(status);
-        if (!data || data.length === 0) {
-            return res.status(404).json([]);
-        }
         res.json(data);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching reports by status' });
@@ -151,19 +148,13 @@ router.put('/updateReport/:status', async (req, res) => {
 
     try {
         const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), assigner);
+        if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
 
-        if (!updateResult.success) {
-            return res.status(404).json({ message: updateResult.message });
-        }
+        const updateStatusResult = await itemFunc.updateStatus(updateResult.itemIds, updateResult.itemStatus);
 
-        const itemIds = updateResult.itemIds;
-        const itemStatus = updateResult.itemStatus;
-        const updateStatusResult = await itemFunc.updateStatus(itemIds, itemStatus);
-        if (!updateStatusResult) {
-            return res.status(404).json({ message: 'Error updating item status' });
-        }
-
-        res.json({ message: 'Report and items updated successfully', itemIds: itemIds });
+        if (!updateStatusResult) return res.status(404).json({ message: 'Error updating item status' });
+        
+        res.json({ message: 'Report and items updated successfully'});
     } catch (error) {
         console.error('Error updating report:', error);
         res.status(500).json({ message: 'Error updating report' });

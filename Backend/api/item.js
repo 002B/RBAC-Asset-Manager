@@ -119,7 +119,7 @@ async function checkItemExist(id) {
         if (!doc) {
             return false;
         }
-        return true;
+        return doc;
     } catch (error) {
         console.error('Error fetching item details:', error);
         return false;
