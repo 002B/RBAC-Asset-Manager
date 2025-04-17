@@ -118,11 +118,10 @@ router.post('/createReport/:company/:branch/:id', async (req, res) => {
 });
 
 router.get('/getReportByStatus/:status', async (req, res) => {
-    const status = req.params.status?.trim();
+    const status = req.params.status;
     if (!status) {
         return res.status(400).json({ message: "Status must not be empty" });
     }
-
     try {
         const data = await reportFunc.getReportByStatus(status);
         if (!data || data.length === 0) {
@@ -145,7 +144,7 @@ router.put('/updateReport/:status', async (req, res) => {
     }
 
     const validStatuses = ['pending', 'accepted', 'fixing', 'done', 'rejected'];
-
+    
     if (!validStatuses.includes(status.toLowerCase())) {
         return res.status(400).json({ message: 'Invalid status' });
     }

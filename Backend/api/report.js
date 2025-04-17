@@ -98,7 +98,7 @@ async function createReport(company, branch, id, data) {
             "client_id": company,
             "client_branch_id": branch,
             "createAt": new Date().toISOString(),
-            "status": "Pending",
+            "status": "pending",
             "assigner": "None",
             "problem": data.problem
         });
