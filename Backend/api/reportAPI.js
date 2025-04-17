@@ -106,6 +106,24 @@ router.post('/createReport/:company/:branch/:id', async (req, res) => {
     }
 });
 
+router.get('/getReportByStatus/:status', async (req, res) => {
+    const status = req.params.status?.trim();
+    if (!status) {
+        return res.status(400).json({ message: "Status must not be empty" });
+    }
+
+    try {
+        const data = await reportFunc.getReportByStatus(status);
+        if (!data || data.length === 0) {
+            return res.status(404).json([]);
+        }
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching reports by status' });
+    }
+});
+
+
 router.put('/updateReport/:status', async (req, res) => {
     const { status } = req.params;
     const { ids, assigner } = req.body;  // ids as an array and assigner as a single value (string)
