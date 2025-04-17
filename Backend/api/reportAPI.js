@@ -109,7 +109,7 @@ router.post('/createReport/:id', async (req, res) => {
         if (!item) {
             return res.status(404).json({ message: 'Item not found' });
         }
-        const report = await reportFunc.createReport(item.client_id, item.client_brancg_id, id, data);
+        const report = await reportFunc.createReport(item.client_id, item.client_branch_id, id, data);
         await itemFunc.updateStatus([id], 'reporting');
         res.json(report);
     } catch (error) {

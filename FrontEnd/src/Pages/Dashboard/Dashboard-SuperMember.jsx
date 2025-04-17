@@ -6,7 +6,6 @@ import "../../Component/DataTable/DataTable.css";
 import CreateForm from "../../Component/CreateForm";
 import { useAuth } from "../../Auth/AuthProvider";
 
-// Fetch activity data for the member
 const fetchInbox = async (user) => {
   try {
     const requestOptions = {
@@ -25,16 +24,14 @@ const fetchInbox = async (user) => {
   }
 };
 
-// Fetch login activity data from the API
 const fetchLoginActivity = async () => {
   try {
     const requestOptions = {
       method: "GET",
       redirect: "follow",
     };
-    const response = await fetch("http://localhost:3000/activityLog/all", requestOptions);
+    const response = await fetch("http://localhost:3000/activitylog/login-logout", requestOptions);
     const data = await response.json();
-    // Format the data for the table (each entry: [icon, username, date])
     return data.map((item) => [
       item.activity === "Log in" ? (
         <box-icon name="log-in-circle" color="green" size="sm"></box-icon>
@@ -50,23 +47,55 @@ const fetchLoginActivity = async () => {
   }
 };
 
-const testBranch = []; // You can replace this with real branch data
-const testTitle = ["Branch", <box-icon name="spray-can" size="sm" color="#473366"></box-icon>];
+async function fetchBranchWithItemCount(user) {
+  try {
+    const branchResponse = await fetch(`http://localhost:3000/company/getAllBranch/${user.company}`, {
+      method: "GET",
+      redirect: "follow",
+    });
+    const branches = await branchResponse.json();
+
+    // ดึงจำนวนถังของแต่ละสาขาแบบ async
+    const branchWithCounts = await Promise.all(
+      branches.map(async (branch) => {
+        try {
+          const itemRes = await fetch(
+            `http://localhost:3000/item/getItemList/count/${user.company}/${branch.client_branch_id}`,
+            {
+              method: "GET",
+              redirect: "follow",
+            }
+          );
+          const itemCount = await itemRes.text(); // หรือ .json() ถ้า API เปลี่ยนในอนาคต
+          return [branch.client_branch_id, itemCount];
+        } catch (err) {
+          console.error(`Error fetching count for ${branch.client_branch_id}`, err);
+          return [branch.client_branch_id, "Error"];
+        }
+      })
+    );
+
+    return branchWithCounts;
+  } catch (error) {
+    console.error("Error fetching branches:", error);
+    return [];
+  }
+}
+
 
 const DashboardSuperMember = () => {
   const { user } = useAuth();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [testActivity, setTestActivity] = useState([]);
   const [loginActivity, setLoginActivity] = useState([]);
-
+  const [branchList, setBranchList] = useState([]);
   useEffect(() => {
     (async () => {
-      // Fetch activity data
       setTestActivity(await fetchInbox(user));
-      // Fetch login activity data
       setLoginActivity(await fetchLoginActivity());
+      setBranchList(await fetchBranchWithItemCount(user));
     })();
-  }, [user.company, user.selectedBranch]); // Re-fetch when company or branch changes
+  }, [user.company, user.selectedBranch]);
 
   const handleButtonClick = () => {
     setShowCreateForm(true);
@@ -74,9 +103,7 @@ const DashboardSuperMember = () => {
 
   return (
     <div className="flex flex-col w-full h-fit rounded drop-shadow">
-      <div className="w-full rounded drop-shadow">
-        {Status(user.selectedRole, user.company, user.selectedBranch)}
-      </div>
+      <div className="w-full rounded drop-shadow">{Status(user.selectedRole, user.company, user.selectedBranch)}</div>
       <div className="dashboard-container flex w-full rounded drop-shadow mt-4">
         <div className="big-item">
           <div className="small-item-wrapper">
@@ -99,7 +126,7 @@ const DashboardSuperMember = () => {
                 tIcon="user"
                 tName="Login Activity"
                 title={["", "User", "Time"]}
-                data={loginActivity}  // Display the login activity here
+                data={loginActivity}
                 hasButton={false}
                 itemPerPage={4}
                 hasSearch={false}
@@ -131,8 +158,8 @@ const DashboardSuperMember = () => {
             colIcon="buildings"
             tIcon="buildings"
             tName="Branch"
-            title={testTitle}
-            data={testBranch}
+            title={["Branch", <box-icon name="spray-can" size="sm" color="#473366"></box-icon>]}
+            data={branchList}
             hasButton={false}
             itemPerPage={10}
           />
@@ -155,3 +182,5 @@ const DashboardSuperMember = () => {
 };
 
 export default DashboardSuperMember;
+
+
