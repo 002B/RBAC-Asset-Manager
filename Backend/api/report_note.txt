@@ -3,3 +3,7 @@ Report -> Pending/Reporting --> Accept -> Accepted/BAD --> Fixing -> Fixing/Fix
 		    	            --> Reject -> Rejected/OK
 Fixed -> Done/OK
 
+
+
+
+report status/item status
