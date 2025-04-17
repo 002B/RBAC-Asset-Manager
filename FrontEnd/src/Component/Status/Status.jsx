@@ -20,7 +20,7 @@ const Status = (role,company,branch) => {
   if (role === "member") {
     return (
       <div className="status-container flex w-full justify-between">
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box ">
           <div className="count-title p-1 m-1">
             <h3>Installed</h3>
             <h1>{getItemBranchCount(company,branch)}</h1>
@@ -125,28 +125,28 @@ const Status = (role,company,branch) => {
   if (role === "super_admin") {
     return (
       <div className="status-container flex w-full justify-between">
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Installed</h3>
             <h1>{getAllItemCompanyCount()}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-accent">
           <div className="count-title p-1 m-1">
             <h3>Total Client</h3>
             <h1>{getCompanyCount()}</h1>
           </div>
           <box-icon name="buildings" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-highlight">
           <div className="count-title p-1 m-1">
             <h3>Total User</h3>
             <h1>{getAllUserCount()}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-error">
           <div className="count-title p-1 m-1">
             <h3>Total Actions</h3>
             <h1>{getAllLogReportPendingCount()}</h1>

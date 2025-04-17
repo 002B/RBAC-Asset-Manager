@@ -117,7 +117,7 @@ const UnassignedWorkAdmin = () => {
                   name="user-circle"
                   type="regular"
                   size="sm"
-                  color={selectedWorker === worker.display_name ? "white" : "#473366"}
+                  color={selectedWorker === worker.display_name ? "white" : "#68A4D4"}
                 ></box-icon>
                 <span>{worker.display_name}</span>
               </span>
@@ -131,7 +131,7 @@ const UnassignedWorkAdmin = () => {
 
       {/* UNASSIGNED WORK LIST */}
       <div className="unassigned-work-list flex flex-col gap-2 min-w-fit flex-1 bg-white p-1 drop-shadow-md rounded-lg">
-        <div className="unassigned-work-list-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
+        <div className="unassigned-work-list-bar bg-highlight p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
           <div className="unassigned-work-list-header flex gap-1 justify-center items-center">
             <box-icon name="list-plus" type="regular" size="md" color="white"></box-icon>
             <h2 className="text-white">Unassigned Work</h2>
@@ -140,17 +140,17 @@ const UnassignedWorkAdmin = () => {
             <input
               type="text"
               placeholder="Search work..."
-              className="rounded px-2 py-1 text-sm text-primary outline-none"
+              className="rounded px-2 py-1 text-sm text-highlight outline-none"
               value={searchWorkTerm}
               onChange={(e) => setSearchWorkTerm(e.target.value)}
             />
           </div>
         </div>
 
-        <div className="unassigned-work-list-container grid max-h-[552px] overflow-scroll border-b-2 border-t-2 border-primary gap-1 pt-1 pb-1">
+        <div className="unassigned-work-list-container grid max-h-[552px] overflow-scroll border-b-2 border-t-2 border-highlight gap-1 pt-1 pb-1">
           {filteredWorkList.map((work) => (
             <div
-              className="unassigned-work-list-item grid grid-cols-10 overflow-scroll w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-primary rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200"
+              className="unassigned-work-list-item grid grid-cols-10 overflow-scroll w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-highlight rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200"
               key={work.report_id}
               onClick={() => handleItemCheck(work.report_id)}
             >
@@ -160,7 +160,7 @@ const UnassignedWorkAdmin = () => {
                   checked={checkedItems[work.report_id] || false}
                   onChange={() => handleItemCheck(work.report_id)}
                 />
-                <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
+                <box-icon name="spray-can" type="regular" size="sm" color="#F4A261"></box-icon>
                 {work.report_id}
               </span>
               <span className="col-span-2">{work.client_id}</span>
@@ -170,8 +170,8 @@ const UnassignedWorkAdmin = () => {
           ))}
         </div>
 
-        <div className="unassigned-work-footer flex justify-between w-full bottom-0 h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
-          <div className="unassigned-work-checked-count flex justify-start items-center bg-primary rounded px-2">
+        <div className="unassigned-work-footer flex justify-between w-full bottom-0 h-[48px] bg-white p-1 border-2 border-highlight rounded-[8px]">
+          <div className="unassigned-work-checked-count flex justify-start items-center bg-highlight rounded px-2">
             <span className="text-white">
               {Object.values(checkedItems).filter(Boolean).length} selected
             </span>

@@ -160,7 +160,7 @@ function App() {
   } else {
     return (
       <AuthProvider>
-        <div className="app bg-light">
+        <div className="app bg-bg">
           <RouterProvider router={router} />
         </div>
       </AuthProvider>

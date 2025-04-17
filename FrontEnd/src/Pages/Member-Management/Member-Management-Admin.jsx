@@ -326,7 +326,7 @@ const MemberManagementAdmin = () => {
       )}
 
       <div className="flex flex-col gap-2">
-        <div className="member-management-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
+        <div className="member-management-bar bg-highlight p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
           <div className="member-management-header flex gap-2 justify-center items-center">
             <box-icon
               name="group"
@@ -340,7 +340,7 @@ const MemberManagementAdmin = () => {
           <div className="member-management-tool flex gap-2">
             <div className="member-add flex justify-center items-center rounded">
               <button
-                className="flex justify-center items-center p-2 w-fit h-fit"
+                className="flex justify-center items-center p-2 w-fit h-fit bg-primary"
                 onClick={() => Confirm()}
               >
                 <box-icon
@@ -361,7 +361,7 @@ const MemberManagementAdmin = () => {
                     name="filter"
                     type="regular"
                     size="sm"
-                    color="#FD6E28"
+                    color="#F4A261"
                   ></box-icon>
                 </button>
                 <input type="text" placeholder="Search" name="member-search" />
@@ -370,7 +370,7 @@ const MemberManagementAdmin = () => {
                     name="search"
                     type="regular"
                     size="sm"
-                    color="#FD6E28"
+                    color="#F4A261"
                   ></box-icon>
                 </button>
               </div>
@@ -409,7 +409,7 @@ const MemberManagementAdmin = () => {
                   </div>
                 </div>
                 <div className="user-card-body flex flex-col justify-center items-center">
-                  <h3 className="text-secondary text-nowrap">
+                  <h3 className="text-primary text-nowrap">
                     {user.display_name}
                   </h3>
                   <h4>{user.username}</h4>
@@ -419,7 +419,7 @@ const MemberManagementAdmin = () => {
                     <box-icon
                       name="buildings"
                       type="regular"
-                      color="#FD6E28"
+                      color="#DF7A61"
                     ></box-icon>
                     <span className="font-bold">{user.client || "System"}</span>
                   </div>
@@ -427,7 +427,7 @@ const MemberManagementAdmin = () => {
                     <box-icon
                       name="user"
                       type="regular"
-                      color="#FD6E28"
+                      color="#DF7A61"
                     ></box-icon>{" "}
                     <span>{user.role}</span>
                   </div>
