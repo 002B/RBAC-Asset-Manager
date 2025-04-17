@@ -1,9 +1,8 @@
 const reportModel = require("./DB/report.js");
 
-async function getAllReport() {  
+async function getAllReport() {
     try {
-        const doc = await reportModel.find({}, { _id: 0 }).lean()
-        return doc;
+        return await reportModel.find({}, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
@@ -12,103 +11,87 @@ async function getAllReport() {
 
 async function getAllReportCount() {
     try {
-        const doc = await reportModel.find({}, { _id: 0 }).lean()
-        return doc.length;
-    }catch (error) {
+        const docs = await reportModel.find({}, { _id: 0 }).lean();
+        return docs.length;
+    } catch (error) {
         console.error('Error fetching data:', error);
         return 0;
     }
 }
 
-//get report by company
 async function getReportByCom(company) {
-    try{
-        const doc = await reportModel.find({ "client_id": company }, { _id: 0 }).lean()
-        return doc
-    }catch(error){
+    try {
+        return await reportModel.find({ "client_id": company }, { _id: 0 }).lean();
+    } catch (error) {
         console.error('Error fetching data:', error);
         return [];
     }
-    
 }
-//get report by company count
+
 async function getReportByComCount(company) {
-    try{
-        const doc = await reportModel.find({ "client_id": company }, { _id: 0 }).lean()
-        return doc.length
-    }catch{
-        console.error('Error ComCount fetching data:', error);
+    try {
+        const docs = await reportModel.find({ "client_id": company }, { _id: 0 }).lean();
+        return docs.length;
+    } catch (error) {
+        console.error('Error fetching data:', error);
         return 0;
     }
 }
-//get report by branch
+
 async function getReportByBranch(company, branch) {
-    try{
-        const doc = await reportModel.find({"client_id": company, "client_branch_id": branch }, { _id: 0 }).lean()
-        return doc
-    }catch(error){
+    try {
+        return await reportModel.find({ "client_id": company, "client_branch_id": branch }, { _id: 0 }).lean();
+    } catch (error) {
         console.error('Error fetching data:', error);
         return [];
     }
 }
 
-async function getReportByBranchCount(company,branch) {
-    try{
-        const doc = await reportModel.find({"client_id": company, "client_branch_id": branch }, { _id: 0 }).lean()
-        return doc.length
-    }catch(error){
+async function getReportByBranchCount(company, branch) {
+    try {
+        const docs = await reportModel.find({ "client_id": company, "client_branch_id": branch }, { _id: 0 }).lean();
+        return docs.length;
+    } catch (error) {
         console.error('Error fetching data:', error);
         return 0;
     }
 }
-
 
 async function getReportById(id) {
     try {
         if (!id || id.trim() === "") {
             throw new Error("ID must not be empty");
         }
-        const doc = await reportModel.find({ "report_id": id }, { _id: 0 }).lean();
-        
-        if (!doc || doc.length === 0) {
-            return null;
-        }
-        
-        return doc;
-    } catch(error) {
+        const docs = await reportModel.find({ "report_id": id }, { _id: 0 }).lean();
+        return docs.length ? docs : null;
+    } catch (error) {
         console.error('Error fetching data:', error);
-        throw error; // ส่ง error ต่อไปให้ route จัดการ
+        throw error;
     }
 }
-//get report by user
+
 async function getReportByUser(user) {
-    try{
-        const doc = await reportModel.find({ "assigner": user }, { _id: 0 }).lean()
-        return doc
-    }catch(error){
-        console.error('Error fetching  data:', error);
-        return [];   
+    try {
+        return await reportModel.find({ "assigner": user }, { _id: 0 }).lean();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return [];
     }
 }
 
-//get report by status (pending/accepted/rejected/fixing/done)
 async function getReportByStatus(status) {
-    try{
-        const doc = await reportModel.find({ "status": status }, { _id: 0 }).lean()
-        return doc
-    }catch(error){
-     console.error('Error fetching  data:', error);
-     return [];   
+    try {
+        return await reportModel.find({ "status": status }, { _id: 0 }).lean();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return [];
     }
 }
-
-
 
 async function createReport(company, branch, id, data) {
     try {
         const lastItem = await reportModel.find({}).lean();
-        if (lastItem.length === 0) return "RP-2025-0000001";
-        const lastNumber = parseInt(lastItem[lastItem.length - 1].item_id.split('-').pop());
+        const lastNumber = lastItem.length ? parseInt(lastItem[lastItem.length - 1].item_id.split('-').pop()) : 0;
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
             "item_id": id,
@@ -126,34 +109,57 @@ async function createReport(company, branch, id, data) {
     }
 }
 
-async function updateStatus(ids, status, assigner) {
+async function updateReport(ids, status, assigner) {
     try {
-        // ค้นหาหลายๆ รายการตาม id ที่ส่งมา
         const docs = await reportModel.find({ "report_id": { $in: ids } });
-
         if (!docs.length) {
-            return false; // ถ้าไม่เจอรายการใดๆ
+            return { success: false, message: 'No reports found for the provided IDs' };
         }
 
-        // อัปเดตข้อมูลทุกๆ รายการใน docs
-        for (let doc of docs) {
+        const itemIds = [];
+        for (const doc of docs) {
             doc.set({
-                "report_id": doc["report_id"],
-                "item_id": doc["item_id"],
-                "client_id": doc["client_id"],
-                "client_branch_id": doc["client_branch_id"],
                 "status": status,
-                "assigner": assigner ? assigner : doc["assigner"],
-                "problem": doc["problem"]
+                "assigner": assigner || doc["assigner"]
             });
-            await doc.save(); // บันทึกการเปลี่ยนแปลง
-        }
 
-        return true; // อัปเดตเสร็จเรียบร้อย
+            await doc.save();
+            itemIds.push(doc.item_id);
+        }
+        const itemStatus = getItemStatusByReportStatus(status)
+        return { success: true, itemIds,  itemStatus};
     } catch (error) {
-        console.error("Error updating item status:", error);
-        return false;
+        console.error('Error updating report:', error);
+        return { success: false, message: 'Error updating report' };
     }
 }
 
-module.exports = {getAllReport, getAllReportCount, createReport, updateStatus, getReportByCom,getReportByComCount,getReportByBranch , getReportByBranchCount , getReportById ,getReportByUser , getReportByStatus}
+function getItemStatusByReportStatus(reportStatus) {
+    switch (reportStatus) {
+        case 'pending':
+            return 'reporting';
+        case 'accepted':
+            return 'bad';
+        case 'fixing':
+            return 'fixing';
+        case 'done':
+        case 'rejected':
+        default:
+            return 'OK';
+    }
+}
+
+module.exports = {
+    getAllReport,
+    getAllReportCount,
+    createReport,
+    updateReport,
+    getReportByCom,
+    getReportByComCount,
+    getReportByBranch,
+    getReportByBranchCount,
+    getReportById,
+    getReportByUser,
+    getReportByStatus
+};
+

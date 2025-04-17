@@ -228,29 +228,25 @@ async function deleteItem(id) {
     }
 }
 
-async function updateStatus(id,status) {
+async function updateStatus(itemIds, itemStatus) {
     try {
-        const doc = await itemModel.findOne({ "item_id": id });
-        if (!doc) {
-            return false;
+        // ค้นหาและอัปเดตหลายๆ item_id
+        const items = await itemModel.updateMany(
+            { "item_id": { $in: itemIds } },  // หา item ที่มี item_id ใน array ของ itemIds
+            { $set: { "item_status": itemStatus } },  // อัปเดตสถานะของ item
+            { multi: true }
+        );
+        
+        if (items.nModified === 0) {
+            return false;  // ถ้าไม่มีการอัปเดต
         }
-        doc.set({
-            "item_id": doc["item_id"],
-            "client_id": doc["client_id"],
-            "client_branch_id": doc["client_branch_id"],
-            "item_brand": doc["item_brand"],
-            "item_capacity": doc["item_capacity"],
-            "item_color": doc["item_color"],
-            "item_type": doc["item_type"],
-            "item_class": doc["item_class"],
-            "item_status": status
-        });
-        await doc.save();
-        return item_status;
+
+        return itemStatus;  // คืนค่าที่อัปเดต
     } catch (error) {
-        console.error('Error fetching item details:', error);
+        console.error('Error updating item status:', error);
         return false;
     }
 }
+
 
 module.exports = { getAllItems, getAllItemCount, getItemCompany, getItemCompanyCount, getItemCompanyBranch, getItemBranchCount, getItemInfo,checkItemExist, createItem, createManyItem, updateItem, deleteItem, updateStatus};

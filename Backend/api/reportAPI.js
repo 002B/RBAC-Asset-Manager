@@ -11,8 +11,7 @@ const handleError = (res, message, error = null, statusCode = 500) => {
 const validateParams = (params, res) => {
     for (const [key, value] of Object.entries(params)) {
         if (!value?.trim()) {
-            res.status(400).json({ message: `${key} must not be empty` });
-            return false;
+            return res.status(400).json({ message: `${key} must not be empty` });
         }
     }
     return true;
@@ -43,10 +42,9 @@ router.get('/getReportByCom/:company', async (req, res) => {
     try {
         const data = await reportFunc.getReportByCom(company);
         if (!data || data.length === 0) {
-            res.status(404).json({ message: 'Company not found' });
-        } else {
-            res.json(data);
+            return res.status(404).json({ message: 'Company not found' });
         }
+        res.json(data);
     } catch (error) {
         handleError(res, 'Error fetching reports by company', error);
     }
@@ -59,10 +57,9 @@ router.get('/getReportByComCount/:company', async (req, res) => {
     try {
         const count = await reportFunc.getReportByComCount(company);
         if (!count) {
-            res.status(404).json({ message: 'Company not found or has no reports' });
-        } else {
-            res.json(count);
+            return res.status(404).json({ message: 'Company not found or has no reports' });
         }
+        res.json(count);
     } catch (error) {
         handleError(res, 'Error fetching report count by company', error);
     }
@@ -75,10 +72,9 @@ router.get('/getReportByBranch/:company/:branch', async (req, res) => {
     try {
         const data = await reportFunc.getReportByBranch(company, branch);
         if (!data || data.length === 0) {
-            res.status(404).json({ message: 'Branch or company not found' });
-        } else {
-            res.json(data);
+            return res.status(404).json({ message: 'Branch or company not found' });
         }
+        res.json(data);
     } catch (error) {
         handleError(res, 'Error fetching reports by branch', error);
     }
@@ -91,10 +87,9 @@ router.get('/getReportById/:id', async (req, res) => {
     try {
         const data = await reportFunc.getReportById(id);
         if (!data) {
-            res.status(404).json({ error: 'Report not found' });
-        } else {
-            res.json(data);
+            return res.status(404).json({ error: 'Report not found' });
         }
+        res.json(data);
     } catch (error) {
         handleError(res, 'Internal server error', error);
     }
@@ -139,46 +134,42 @@ router.get('/getReportByStatus/:status', async (req, res) => {
     }
 });
 
-
 router.put('/updateReport/:status', async (req, res) => {
     const { status } = req.params;
-    const { ids, assigner } = req.body;  // ids as an array and assigner as a single value (string)
-
-    // Validation for ids array
+    const { ids, assigner } = req.body;  
     if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ message: 'IDs are required and should be an array' });
     }
-
-    // Validation for status
     if (!status) {
         return res.status(400).json({ message: 'Status is required' });
     }
 
-    const validStatuses = ['accept', 'reject', 'fixing', 'done'];
+    const validStatuses = ['pending', 'accepted', 'fixing', 'done', 'rejected'];
 
     if (!validStatuses.includes(status.toLowerCase())) {
         return res.status(400).json({ message: 'Invalid status' });
     }
 
-    // Validation for assigner
-    if (!assigner || typeof assigner !== 'string') {
-        return res.status(400).json({ message: 'Valid assigner is required' });
-    }
-
     try {
-        // Call the updateStatus function with multiple ids, status, and assigner
-        const updateResult = await reportFunc.updateStatus(ids, status.toLowerCase(), assigner);
-        
-        if (!updateResult) {
-            return res.status(404).json({ message: 'No reports found for the provided IDs' });
+        const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), assigner);
+
+        if (!updateResult.success) {
+            return res.status(404).json({ message: updateResult.message });
         }
 
-        res.json({ message: 'Reports updated successfully' });
+        const itemIds = updateResult.itemIds;
+        const itemStatus = updateResult.itemStatus;
+        const updateStatusResult = await itemFunc.updateStatus(itemIds, itemStatus);
+        if (!updateStatusResult) {
+            return res.status(404).json({ message: 'Error updating item status' });
+        }
+
+        res.json({ message: 'Report and items updated successfully', itemIds: itemIds });
     } catch (error) {
-        handleError(res, 'Error updating report status', error);
+        console.error('Error updating report:', error);
+        res.status(500).json({ message: 'Error updating report' });
     }
 });
-
 
 module.exports = router;
 

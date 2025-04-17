@@ -224,21 +224,34 @@ router.put('/updateItem/:company/:branch/:id', async (req, res) => {
 /*
 ⁡⁣⁢⁣​‌‌‍𝗣𝗨𝗧​ (𝗨𝗽𝗱𝗮𝘁𝗲 𝗦𝘁𝗮𝘁𝘂𝘀)⁡
 */
-router.put('/updateStatus/:id', async (req, res) => {
+router.put('/updateStatus', async (req, res) => { 
     try {
-        const { id } = req.params;
-        const data = req.body;
-        if (!id) return res.status(404).json({ message: 'ID not found' });
-        if (!data) return res.status(404).json({ message: 'Data not found' });
+        const { item_ids, status } = req.body;
 
+        if (!Array.isArray(item_ids) || item_ids.length === 0) {
+            return res.status(400).json({ message: 'Item IDs are required and should be an array' });
+        }
 
+        if (!status) {
+            return res.status(400).json({ message: 'Status is required' });
+        }
 
-        const items = await itemFunc.updateItemById(id, data);
-        if (!items) return res.status(404).json({ message: 'Item not found' });
-        res.json(items);
+        const validStatuses = ['pending', 'reporting', 'accepted', 'fixing', 'done'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: 'Invalid status' });
+        }
+
+        const updateResult = await updateStatus(item_ids, status);
+
+        if (!updateResult) {
+            return res.status(404).json({ message: 'No items found or no updates were made' });
+        }
+
+        res.json({ message: `Items updated successfully to ${status}` });
     } catch (error) {
+        console.error('Error updating status:', error);
         res.status(500).json({
-            message: 'Error updating item'
+            message: 'Error updating item status'
         });
     }
 });
