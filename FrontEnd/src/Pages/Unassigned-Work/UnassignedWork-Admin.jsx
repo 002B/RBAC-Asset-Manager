@@ -8,41 +8,32 @@ const UnassignedWorkAdmin = () => {
   const [workerList, setWorkerList] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
   const [selectedWorker, setSelectedWorker] = useState("");
+  const [searchWorkerTerm, setSearchWorkerTerm] = useState("");
+  const [searchWorkTerm, setSearchWorkTerm] = useState("");
   const filterBoxRef = useRef();
 
-  // ดึงข้อมูลงานที่ยังไม่ได้มอบหมาย
   useEffect(() => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow"
-    };
-
-    fetch("http://localhost:3000/report/getReportByStatus/accepted", requestOptions)
-      .then((response) => response.json())
-      .then((data) => setWorkList(data))
-      .catch((error) => console.error("Error fetching unassigned work:", error));
+    fetch("http://localhost:3000/report/getReportByStatus/accepted")
+      .then((res) => res.json())
+      .then(setWorkList)
+      .catch((err) => console.error("Error fetching unassigned work:", err));
   }, []);
 
-  // ดึงข้อมูลผู้ใช้งาน (workers)
   useEffect(() => {
     fetch("http://localhost:3000/users/getOperatorUser")
-      .then((response) => response.json())
-      .then((data) => setWorkerList(data))
-      .catch((error) => console.error("Error fetching worker data:", error));
+      .then((res) => res.json())
+      .then(setWorkerList)
+      .catch((err) => console.error("Error fetching worker data:", err));
   }, []);
 
   const toggleSelectedWorker = (worker) => {
-    if (selectedWorker === worker) {
-      setSelectedWorker("");
-    } else {
-      setSelectedWorker(worker);
-    }
+    setSelectedWorker(selectedWorker === worker ? "" : worker);
   };
 
   const handleItemCheck = (serial) => {
-    setCheckedItems((prevState) => ({
-      ...prevState,
-      [serial]: !prevState[serial],
+    setCheckedItems((prev) => ({
+      ...prev,
+      [serial]: !prev[serial],
     }));
   };
 
@@ -82,17 +73,36 @@ const UnassignedWorkAdmin = () => {
     });
   }
 
+  const filteredWorkerList = workerList.filter((worker) =>
+    worker.display_name.toLowerCase().includes(searchWorkerTerm.toLowerCase())
+  );
+
+  const filteredWorkList = workList.filter((work) =>
+    work.report_id.toLowerCase().includes(searchWorkTerm.toLowerCase())
+  );
+
   return (
     <div className="unassigned-work-admin flex gap-2">
-      <div className="worker-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg ">
+      {/* WORKER LIST */}
+      <div className="worker-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
         <div className="worker-list-bar bg-secondary p-2 rounded-[8px] drop-shadow flex items-center border-2 border-white justify-between sticky top-0 z-10">
           <div className="worker-list-header flex gap-1 justify-center items-center">
             <box-icon name="user" type="regular" size="md" color="white"></box-icon>
             <h2 className="text-white">Worker</h2>
           </div>
+          <div className="filter-bar">
+            <input
+              type="text"
+              placeholder="Search worker..."
+              className="rounded px-2 py-1 text-sm text-secondary outline-none"
+              value={searchWorkerTerm}
+              onChange={(e) => setSearchWorkerTerm(e.target.value)}
+            />
+          </div>
         </div>
+
         <div className="worker-list-container grid gap-1 max-h-[600px] overflow-y-scroll border-t-2 border-b-2 border-secondary pt-1 pb-1">
-          {workerList.map((worker) => (
+          {filteredWorkerList.map((worker) => (
             <div
               className={`worker-list-item grid grid-cols-4 w-full h-[48px] justify-between items-center p-2 border-2 border-secondary rounded-[8px] cursor-pointer drop-shadow transition-all duration-200 ${
                 selectedWorker === worker.display_name
@@ -103,7 +113,12 @@ const UnassignedWorkAdmin = () => {
               onClick={() => toggleSelectedWorker(worker.display_name)}
             >
               <span className="col-span-2 flex gap-2 items-center">
-                <box-icon name="user-circle" type="regular" size="sm" color={selectedWorker === worker.display_name ? "white" : "#473366"}></box-icon>
+                <box-icon
+                  name="user-circle"
+                  type="regular"
+                  size="sm"
+                  color={selectedWorker === worker.display_name ? "white" : "#473366"}
+                ></box-icon>
                 <span>{worker.display_name}</span>
               </span>
               <span className="w-full flex gap-2 items-center justify-center">
@@ -114,15 +129,26 @@ const UnassignedWorkAdmin = () => {
         </div>
       </div>
 
+      {/* UNASSIGNED WORK LIST */}
       <div className="unassigned-work-list flex flex-col gap-2 min-w-fit flex-1 bg-white p-1 drop-shadow-md rounded-lg">
         <div className="unassigned-work-list-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
           <div className="unassigned-work-list-header flex gap-1 justify-center items-center">
             <box-icon name="list-plus" type="regular" size="md" color="white"></box-icon>
             <h2 className="text-white">Unassigned Work</h2>
           </div>
+          <div className="filter-bar">
+            <input
+              type="text"
+              placeholder="Search work..."
+              className="rounded px-2 py-1 text-sm text-primary outline-none"
+              value={searchWorkTerm}
+              onChange={(e) => setSearchWorkTerm(e.target.value)}
+            />
+          </div>
         </div>
+
         <div className="unassigned-work-list-container grid max-h-[552px] overflow-scroll border-b-2 border-t-2 border-primary gap-1 pt-1 pb-1">
-          {workList.map((work) => (
+          {filteredWorkList.map((work) => (
             <div
               className="unassigned-work-list-item grid grid-cols-10 overflow-scroll w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-primary rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200"
               key={work.report_id}
@@ -131,8 +157,6 @@ const UnassignedWorkAdmin = () => {
               <span className="flex gap-2 items-center col-span-3">
                 <input
                   type="checkbox"
-                  name="work-item-checkbox"
-                  id={work.report_id}
                   checked={checkedItems[work.report_id] || false}
                   onChange={() => handleItemCheck(work.report_id)}
                 />
@@ -145,6 +169,7 @@ const UnassignedWorkAdmin = () => {
             </div>
           ))}
         </div>
+
         <div className="unassigned-work-footer flex justify-between w-full bottom-0 h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
           <div className="unassigned-work-checked-count flex justify-start items-center bg-primary rounded px-2">
             <span className="text-white">
