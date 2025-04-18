@@ -27,10 +27,13 @@ const Status = ({ role, company, branch }) => {
 
   const [adminItemCount, setAdminItemCount] = useState(0);
   const [adminReportPendingCount, setAdminReportPendingCount] = useState(0);
-
+  const [adminBadItemCount, setAdminBadItemCount] = useState(0);
+  const [adminTotalUser, adminSetTotalUser] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
       if (role === "member") {
+
+
         const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getItemList/count/${company}/${branch}`);
         const itemInBranchCount = await itemInBranchCountResponse.text();
         setMemberItemCount(parseInt(itemInBranchCount));
@@ -46,7 +49,10 @@ const Status = ({ role, company, branch }) => {
         const nextCheckValue = await getNextCheck(company, branch);
         setNextCheck(0);
 
+
       }else if(role === "super_member"){
+
+
         const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getItemList/count/${company}${branch !== "All Branches" ? `/${branch}` : ""}`);
         const itemInBranchCount = await itemInBranchCountResponse.text();
         setSuperMemberItemCount(parseInt(itemInBranchCount));
@@ -58,14 +64,26 @@ const Status = ({ role, company, branch }) => {
         const badItemInBranchCountResponse = await fetch(`${ branch !== "All Branches" ? `http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/accepted` : `http://localhost:3000/report/getReportStatusByCom/count/${company}/accepted`}`);
         const badItemInBranchCount = await badItemInBranchCountResponse.text();
         setSuperMemberBadItemCount(parseInt(badItemInBranchCount));
+
+
       }else if(role === "admin"){
+
+
         const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getAllItem/count`);
         const itemInBranchCount = await itemInBranchCountResponse.text();
         setAdminItemCount(parseInt(itemInBranchCount));
 
-        const reportPendingInBranchCountResponse = await fetch(`http://localhost:3000/report/getAllReportStatus/count/pending`);
+        const reportPendingInBranchCountResponse = await fetch(`http://localhost:3000/report/getAllReportByStatus/count/pending`);
         const reportPendingInBranchCount = await reportPendingInBranchCountResponse.text();
         setAdminReportPendingCount(parseInt(reportPendingInBranchCount));
+
+        const badItemInBranchCountResponse = await fetch(`http://localhost:3000/report/getAllReportByStatus/count/accepted`);
+        const badItemInBranchCount = await badItemInBranchCountResponse.text();
+        setAdminBadItemCount(parseInt(badItemInBranchCount));
+
+        const totalUserResponse = await fetch(`http://localhost:3000/users/getOperatorUser`);
+        const totalUser = await totalUserResponse.json();
+        adminSetTotalUser(totalUser.length);
       }
     };
     fetchData();
@@ -149,23 +167,23 @@ const Status = ({ role, company, branch }) => {
         <div className="flex justify-between items-center status-box">
           <div className="count-title p-1 m-1">
             <h3>Total Report</h3>
-            <h1>{getAllLogReportCount()}</h1>
+            <h1>{adminReportPendingCount}</h1>
           </div>
           <box-icon name="news" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box">
           <div className="count-title p-1 m-1">
-            <h3>Total User</h3>
-            <h1>{getAllUserCount()}</h1>
-          </div>
-          <box-icon name="user" color="white" size="lg"></box-icon>
+            <h3>Need Action</h3>
+            <h1>{adminBadItemCount}</h1>
+          </div>  
+          <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box">
           <div className="count-title p-1 m-1">
-            <h3>Total Actions</h3>
-            <h1>{getAllLogReportPendingCount()}</h1>
-          </div>  
-          <box-icon name="wrench" color="white" size="lg"></box-icon>
+            <h3>Total User</h3>
+            <h1>{adminTotalUser}</h1>
+          </div>
+          <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
       </div>
     );

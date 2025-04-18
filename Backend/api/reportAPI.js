@@ -48,6 +48,19 @@ router.get('/getAllReportByStatus/:status', async (req, res) => {
     }
 });
 
+router.get('/getAllReportByStatus/count/:status', async (req, res) => {
+    const { status } = req.params;
+    if (!status) {
+        return res.status(400).json({ message: "Status must not be empty" });
+    }
+    try {
+        const data = await reportFunc.getAllReportByStatus(status);
+        res.json(data.length);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by status', error);
+    }
+});
+
 router.get('/getReportByUserDone/:user', async (req, res) => {
     const { user } = req.params;
     if (!validateParams({ user }, res)) return;
