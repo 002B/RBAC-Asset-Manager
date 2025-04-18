@@ -35,6 +35,52 @@ router.get('/getAllReport/count', async (req, res) => {
     }
 });
 
+router.get('/getReportByUserDone/:user', async (req, res) => {
+    const { user } = req.params;
+    if (!validateParams({ user }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportByUserDone(user);
+        if (!data || data.length === 0) {
+            return res.status(404).json({ message: 'No done reports found for this user' });
+        }
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching done reports by user', error);
+    }
+});
+
+router.get('/getReportByUserFixing/:user', async (req, res) => {
+    const { user } = req.params;
+    if (!validateParams({ user }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportByUserFixing(user);
+        if (!data || data.length === 0) {
+            return res.status(404).json({ message: 'No fixing reports found for this user' });
+        }
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching fixing reports by user', error);
+    }
+});
+
+
+router.get('/getReportByUser/:user', async (req, res) => {
+    const { user } = req.params;
+    if (!validateParams({ user }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportByUser(user);
+        if (!data || data.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by user', error);
+    }
+});
+
 router.get('/getReportByCom/:company', async (req, res) => {
     const { company } = req.params;
     if (!validateParams({ company }, res)) return;
@@ -119,6 +165,7 @@ router.post('/createReport/:id', async (req, res) => {
 
 router.get('/getReportByStatus/:status', async (req, res) => {
     const status = req.params.status;
+    
     if (!status) {
         return res.status(400).json({ message: "Status must not be empty" });
     }
@@ -132,7 +179,7 @@ router.get('/getReportByStatus/:status', async (req, res) => {
 
 router.put('/updateReport/:status', async (req, res) => {
     const { status } = req.params;
-    const { ids, assigner } = req.body;  
+    const { ids, assigner } = req.body; 
     if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ message: 'IDs are required and should be an array' });
     }

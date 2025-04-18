@@ -1,67 +1,70 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "../Report-Box/ReportBox.css";
-import { getAdminAndWorker } from "../../Component/user";
 
-const testReport = [];
+const SubmittedWork = ({ username = "worker" }) => {
+  const [reports, setReports] = useState([]);
+  const [checkedItems, setCheckedItems] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [companyFilter, setCompanyFilter] = useState("all");
 
-const testWorker = getAdminAndWorker();
+  const filterBoxRef = useRef();
 
-const getRandomWorker = () => {
-  const worker = testWorker[Math.floor(Math.random() * testWorker.length)];
-  return [worker.display_name, worker.display_role];
-};
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
-
-const getRandomDate = (start, end) => {
-  const date = new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime())
-  );
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
-const getRandomTime = () => {
-  const hours = String(Math.floor(Math.random() * 24)).padStart(2, "0");
-  const minutes = String(Math.floor(Math.random() * 60)).padStart(2, "0");
-  const seconds = String(Math.floor(Math.random() * 60)).padStart(2, "0");
-  return `${hours}:${minutes}:${seconds}`;
-};
-
-const generateReportData = (count) => {
-  for (let i = 0; i < count; i++) {
-    const year = 2023;
-    const serialNumber = `FTX=${year}-${String(
-      Math.floor(Math.random() * 1000)
-    ).padStart(3, "0")}`;
-    const sender = getRandomWorker();
-    const date = getRandomDate(new Date(2022, 0, 1), new Date());
-    const time = getRandomTime();
-
-    testReport.push({
-      serial: serialNumber,
-      sender: sender[0],
-      role: sender[1],
-      date: date,
-      time: time,
+  const fetchReports = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/report/getReportByUserDone/${username}`
+      );
+      setReports(res.data);
+    } catch (err) {
+      console.error("Error fetching reports", err);
+    }
+  };
+  const handleViewDetails = (report) => {
+    SweetAlert.fire({
+      title: `<strong>Report Details</strong>`,
+      html: `
+        <div style="text-align: left;">
+          <p><strong>Report ID:</strong> ${report.report_id}</p>
+          <p><strong>Item ID:</strong> ${report.item_id}</p>
+          <p><strong>Company:</strong> ${report.client_id}</p>
+          <p><strong>Branch:</strong> ${report.client_branch_id}</p>
+          <p><strong>Status:</strong> ${report.status}</p>
+          <p><strong>Assigner:</strong> ${report.assigner}</p>
+          <p><strong>Problem:</strong> ${report.problem}</p>
+          <p><strong>Created At:</strong> ${new Date(
+            report.createAt
+          ).toLocaleString()}</p>
+        </div>
+      `,
+      confirmButtonColor: "#FD6E28",
+      confirmButtonText: "Close",
+      focusConfirm: false,
     });
-  }
-};
+  };
 
-generateReportData(20);
+  const handleItemCheck = (id) => {
+    setCheckedItems((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
-const filterList = {
-  Company: [...new Set(testReport.map((report) => report.company))],
-};
 
-const SubmittedWork = () => {
-  function confirmAccept(totalReport) {
+  const toggleFilterBox = () => {
+    filterBoxRef.current.classList.toggle("hidden");
+  };
+
+  const confirmAccept = (count) => {
     SweetAlert.fire({
       title: "Are you sure?",
-      text: "You need to approve " + totalReport + " work(s)?",
+      text: `You need to approve ${count} work(s)?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#16a34a",
@@ -71,23 +74,19 @@ const SubmittedWork = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         SweetAlert.fire({
-          title: "Congratulations! ",
+          title: "Congratulations!",
           text: "Work(s) Approved!",
           icon: "success",
           confirmButtonColor: "#16a34a",
         });
       }
     });
-  }
-
-  const handleConfirmAccept = () => {
-    confirmAccept(checkedCount);
   };
 
-  function confirmReject(totalReport) {
+  const confirmReject = (count) => {
     SweetAlert.fire({
       title: "Are you sure?",
-      text: "You need to reject " + totalReport + " Work(s)?",
+      text: `You need to reject ${count} work(s)?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#dc2626",
@@ -97,43 +96,28 @@ const SubmittedWork = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         SweetAlert.fire({
-          title: "Congratulations! ",
-          text: totalReport + "Work(s) Rejected!",
+          title: "Rejected!",
+          text: `${count} Work(s) Rejected!`,
           icon: "success",
           confirmButtonColor: "#dc2626",
         });
       }
     });
-  }
-
-  const handleConfirmReject = () => {
-    confirmReject(checkedCount);
   };
 
-  const filterBoxRef = useRef();
-  const [checkedItems, setCheckedItems] = useState({});
+  const companyList = Array.from(new Set(reports.map((r) => r.client_id)));
 
-  const handleItemCheck = (serial) => {
-    setCheckedItems((prevState) => ({
-      ...prevState,
-      [serial]: !prevState[serial],
-    }));
-  };
+  const filteredReports = reports.filter((report) => {
+    const matchesSearch =
+      report.report_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      report.item_id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCompany =
+      companyFilter === "All" || report.client_id === companyFilter;
 
-  const toggleAllItemCheckBox = (e) => {
-    const checked = e.target.checked;
-    const updatedCheckedItems = {};
-    testReport.forEach((report) => {
-      updatedCheckedItems[report.serial] = checked;
-    });
-    setCheckedItems(updatedCheckedItems);
-  };
+    return matchesSearch && matchesCompany;
+  });
 
   const checkedCount = Object.values(checkedItems).filter(Boolean).length;
-
-  const toggleFilterBox = () => {
-    filterBoxRef.current.classList.toggle("hidden");
-  };
 
   return (
     <div className="report-box-admin grid gap-2">
@@ -151,145 +135,114 @@ const SubmittedWork = () => {
           <div className="report-box-list-tool flex gap-2 items-center">
             <div className="report-box-search flex flex-col justify-center items-center gap-2">
               <div className="report-box-search-box flex gap-2">
-                <button
-                  className="flex justify-center items-center w-fit h-fit"
-                  onClick={toggleFilterBox}
-                >
+                <button onClick={toggleFilterBox}>
                   <box-icon
                     name="filter"
                     type="regular"
                     size="sm"
                     color="#FD6E28"
-                  ></box-icon>
+                  />
                 </button>
                 <input
                   type="text"
                   placeholder="Search"
-                  name="report-box-search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button className="flex justify-center items-center w-fit h-fit">
+                <button>
                   <box-icon
                     name="search"
                     type="regular"
                     size="sm"
                     color="#FD6E28"
-                  ></box-icon>
+                  />
                 </button>
               </div>
               <div className="filter-box hidden" ref={filterBoxRef}>
-                {Object.keys(filterList).map((key) => (
-                  <div className="filter-item flex flex-col" key={key}>
-                    <h4 className="text-white w-full text-center bg-primary rounded-[4px]">
-                      {key}
-                    </h4>
-                    {filterList[key].map((item) => (
-                      <div className="filter-list" key={item}>
-                        <input
-                          type="checkbox"
-                          name={key + item}
-                          id={key}
-                          defaultChecked={false}
-                        />
-                        <label htmlFor={key}>{item}</label>
-                      </div>
-                    ))}
+                <div className="filter-item flex flex-col">
+                  <h4 className="text-white w-full text-center bg-primary rounded-[4px]">
+                    Company
+                  </h4>
+                  <div className="filter-list">
+                    <input
+                      type="radio"
+                      name="company"
+                      checked={companyFilter === "all"}
+                      onChange={() => setCompanyFilter("all")}
+                    />
+                    <label>Company</label>
                   </div>
-                ))}
+                  {companyList.map((company) => (
+                    <div className="filter-list" key={company}>
+                      <input
+                        type="radio"
+                        name="company"
+                        checked={companyFilter === company}
+                        onChange={() => setCompanyFilter(company)}
+                      />
+                      <label>{company}</label>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
+
         <div className="report-box-list-body min-fit w-full gap-1 grid">
-          <div className="report-box-list-header min-w-fit grid grid-cols-7 w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-secondary rounded-[8px] drop-shadow text-secondary">
-            <div className="min-w-fit report-box-select-all rounded flex gap-1 items-center">
-              <input
-                className="cursor-pointer "
-                type="checkbox"
-                name="report-box-select-all"
-                id="report-select-all"
-                value=""
-                onChange={toggleAllItemCheckBox}
-              />
-              <label htmlFor="report-select-all" className="text-center w-full">
-                <span className="text-center font-bold text-secondary">
-                  Serial Number
-                </span>
-              </label>
+          <div className="report-box-list-header grid grid-cols-7 w-full h-[48px] items-center p-2 bg-white border-2 border-secondary rounded-[8px] drop-shadow text-secondary">
+            <div className="report-box-select-all flex gap-1 items-center">
+              <label className="font-bold">Report ID</label>
             </div>
-            <div className="min-w-fit w-full text-center font-bold col-span-2">
-              Worker Name
-            </div>
-            <div className="min-w-fit w-full text-center font-bold">Role</div>
-            <div className="min-w-fit w-full text-center font-bold">Date</div>
-            <div className="min-w-fit w-full text-center font-bold">Time</div>
+            <div className="text-center font-bold">Item ID</div>
+            <div className="text-center font-bold">Company</div>
+            <div className="text-center font-bold">Branch</div>
+            <div className="text-center font-bold">Status</div>
+            <div className="text-center font-bold">Assigner</div>
+            <div className="text-center font-bold">Action</div>
           </div>
 
-          <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-primary gap-1 pt-1 pb-1">
-            {testReport.map((report, index) => (
+          <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-y-2 border-primary gap-1 py-1">
+            {filteredReports.map((report, index) => (
               <div
-                className="report-box-list-item min-w-fit grid grid-cols-7 w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-primary rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200"
                 key={index}
-                onClick={() => handleItemCheck(report.serial)}
+                className="report-box-list-item grid grid-cols-7 w-full h-[48px] items-center p-2 bg-white border-2 border-primary rounded-[8px] drop-shadow hover:brightness-90 transition-all duration-200 cursor-pointer"
+                onClick={() => handleItemCheck(report.report_id)}
               >
-                <span className="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    name="work-item-checkbox"
-                    id={index}
-                    checked={checkedItems[report.serial] || false}
-                    onChange={() => handleItemCheck(report.serial)}
-                  />
-                  <box-icon
-                    name="spray-can"
-                    type="regular"
-                    size="sm"
-                    color="#FD6E28"
-                  ></box-icon>
-                  {report.serial}
+                <span className="flex items-center gap-2">
+                  
+                  <box-icon name="file" color="#FD6E28" size="sm" />
+                  {report.report_id}
                 </span>
-                <span className="min-w-fit w-full text-center col-span-2">
-                  {report.sender}
+                <span className="text-center">{report.item_id}</span>
+                <span className="text-center">{report.client_id}</span>
+                <span className="text-center">{report.client_branch_id}</span>
+                <span className="text-center">{report.status}</span>
+                <span className="text-center">{report.assigner}</span>
+                <span className="flex justify-end">
+                  <button
+                    className="text-white rounded bg-secondary px-2 py-1 hover:brightness-110"
+                    onClick={(e) => {
+                      e.stopPropagation(); // ป้องกันไม่ให้ checkbox ติดด้วย
+                      handleViewDetails(report);
+                    }}
+                  >
+                    <box-icon
+                      name="show"
+                      type="regular"
+                      color="white"
+                      size="sm"
+                    />
+                  </button>
                 </span>
-                <span className="min-w-fit w-full text-center">
-                  {report.role}
-                </span>
-                <span className="min-w-fit w-full text-center">
-                  {report.date}
-                </span>
-                <span className="min-w-fit w-full text-center">
-                  {report.time}
-                </span>
-                <div className="flex justify-end items-center w-full h-full">
-                <button
-                  className="flex justify-center items-center w-1/4 h-full text-white z-50 rounded bg-secondary hover:brightness-110"
-                  onClick={() => Confirm()}
-                >
-                  <box-icon name="show" type="regular" color="white"></box-icon>
-                </button>
-              </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="report-box-footer flex  justify-between w-full bottom-0 h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
-          <div className="report-box-checked-count flex justify-start items-center bg-primary rounded px-2">
-            <span className="text-white">{checkedCount} selected</span>
-          </div>
-          <div className="flex gap-2">
-            <button
-              className="flex justify-center items-center gap-1 px-2 text-white rounded bg-red-600 hover:brightness-110"
-              onClick={() => handleConfirmReject()}
-            >
-              <span>Reject</span>
-              <box-icon name="x" type="regular " color="white"></box-icon>
-            </button>
-            <button
-              className="flex justify-center items-center gap-1 px-2 text-white rounded bg-green-600 hover:brightness-110"
-              onClick={() => handleConfirmAccept()}
-            >
-              <span>Approve</span>
-              <box-icon name="check" type="regular " color="white"></box-icon>
-            </button>
+
+        <div className="report-box-footer flex justify-between w-full h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
+          <div className="bg-primary text-white px-2 rounded flex items-center">
+            {checkedCount} selected
           </div>
         </div>
       </div>

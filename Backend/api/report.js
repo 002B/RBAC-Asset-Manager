@@ -88,6 +88,24 @@ async function getReportByStatus(status) {
     }
 }
 
+async function getReportByUserDone(user) {
+    try{
+        return await reportModel.find({ "assigner":user , "status": "done" }, { _id: 0 }).lean();
+    }catch(error){
+        console.error('Error fetching data:', error); 
+        return [];
+    }
+}
+
+async function getReportByUserFixing(user) {
+    try{
+        return await reportModel.find({ "assigner": user, "status": "fixing" }, { _id: 0 }).lean();
+    }catch(error){
+        console.error('Error fetching data:', error); 
+        return [];
+    }
+}
+
 async function createReport(company, branch, id, data) {
     try {
         const lastItem = await reportModel.find({}).lean();
@@ -160,6 +178,8 @@ module.exports = {
     getReportByBranchCount,
     getReportById,
     getReportByUser,
-    getReportByStatus
+    getReportByStatus,
+    getReportByUserFixing,
+    getReportByUserDone
 };
 

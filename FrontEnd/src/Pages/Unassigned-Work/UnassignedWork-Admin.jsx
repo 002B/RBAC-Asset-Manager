@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./UnassignedWork.css";
@@ -10,7 +10,6 @@ const UnassignedWorkAdmin = () => {
   const [selectedWorker, setSelectedWorker] = useState("");
   const [searchWorkerTerm, setSearchWorkerTerm] = useState("");
   const [searchWorkTerm, setSearchWorkTerm] = useState("");
-  const filterBoxRef = useRef();
 
   useEffect(() => {
     fetch("http://localhost:3000/report/getReportByStatus/accepted")
@@ -48,13 +47,23 @@ const UnassignedWorkAdmin = () => {
 
   const handleConfirmAssign = () => {
     const checkedCount = Object.values(checkedItems).filter(Boolean).length;
-    confirmAssign(selectedWorker, checkedCount);
+    if (selectedWorker && checkedCount > 0) {
+      confirmAssign(selectedWorker, checkedCount);
+    } else {
+      SweetAlert.fire({
+        title: "Warning!",
+        text: "Please select a worker and unassigned work to assign.",
+        icon: "warning",
+        confirmButtonColor: "#FD6E28",
+      });
+    }
   };
 
-  function confirmAssign(worker, totalWork) {
+  //ยังไม่สมบูรณ์ แต่ดูดี
+  function confirmAssign(worker,) {
     SweetAlert.fire({
       title: "Are you sure?",
-      text: `You need to assign ${totalWork} work(s) to ${worker}`,
+      text: `You need to assign work(s) to ${worker} ?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#FD6E28",
@@ -63,12 +72,56 @@ const UnassignedWorkAdmin = () => {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        SweetAlert.fire({
-          title: "Congratulations!",
-          text: "Work Assigned!",
-          icon: "success",
-          confirmButtonColor: "#FD6E28",
-        });
+        // ทำการอัปเดตสถานะและ assigner ที่ API
+        const selectedReportIds = Object.keys(checkedItems).filter(
+          (report_id) => checkedItems[report_id]
+        );
+
+        fetch("http://localhost:3000/report/updateReport/fixing", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ids: selectedReportIds,
+            assigner: selectedWorker, // ส่ง assigner เป็นชื่อของ worker
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.message === "Report and items updated successfully") {
+              SweetAlert.fire({
+                title: "Success!",
+                text: `work(s) assigned to ${worker}`,
+                icon: "success",
+                confirmButtonColor: "#FD6E28",
+              });
+              // ลบ work ที่ assign แล้วออกจาก list
+              setWorkList((prevList) =>
+                prevList.filter(
+                  (work) => !selectedReportIds.includes(work.report_id)
+                )
+              );
+              // Reset checked items and selected worker
+              setCheckedItems({});
+              setSelectedWorker("");
+            } else {
+              SweetAlert.fire({
+                title: "Error!",
+                text: data.message,
+                icon: "error",
+                confirmButtonColor: "#FD6E28",
+              });
+            }
+          })
+          .catch((error) => {
+            SweetAlert.fire({
+              title: "Error!",
+              text: "An error occurred while assigning work.",
+              icon: "error",
+              confirmButtonColor: "#FD6E28",
+            });
+          });
       }
     });
   }
@@ -87,7 +140,12 @@ const UnassignedWorkAdmin = () => {
       <div className="worker-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
         <div className="worker-list-bar bg-secondary p-2 rounded-[8px] drop-shadow flex items-center border-2 border-white justify-between sticky top-0 z-10">
           <div className="worker-list-header flex gap-1 justify-center items-center">
-            <box-icon name="user" type="regular" size="md" color="white"></box-icon>
+            <box-icon
+              name="user"
+              type="regular"
+              size="md"
+              color="white"
+            ></box-icon>
             <h2 className="text-white">Worker</h2>
           </div>
           <div className="filter-bar">
@@ -117,7 +175,9 @@ const UnassignedWorkAdmin = () => {
                   name="user-circle"
                   type="regular"
                   size="sm"
-                  color={selectedWorker === worker.display_name ? "white" : "#473366"}
+                  color={
+                    selectedWorker === worker.display_name ? "white" : "#473366"
+                  }
                 ></box-icon>
                 <span>{worker.display_name}</span>
               </span>
@@ -133,7 +193,12 @@ const UnassignedWorkAdmin = () => {
       <div className="unassigned-work-list flex flex-col gap-2 min-w-fit flex-1 bg-white p-1 drop-shadow-md rounded-lg">
         <div className="unassigned-work-list-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
           <div className="unassigned-work-list-header flex gap-1 justify-center items-center">
-            <box-icon name="list-plus" type="regular" size="md" color="white"></box-icon>
+            <box-icon
+              name="list-plus"
+              type="regular"
+              size="md"
+              color="white"
+            ></box-icon>
             <h2 className="text-white">Unassigned Work</h2>
           </div>
           <div className="filter-bar">
@@ -160,7 +225,12 @@ const UnassignedWorkAdmin = () => {
                   checked={checkedItems[work.report_id] || false}
                   onChange={() => handleItemCheck(work.report_id)}
                 />
-                <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
+                <box-icon
+                  name="spray-can"
+                  type="regular"
+                  size="sm"
+                  color="#FD6E28"
+                ></box-icon>
                 {work.report_id}
               </span>
               <span className="col-span-2">{work.client_id}</span>
