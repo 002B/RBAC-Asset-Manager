@@ -24,6 +24,10 @@ const Status = ({ role, company, branch }) => {
   const [superMemberItemCount, setSuperMemberItemCount] = useState(0);
   const [superMemberReportPendingCount, setSuperMemberReportPendingCount] = useState(0);
   const [superMemberBadItemCount, setSuperMemberBadItemCount] = useState(0);
+
+  const [adminItemCount, setAdminItemCount] = useState(0);
+  const [adminReportPendingCount, setAdminReportPendingCount] = useState(0);
+
   useEffect(() => {
     const fetchData = async () => {
       if (role === "member") {
@@ -54,6 +58,14 @@ const Status = ({ role, company, branch }) => {
         const badItemInBranchCountResponse = await fetch(`${ branch !== "All Branches" ? `http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/accepted` : `http://localhost:3000/report/getReportStatusByCom/count/${company}/accepted`}`);
         const badItemInBranchCount = await badItemInBranchCountResponse.text();
         setSuperMemberBadItemCount(parseInt(badItemInBranchCount));
+      }else if(role === "admin"){
+        const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getAllItem/count`);
+        const itemInBranchCount = await itemInBranchCountResponse.text();
+        setAdminItemCount(parseInt(itemInBranchCount));
+
+        const reportPendingInBranchCountResponse = await fetch(`http://localhost:3000/report/getAllReportStatus/count/pending`);
+        const reportPendingInBranchCount = await reportPendingInBranchCountResponse.text();
+        setAdminReportPendingCount(parseInt(reportPendingInBranchCount));
       }
     };
     fetchData();
@@ -130,7 +142,7 @@ const Status = ({ role, company, branch }) => {
         <div className="flex justify-between items-center status-box">
           <div className="count-title p-1 m-1">
             <h3>Total Installed</h3>
-            <h1>{getAllItemCompanyCount()}</h1>
+            <h1>{adminItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>

@@ -19,6 +19,15 @@ async function getAllReportCount() {
     }
 }
 
+async function getAllReportByStatus(status) {
+    try {
+        return await reportModel.find({ status: status }, { _id: 0 }).lean();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return [];
+    }
+}
+
 async function getReportByCom(company) {
     try {
         return await reportModel.find({ "client_id": company }, { _id: 0 }).lean();
@@ -196,6 +205,7 @@ module.exports = {
     createReport,
     getAllReport,
     getAllReportCount,
+    getAllReportByStatus,
     getReportByBranch,
     getReportByBranchCount,
     getReportByCom,

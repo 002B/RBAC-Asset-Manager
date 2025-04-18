@@ -35,6 +35,19 @@ router.get('/getAllReport/count', async (req, res) => {
     }
 });
 
+router.get('/getAllReportByStatus/:status', async (req, res) => {
+    const { status } = req.params;
+    if (!status) {
+        return res.status(400).json({ message: "Status must not be empty" });
+    }
+    try {
+        const data = await reportFunc.getAllReportByStatus(status);
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by status', error);
+    }
+});
+
 router.get('/getReportByUserDone/:user', async (req, res) => {
     const { user } = req.params;
     if (!validateParams({ user }, res)) return;
@@ -228,7 +241,6 @@ router.get('/getReportByStatus/:status', async (req, res) => {
 router.put('/updateReport/:status', async (req, res) => {
     const { status } = req.params;
     const { ids, assigner } = req.body; 
-      
 
     if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ message: 'IDs are required and should be an array' });
