@@ -133,7 +133,7 @@ async function getReportByUserFixing(user) {
     }
 }
 
-async function createReport(company, branch, id, data) {
+async function createReport(company, branch, id, data ) {
     try {
         const lastItem = await reportModel.find({}, { sort: { createAt: -1 } }).limit(1).lean();
         const lastNumber = lastItem.length ? lastItem[0].report_id.split('-')[2] : 0;
@@ -145,7 +145,7 @@ async function createReport(company, branch, id, data) {
             "client_branch_id": branch,
             "createAt": new Date().toISOString(),
             "status": "pending",
-            "assigner": "None",
+            "send_by": data.send_by,
             "problem": data.problem
         });
         return true;
@@ -154,7 +154,7 @@ async function createReport(company, branch, id, data) {
     }
 }
 
-async function updateReport(ids, status, assigner) {
+async function updateReport(ids, status, send_to) {
     try {
         const docs = await reportModel.find({ "report_id": { $in: ids } });
         if (!docs.length) {
@@ -170,7 +170,7 @@ async function updateReport(ids, status, assigner) {
                 "client_branch_id": doc.client_branch_id,
                 "createAt": doc.createAt,
                 "status": status,
-                "assigner": assigner || doc["assigner"],
+                "send_to": send_to || doc["send_to"],
                 "problem": doc.problem
             });
 
