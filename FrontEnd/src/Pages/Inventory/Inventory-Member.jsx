@@ -1,3 +1,4 @@
+// src/Pages/Inventory/Inventory-Member.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Auth/AuthProvider";
 import DataTable from "../../Component/DataTable/DataTable";
@@ -7,17 +8,12 @@ const InventoryMember = () => {
   const { user } = useAuth();
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const requestOptions = {
-          method: "GET",
-          redirect: "follow",
-        };
+        user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]
         const response = await fetch(
-          `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`,
-          requestOptions
+          `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`
         );
         const data = await response.json();
         const formattedData = data.map((item) => [
@@ -42,20 +38,22 @@ const InventoryMember = () => {
     fetchData();
   }, [user.company, user.selectedBranch]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col w-full drop-shadow rounded-[8px]">
       <div className="bg-white rounded-[8px] drop-shadow">
-        {Status(user.role, user.company, user.selectedBranch)}
+        <Status
+          role={user.role}
+          company={user.company}
+          branch={user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]}
+        />
       </div>
 
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
         <DataTable
-          tIcon={"spray-can"}
-          colIcon={"spray-can"}
+          tIcon="spray-can"
+          colIcon="spray-can"
           tName="Fire Extinguisher List"
           title={[
             "item_id",

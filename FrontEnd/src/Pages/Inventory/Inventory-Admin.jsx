@@ -50,7 +50,10 @@ const InventoryAdmin = () => {
   return (
     <div className="flex flex-col w-full drop-shadow rounded-[8px]">
       <div className="bg-white rounded-[8px] drop-shadow">
-        {Status(user.role, user.company, user.selectedBranch)}
+      <Status
+          role={user.role}
+          company={user.company}
+        />
       </div>
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
         <DataTable

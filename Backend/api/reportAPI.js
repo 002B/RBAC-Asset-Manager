@@ -117,6 +117,54 @@ router.get('/getReportByBranch/:company/:branch', async (req, res) => {
     }
 });
 
+router.get('/getReportStatusByBranch/:company/:branch/:status', async (req, res) => {
+    const { company, branch, status } = req.params;
+    if (!validateParams({ company, branch, status }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportStatusByBranch(company, branch, status);
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by branch and status', error);
+    }
+});
+
+router.get('/getReportStatusByBranch/count/:company/:branch/:status', async (req, res) => {
+    const { company, branch, status } = req.params;
+    if (!validateParams({ company, branch, status }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportStatusByBranch(company, branch, status);
+        res.json(data.length);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by branch and status', error);
+    }
+});
+
+router.get('/getReportStatusByCom/:company/:status', async (req, res) => {
+    const { company, status } = req.params;
+    if (!validateParams({ company, status }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportStatusByCom(company, status);
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by company and status', error);
+    }
+});
+
+router.get('/getReportStatusByCom/count/:company/:status', async (req, res) => {
+    const { company, status } = req.params;
+    if (!validateParams({ company, status }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportStatusByCom(company, status);
+        res.json(data.length);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by company and status', error);
+    }
+});
+
 router.get('/getReportById/:id', async (req, res) => {
     const { id } = req.params;
     if (!validateParams({ id }, res)) return;
@@ -155,7 +203,7 @@ router.post('/createReport/:id', async (req, res) => {
         if (!item) {
             return res.status(404).json({ message: 'Item not found' });
         }
-        const report = await reportFunc.createReport(item.client_id, item.client_brancg_id, id, data);
+        const report = await reportFunc.createReport(item.client_id, item.client_branch_id, id, data);
         await itemFunc.updateStatus([id], 'reporting');
         res.json(report);
     } catch (error) {
@@ -173,13 +221,15 @@ router.get('/getReportByStatus/:status', async (req, res) => {
         const data = await reportFunc.getReportByStatus(status);
         res.json(data);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching reports by status' });
+        handleError(res, 'Error fetching reports by status', error);
     }
 });
 
 router.put('/updateReport/:status', async (req, res) => {
     const { status } = req.params;
     const { ids, assigner } = req.body; 
+      
+
     if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ message: 'IDs are required and should be an array' });
     }
@@ -188,7 +238,6 @@ router.put('/updateReport/:status', async (req, res) => {
     }
 
     const validStatuses = ['pending', 'accepted', 'fixing', 'done', 'rejected'];
-    
     if (!validStatuses.includes(status.toLowerCase())) {
         return res.status(400).json({ message: 'Invalid status' });
     }
@@ -201,10 +250,9 @@ router.put('/updateReport/:status', async (req, res) => {
 
         if (!updateStatusResult) return res.status(404).json({ message: 'Error updating item status' });
         
-        res.json({ message: 'Report and items updated successfully'});
+        res.json({ message: 'Report and items updated successfully' });
     } catch (error) {
-        console.error('Error updating report:', error);
-        res.status(500).json({ message: 'Error updating report' });
+        handleError(res, 'Error updating report', error);
     }
 });
 

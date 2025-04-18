@@ -1,252 +1,185 @@
 const itemModel = require('./DB/item.js');
 
-
-
-
-/*
-​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
-*/
 async function getAllItems() {
     try {
-        const doc = await itemModel.find({}, { _id: 0 }).lean()
-        return doc;
+        return await itemModel.find({}, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
     }
 }
 
-
-/*
-​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
-*/
 async function getAllItemCount() {
     try {
-        const doc = await itemModel.find({}, { _id: 0 }).lean();
-        return doc.length;
+        return await itemModel.countDocuments();
     } catch (error) {
         console.error('Error fetching total item count:', error);
         return 0;
     }
 }
 
-
-/*
-​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
-*/
 async function getItemCompany(company) {
     try {
-        const doc = await itemModel.find({ "client_id": company }, { _id: 0 }).lean();
-        return doc;
+        return await itemModel.find({ client_id: company }, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
     }
 }
 
-
-/*
-​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
-*/
 async function getItemCompanyCount(company) {
     try {
-        const doc = await itemModel.find({ "client_id": company }, { _id: 0 }).lean();
-        if (doc.length > 0) {
-            return doc.length;
-        }
-        return 0;
+        return await itemModel.countDocuments({ client_id: company });
     } catch (error) {
         console.error('Error fetching data:', error);
         return 0;
     }
 }
 
-
-/*
-​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
-*/
 async function getItemCompanyBranch(company, branch) {
     try {
-        const doc = await itemModel.find({ "client_id": company, "client_branch_id": branch }, { _id: 0 }).lean();
-        return doc;
+        return await itemModel.find({ client_id: company, client_branch_id: branch }, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
     }
 }
 
-
-/*
-​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
-*/
 async function getItemBranchCount(company, branch) {
     try {
-        const doc = await itemModel.find({ "client_id": company, "client_branch_id": branch }, { _id: 0 }).lean();
-        if (doc.length > 0) {
-            return doc.length;
-        }
-        return 0;
+        return await itemModel.countDocuments({ client_id: company, client_branch_id: branch });
     } catch (error) {
         console.error('Error fetching data:', error);
         return 0;
     }
 }
 
-
-/*
-​‌‌‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
-*/
 async function getItemInfo(id) {
     try {
-        const doc = await itemModel.findOne({ "item_id": id }, { _id: 0 }).lean();
-        if (!doc) {
-            return null;
-        }
-        return doc;
+        return await itemModel.findOne({ item_id: id }, { _id: 0 }).lean() || null;
     } catch (error) {
         console.error('Error fetching item details:', error);
         return null;
     }
 }
 
-
-/*
-​‌‌‍‍⁡⁢⁢⁢‍𝗚𝗘𝗧⁡​
-*/
 async function checkItemExist(id) {
     try {
-        const doc = await itemModel.findOne({ "item_id": id }, { _id: 0 }).lean();
-        if (!doc) {
-            return false;
-        }
-        return doc;
+        return await itemModel.findOne({ item_id: id });
     } catch (error) {
         console.error('Error fetching item details:', error);
         return false;
     }
 }
 
-
-/*
-​‌‌‍‍⁡⁣⁣⁢‍POST⁡​ ⁡⁣⁣⁡⁣⁣⁢(𝗖𝗿𝗲𝗮𝘁𝗲 𝗜𝘁𝗲𝗺‍‍)⁡
-*/
 async function createItem(company, branch, data) {
     try {
-        const lastItem = await itemModel.find({}).lean();
-        if (lastItem.length === 0) return "TH-2025-0000001";
-        const lastNumber = parseInt(lastItem[lastItem.length - 1].item_id.split('-').pop());
+        const lastItem = await itemModel.findOne().sort({ item_id: -1 });
+        const lastNumber = lastItem ? parseInt(lastItem.item_id.split('-').pop()) : 0;
+        const newId = `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`;
 
         await itemModel.create({
-            "item_id": `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
-            "client_id": company,
-            "client_branch_id": branch,
-            "item_brand": data.item_brand,
-            "item_capacity": data.item_capacity,
-            "item_color": data.item_color,
-            "item_type": data.item_type,
-            "item_class": data.item_class
+            item_id: newId,
+            client_id: company,
+            client_branch_id: branch,
+            item_brand: data.item_brand,
+            item_capacity: data.item_capacity,
+            item_color: data.item_color,
+            item_type: data.item_type,
+            item_class: data.item_class
         });
-        return `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`;
+        return newId;
     } catch (error) {
         console.error("Error adding new item:", error);
         return false;
     }
 }
 
-
-
-/*
-​‌‌‍‍‍⁡⁣⁣⁢POST​ (Create Many Item)⁡
-*/
 async function createManyItem(company, branch, data, count) {
     try {
-        const lastItem = await itemModel.find({}).lean();
-        if (lastItem.length === 0) return "TH-2025-0000001";
-        let lastNumber = parseInt(lastItem[lastItem.length - 1].item_id.split('-').pop());
+        const lastItem = await itemModel.findOne().sort({ item_id: -1 });
+        let lastNumber = lastItem ? parseInt(lastItem.item_id.split('-').pop()) : 0;
+        const items = [];
+
         for (let i = 0; i < count; i++) {
             lastNumber++;
-            await itemModel.create({
-                "item_id": `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
-                "client_id": company,
-                "client_branch_id": branch,
-                "item_brand": data.item_brand,
-                "item_capacity": data.item_capacity,
-                "item_color": data.item_color,
-                "item_type": data.item_type,
-                "item_class": data.item_class,
-                "item_status": "Available" //Good Report Bad Fix
+            items.push({
+                item_id: `TH-${new Date().getFullYear()}-${lastNumber.toString().padStart(7, '0')}`,
+                client_id: company,
+                client_branch_id: branch,
+                item_brand: data.item_brand,
+                item_capacity: data.item_capacity,
+                item_color: data.item_color,
+                item_type: data.item_type,
+                item_class: data.item_class,
+                item_status: "Available"
             });
         }
+        await itemModel.insertMany(items);
         return true;
     } catch (error) {
-        console.error("Error adding new item:", error);
+        console.error("Error adding new items:", error);
         return false;
     }
 }
 
-
-/*
-⁡⁣⁢⁣​‌‌‍PUT​ (𝗨𝗽𝗱𝗮𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
-*/
 async function updateItem(id, data) {
     try {
-        const doc = await itemModel.findOne({ "item_id": id });
-        if (!doc) {
-            return false;
-        }
-        doc.set({
-            "item_id": doc["item_id"],
-            "client_id": doc["item_client"],
-            "client_branch_id": doc["item_client_branch"],
-            "item_brand": data.item_brand || doc["item_brand"],
-            "item_capacity": data.item_capacity || doc["item_capacity"],
-            "item_color": data.item_color || doc["item_color"],
-            "item_type": data.item_type || doc["item_type"],
-            "item_class": data.item_class || doc["item_class"],
-            "item_status": doc["item_class"]
+        const doc = await itemModel.findOne({ item_id: id });
+        if (!doc) return false;
+
+        Object.assign(doc, {
+            item_brand: data.item_brand || doc.item_brand,
+            item_capacity: data.item_capacity || doc.item_capacity,
+            item_color: data.item_color || doc.item_color,
+            item_type: data.item_type || doc.item_type,
+            item_class: data.item_class || doc.item_class,
+            item_status: data.item_status || doc.item_status
         });
         await doc.save();
         return true;
     } catch (error) {
-        return false
+        console.error('Error updating item:', error);
+        return false;
     }
 }
 
-
-/*
-​‌‌‍⁡⁢⁣⁢‍DELETE⁡​ ⁡⁢⁣⁢(𝗗𝗲𝗹𝗲𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
-*/
 async function deleteItem(id) {
     try {
-        const doc = await itemModel.deleteOne({ "item_id": id });
-        if (doc.deletedCount === 0) {
-            return false;
-        }
-        return true
+        const result = await itemModel.deleteOne({ item_id: id });
+        return result.deletedCount > 0;
     } catch (error) {
-        return false
+        console.error('Error deleting item:', error);
+        return false;
     }
 }
 
 async function updateStatus(itemIds, itemStatus) {
     try {
-        // ค้นหาและอัปเดตหลายๆ item_id
-        const items = await itemModel.updateMany(
-            { "item_id": { $in: itemIds } },  // หา item ที่มี item_id ใน array ของ itemIds
-            { $set: { "item_status": itemStatus } },  // อัปเดตสถานะของ item
-            { multi: true }
+        const result = await itemModel.updateMany(
+            { item_id: { $in: itemIds } },
+            { $set: { item_status: itemStatus } }
         );
-        
-        if (items.nModified === 0) {
-            return false;  // ถ้าไม่มีการอัปเดต
-        }
-
-        return itemStatus;  // คืนค่าที่อัปเดต
+        return result.modifiedCount > 0 ? itemStatus : false;
     } catch (error) {
         console.error('Error updating item status:', error);
         return false;
     }
 }
 
+module.exports = { 
+    getAllItems, 
+    getAllItemCount, 
+    getItemCompany, 
+    getItemCompanyCount, 
+    getItemCompanyBranch, 
+    getItemBranchCount, 
+    getItemInfo,
+    checkItemExist, 
+    createItem, 
+    createManyItem, 
+    updateItem, 
+    deleteItem, 
+    updateStatus
+};
 
-module.exports = { getAllItems, getAllItemCount, getItemCompany, getItemCompanyCount, getItemCompanyBranch, getItemBranchCount, getItemInfo,checkItemExist, createItem, createManyItem, updateItem, deleteItem, updateStatus};

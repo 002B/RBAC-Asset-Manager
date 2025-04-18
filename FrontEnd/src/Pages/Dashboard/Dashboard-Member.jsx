@@ -4,7 +4,7 @@ import DataTable from "../../Component/DataTable/DataTable";
 import CreateForm from "../../Component/CreateForm";
 import Status from "../../Component/Status/Status";
 import { useAuth } from "../../Auth/AuthProvider";
-import { getItemBranch } from "../../Component/file";
+
 const fetchInbox = async (user) => {
   try {
     const requestOptions = {
@@ -17,8 +17,10 @@ const fetchInbox = async (user) => {
     );
     const data = await response.json();
     const formattedData = data.map((item) => [
+      item.report_id,
       item.item_id,
-      item.createAt
+      item.createAt,
+      item.status,
     ]);
     return formattedData;
   } catch (error) {
@@ -28,13 +30,8 @@ const fetchInbox = async (user) => {
 
 const fetchInventory = async (user) => {
   try {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
     const response = await fetch(
-      `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`,
-      requestOptions
+      `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`
     );
     const data = await response.json();
     const formattedData = data.map((item) => [
@@ -54,7 +51,7 @@ const DashboardMember = () => {
   const [inventory, setInventory] = useState([]);
     useEffect(() => {
       (async () => {
-        user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
+        user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]
         setTestActivity(await fetchInbox(user));
         setInventory(await fetchInventory(user));
       })()
@@ -88,7 +85,11 @@ const DashboardMember = () => {
   return (
     <div className="flex flex-col w-full rounded drop-shadow">
       <div className="w-full rounded drop-shadow">
-        {Status(user.role, user.company, user.selectedBranch)}
+      <Status
+          role={user.role}
+          company={user.company}
+          branch={user.selectedBranch ? user.selectedBranch : user.branch[0]}
+        />
       </div>
       <div className=" dashboard-container flex w-full rounded drop-shadow mt-4">
         <div className="big-item">
@@ -96,9 +97,9 @@ const DashboardMember = () => {
           <div className="small-item h-fit">
             <DataTable
               tIcon="revision"
-              tName={"Recent Activity"}
+              tName={"Report Activity"}
               colIcon= {"import"}
-              title={["Activity", "Date"]}
+              title={["Report ID", "Item ID", "Time", "Status"]}
               data={testActivity}
               hasButton={false}
               itemPerPage={4}

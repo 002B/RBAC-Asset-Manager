@@ -58,7 +58,7 @@ const Header = () => {
           Hi {user.user} from {user.company}
         </p>
         <span className="ml-2 text-4xl">
-          Welcome to <span className="text-primary font-bold">Metthier</span>!
+          Welcome to <span className="text-highlight font-bold">Metthier</span>!
         </span>
       </div>
       {user.branch.length > 1 && (

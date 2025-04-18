@@ -19,7 +19,7 @@
 .report-box-select-all input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  border: 2px solid var(--secondary-color);
+  border: 2px solid var(--primary-color);
   border-radius: 4px;
   width: 16px;
   height: 16px;

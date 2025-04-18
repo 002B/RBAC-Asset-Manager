@@ -7,12 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary': '#FD6E28',
-        'secondary': '#473366',
+        'primary': '#1F2A44',
+        'secondary': '#68A4D4',
+        'accent': '#3BAA75',
         'light': '#F2F2E6',
         'gray': '#B3B4AD',
         'green-crop': '#748D8C',
         'pink': '#E8CFCD',
+        'bg': '#F9FAFB',
+        'ndText': '#6B7280',
+        'highlight': '#F4A261',
+        'error': '#DD7A61',
+        'nonHighlight': '#E5E5E5'
       }
     },
   },

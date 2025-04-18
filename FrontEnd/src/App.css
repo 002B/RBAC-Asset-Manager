@@ -2,12 +2,17 @@
 
 
 :root {
-    --primary-color: #FD6E28;
-    --secondary-color: #473366;
+    --primary-color: #1F2A44;
+    --secondary-color: #68A4D4;
+    --accent-color: #3BAA75;
+    --nd-text-color: #6B7280;
+    --highlight-color: #F4A261;
+    --error-color: #DF7A61;
     --light-color:#F2F2E6;
     --gray-color: #B3B4AD;
     --green-color: #748D8C;
     --pink-color: #E8CFCD;
+    --BG-color: #F9FAFB;
 }
 @font-face {
     font-family: 'Sukhumvit';
