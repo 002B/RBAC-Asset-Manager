@@ -46,8 +46,9 @@ const Status = ({ role, company, branch }) => {
         const badItemInBranchCount = await badItemInBranchCountResponse.text();
         setMemberBadItemCount(parseInt(badItemInBranchCount));
 
-        const nextCheckValue = await getNextCheck(company, branch);
-        setNextCheck(0);
+        const nextCheckResponse = await fetch(`http://localhost:3000/company/getNextCheck/${company}/${branch}`);
+        const nextCheckValue = await nextCheckResponse.text();
+        setMemberNextCheck(nextCheckValue.replace('"', "").replace('"', ""));
 
 
       }else if(role === "super_member"){
