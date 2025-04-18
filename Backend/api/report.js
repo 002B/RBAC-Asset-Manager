@@ -99,7 +99,7 @@ async function getReportById(id) {
 
 async function getReportByUser(user) {
     try {
-        return await reportModel.find({ "assigner": user }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_by": user }, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
