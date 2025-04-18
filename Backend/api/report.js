@@ -47,6 +47,15 @@ async function getReportByBranch(company, branch) {
     }
 }
 
+async function getReportStatusByBranch(company, branch, status) {
+    try {
+        return await reportModel.find({ "client_id": company, "client_branch_id": branch, status: status }, { _id: 0 }).lean();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return [];
+    }
+}
+
 async function getReportByBranchCount(company, branch) {
     try {
         const docs = await reportModel.find({ "client_id": company, "client_branch_id": branch }, { _id: 0 }).lean();
@@ -54,6 +63,15 @@ async function getReportByBranchCount(company, branch) {
     } catch (error) {
         console.error('Error fetching data:', error);
         return 0;
+    }
+}
+
+async function getReportStatusByCom(company, status) {
+    try {
+        return await reportModel.find({ "client_id": company, status: status }, { _id: 0 }).lean();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return [];
     }
 }
 
@@ -90,12 +108,11 @@ async function getReportByStatus(status) {
 
 async function createReport(company, branch, id, data) {
     try {
-        const lastItem = await reportModel.find({}).lean();
-        const lastNumber = lastItem.length;
-        console.log(company, branch, id, data);
-        
+        const lastItem = await reportModel.find({}, { sort: { createAt: -1 } }).limit(1).lean();
+        const lastNumber = lastItem.length ? lastItem[0].report_id.split('-')[2] : 0;
+
         await reportModel.create({
-            "report_id": `RP-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
+            "report_id": `RP-${new Date().getFullYear()}-${(parseInt(lastNumber, 10) + 1).toString().padStart(7, '0')}`,
             "item_id": id,
             "client_id": company,
             "client_branch_id": branch,
@@ -133,8 +150,9 @@ async function updateReport(ids, status, assigner) {
             await doc.save();
             itemIds.push(doc.item_id);
         }
-        const itemStatus = getItemStatusByReportStatus(status)
-        return { success: true, itemIds,  itemStatus};
+
+        const itemStatus = getItemStatusByReportStatus(status);
+        return { success: true, itemIds, itemStatus };
     } catch (error) {
         console.error('Error updating report:', error);
         return { success: false, message: 'Error updating report' };
@@ -157,16 +175,18 @@ function getItemStatusByReportStatus(reportStatus) {
 }
 
 module.exports = {
+    createReport,
     getAllReport,
     getAllReportCount,
-    createReport,
-    updateReport,
-    getReportByCom,
-    getReportByComCount,
     getReportByBranch,
     getReportByBranchCount,
+    getReportByCom,
+    getReportByComCount,
     getReportById,
+    getReportByStatus,
     getReportByUser,
-    getReportByStatus
+    getReportStatusByBranch,
+    getReportStatusByCom,
+    updateReport
 };
 

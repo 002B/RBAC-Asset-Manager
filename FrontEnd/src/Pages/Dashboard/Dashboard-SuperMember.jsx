@@ -17,7 +17,7 @@ const fetchInbox = async (user) => {
       : `http://localhost:3000/report/getReportByBranch/${user.company}/${user.selectedBranch}`;
     const response = await fetch(url, requestOptions);
     const data = await response.json();
-    return data.map((item) => [item.item_id, item.createAt]);
+    return data.map((item) => [item.report_id, item.item_id, item.createAt, item.status]);
   } catch (error) {
     console.error("Error fetching inbox data:", error);
     return [];
@@ -55,7 +55,6 @@ async function fetchBranchWithItemCount(user) {
     });
     const branches = await branchResponse.json();
 
-    // ดึงจำนวนถังของแต่ละสาขาแบบ async
     const branchWithCounts = await Promise.all(
       branches.map(async (branch) => {
         try {
@@ -66,7 +65,7 @@ async function fetchBranchWithItemCount(user) {
               redirect: "follow",
             }
           );
-          const itemCount = await itemRes.text(); // หรือ .json() ถ้า API เปลี่ยนในอนาคต
+          const itemCount = await itemRes.text();
           return [branch.client_branch_id, itemCount];
         } catch (err) {
           console.error(`Error fetching count for ${branch.client_branch_id}`, err);
@@ -117,8 +116,8 @@ const DashboardSuperMember = () => {
               <DataTable
                 tIcon="revision"
                 colIcon="send"
-                tName="Recent Activity"
-                title={["Activity", "Time"]}
+                tName="Report Activity"
+                title={["Report ID", "Item ID", "Time", "Status"]}
                 data={testActivity}
                 hasButton={false}
                 itemPerPage={4}

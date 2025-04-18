@@ -8,14 +8,12 @@ const InventoryMember = () => {
   const { user } = useAuth();
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const selectedBranch = user.selectedBranch || user.branch[0];
-
   useEffect(() => {
     const fetchData = async () => {
       try {
+        user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]
         const response = await fetch(
-          `http://localhost:3000/item/getItemList/${user.company}/${selectedBranch}`
+          `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`
         );
         const data = await response.json();
         const formattedData = data.map((item) => [
@@ -38,7 +36,7 @@ const InventoryMember = () => {
     };
 
     fetchData();
-  }, [user.company, selectedBranch]);
+  }, [user.company, user.selectedBranch]);
 
   if (loading) return <div>Loading...</div>;
 
@@ -48,7 +46,7 @@ const InventoryMember = () => {
         <Status
           role={user.role}
           company={user.company}
-          branch={selectedBranch}
+          branch={user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]}
         />
       </div>
 
@@ -81,7 +79,7 @@ const InventoryMember = () => {
           ]}
           formPlaceholder={{
             Company: user.company,
-            Branch: selectedBranch,
+            Branch: user.selectedBranch,
             Name: user.display_name,
           }}
         />
