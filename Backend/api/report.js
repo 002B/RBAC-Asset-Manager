@@ -170,6 +170,7 @@ async function updateReport(ids, status, send_to) {
                 "client_branch_id": doc.client_branch_id,
                 "createAt": doc.createAt,
                 "status": status,
+                "send_by": data.send_by,
                 "send_to": send_to || doc["send_to"],
                 "problem": doc.problem
             });
