@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const reportFunc = require('./report');
 const itemFunc = require('./item');
+const { stat } = require('fs');
 
 const handleError = (res, message, error = null, statusCode = 500) => {
     console.error(message, error || '');
@@ -270,7 +271,7 @@ router.put('/updateReport/:status', async (req, res) => {
     try {
         const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), assigner);
         if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
-
+        
         const updateStatusResult = await itemFunc.updateStatus(updateResult.itemIds, updateResult.itemStatus);
 
         if (!updateStatusResult) return res.status(404).json({ message: 'Error updating item status' });

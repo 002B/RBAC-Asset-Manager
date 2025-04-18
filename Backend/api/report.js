@@ -137,7 +137,6 @@ async function createReport(company, branch, id, data ) {
     try {
         const lastItem = await reportModel.find({}, { sort: { createAt: -1 } }).lean();
         const lastNumber = lastItem.length;
-        console.log(lastNumber);
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(parseInt(lastNumber, 10) + 1).toString().padStart(7, '0')}`,
             "item_id": id,
@@ -152,7 +151,6 @@ async function createReport(company, branch, id, data ) {
         return true;
     } catch (error) {
         console.log("Error adding new report:", error);
-        
         return false;
     }
 }
@@ -207,6 +205,17 @@ function getItemStatusByReportStatus(reportStatus) {
     }
 }
 
+async function deleteReport(id) {
+    try {
+        const result = await reportModel.deleteMany({ "item_id": { $in: id }, status: "pending" });
+        return result.deletedCount; // Returns how many documents were deleted
+    } catch (error) {
+        console.error("Error deleting report:", error);
+        throw new Error("Failed to delete report");
+    }
+}
+
+
 module.exports = {
     createReport,
     getAllReport,
@@ -224,6 +233,7 @@ module.exports = {
     getReportByUserDone,
     getReportStatusByBranch,
     getReportStatusByCom,
-    updateReport
+    updateReport,
+    deleteReport
 };
 

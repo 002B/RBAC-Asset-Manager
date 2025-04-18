@@ -107,7 +107,7 @@ const DashboardSuperMember = () => {
         <Status
           role={user.role}
           company={user.company}
-          branch={user.selectedBranch}
+          branch={user.selectedBranch ? user.selectedBranch : "All Branches"}
         /></div>
       <div className="dashboard-container flex w-full rounded drop-shadow mt-4">
         <div className="big-item">
