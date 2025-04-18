@@ -88,7 +88,11 @@ const DashboardMember = () => {
   return (
     <div className="flex flex-col w-full rounded drop-shadow">
       <div className="w-full rounded drop-shadow">
-        {Status(user.role, user.company, user.selectedBranch)}
+      <Status
+          role={user.role}
+          company={user.company}
+          branch={user.selectedBranch}
+        />
       </div>
       <div className=" dashboard-container flex w-full rounded drop-shadow mt-4">
         <div className="big-item">

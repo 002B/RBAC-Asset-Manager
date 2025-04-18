@@ -65,20 +65,17 @@ async function getItemInfo(id) {
 
 async function checkItemExist(id) {
     try {
-        return await itemModel.findOne({ item_id: id }, { _id: 0 }).lean() || false;
+        return await itemModel.findOne({ item_id: id });
     } catch (error) {
         console.error('Error fetching item details:', error);
         return false;
     }
 }
 
-/*
-​‌‌‍‍⁡⁣⁣⁢‍POST⁡​ ⁡⁣⁣⁡⁣⁣⁢(𝗖𝗿𝗲𝗮𝘁𝗲 𝗜𝘁𝗲𝗺‍‍)⁡
-*/
 async function createItem(company, branch, data) {
     try {
-        const lastItem = await itemModel.find().sort({ item_id: -1 }).limit(1).lean();
-        const lastNumber = lastItem.length ? parseInt(lastItem[0].item_id.split('-').pop()) : 0;
+        const lastItem = await itemModel.findOne().sort({ item_id: -1 });
+        const lastNumber = lastItem ? parseInt(lastItem.item_id.split('-').pop()) : 0;
         const newId = `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`;
 
         await itemModel.create({
@@ -100,8 +97,8 @@ async function createItem(company, branch, data) {
 
 async function createManyItem(company, branch, data, count) {
     try {
-        const lastItem = await itemModel.find().sort({ item_id: -1 }).limit(1).lean();
-        let lastNumber = lastItem.length ? parseInt(lastItem[0].item_id.split('-').pop()) : 0;
+        const lastItem = await itemModel.findOne().sort({ item_id: -1 });
+        let lastNumber = lastItem ? parseInt(lastItem.item_id.split('-').pop()) : 0;
         const items = [];
 
         for (let i = 0; i < count; i++) {
@@ -126,9 +123,6 @@ async function createManyItem(company, branch, data, count) {
     }
 }
 
-/*
-⁡⁣⁢⁣​‌‌‍PUT​ (𝗨𝗽𝗱𝗮𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
-*/
 async function updateItem(id, data) {
     try {
         const doc = await itemModel.findOne({ item_id: id });
@@ -150,9 +144,6 @@ async function updateItem(id, data) {
     }
 }
 
-/*
-​‌‌‍⁡⁢⁣⁢‍DELETE⁡​ ⁡⁢⁣⁢(𝗗𝗲𝗹𝗲𝘁𝗲 𝗜𝘁𝗲𝗺)⁡
-*/
 async function deleteItem(id) {
     try {
         const result = await itemModel.deleteOne({ item_id: id });

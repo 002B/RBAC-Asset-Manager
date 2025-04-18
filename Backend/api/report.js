@@ -92,6 +92,7 @@ async function createReport(company, branch, id, data) {
     try {
         const lastItem = await reportModel.find({}).lean();
         const lastNumber = lastItem.length;
+        console.log(company, branch, id, data);
         
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`,
@@ -119,8 +120,14 @@ async function updateReport(ids, status, assigner) {
         const itemIds = [];
         for (const doc of docs) {
             doc.set({
+                "report_id": doc.report_id,
+                "item_id": doc.item_id,
+                "client_id": doc.client_id,
+                "client_branch_id": doc.client_branch_id,
+                "createAt": doc.createAt,
                 "status": status,
-                "assigner": assigner || doc["assigner"]
+                "assigner": assigner || doc["assigner"],
+                "problem": doc.problem
             });
 
             await doc.save();

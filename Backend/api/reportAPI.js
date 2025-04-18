@@ -106,6 +106,8 @@ router.post('/createReport/:id', async (req, res) => {
 
     try {
         const item = await itemFunc.checkItemExist(id);
+        console.log(item);
+        
         if (!item) {
             return res.status(404).json({ message: 'Item not found' });
         }

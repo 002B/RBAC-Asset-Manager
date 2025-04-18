@@ -1,4 +1,5 @@
-import React from "react";
+// src/Component/Status/Status.jsx
+import React, { useEffect, useState } from "react";
 import "./Status.css";
 import "boxicons";
 import {
@@ -10,12 +11,35 @@ import {
   getLogReportPendingCount,
   getUserCount,
   getBranchCount,
-  getItemBranchCount,
   getCompanyCount
 } from "../Count.js";
-import { getBadItemBranch, getItemBranch, getNextCheck } from "../file.js";
+import { getBadItemBranch, getNextCheck } from "../file.js";
 
-const Status = (role,company,branch) => {
+const Status = ({ role, company, branch }) => {
+  const [itemCount, setItemCount] = useState(0);
+  const [badItemCount, setBadItemCount] = useState(0);
+  const [reportPendingCount, setReportPendingCount] = useState(0);
+  const [nextCheck, setNextCheck] = useState("N/A");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (role === "member") {
+        const res = await fetch(`http://localhost:3000/item/getItemList/count/${company}/${branch}`);
+        const count = await res.text();
+        setItemCount(count);
+
+        const badItems = await getBadItemBranch(company, branch);
+        setBadItemCount(badItems.length);
+
+        const reportCount = await getLogReportPendingCount(company);
+        setReportPendingCount(reportCount);
+
+        const nextCheckValue = await getNextCheck(company, branch);
+        setNextCheck(nextCheckValue);
+      }
+    };
+    fetchData();
+  }, [role, company, branch]);
 
   if (role === "member") {
     return (
@@ -23,33 +47,33 @@ const Status = (role,company,branch) => {
         <div className="flex justify-between items-center status-box">
           <div className="count-title p-1 m-1">
             <h3>Installed</h3>
-            <h1>{getItemBranchCount(company,branch)}</h1>
+            <h1>{itemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
-            <h1>{(getBadItemBranch(company, branch)).length}</h1>
+            <h1>{badItemCount}</h1>
           </div>
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box">
           <div className="count-title p-1 m-1">
             <h3>Report Sent</h3>
-            <h1>{getLogReportPendingCount(company)}</h1>
+            <h1>{reportPendingCount}</h1>
           </div>
           <box-icon name="send" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box">
           <div className="count-title p-1 m-1">
             <h3>Next Check</h3>
-            <h1>{getNextCheck(company,branch)}</h1>
+            <h1>{nextCheck}</h1>
           </div>
           <box-icon name="calendar" color="white" size="lg"></box-icon>
         </div>
       </div>
-    )
+    );
   }
 
   if (role === "super_member") {
@@ -84,7 +108,7 @@ const Status = (role,company,branch) => {
           <box-icon name="send" color="white" size="lg"></box-icon>
         </div>
       </div>
-    )
+    );
   }
 
   if (role === "admin") {
@@ -119,7 +143,7 @@ const Status = (role,company,branch) => {
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
       </div>
-    )
+    );
   }
 
   if (role === "super_admin") {
@@ -154,43 +178,10 @@ const Status = (role,company,branch) => {
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
       </div>
-    )
+    );
   }
 
-
-
-  // return (
-  //   <div className="status-container flex w-full justify-between">
-  //     <div className="flex justify-between items-center status-box">
-  //       <div className="count-title p-1 m-1">
-  //         {role === "member" ? <h3>Installed</h3> : role === "super_member" ? <h3>Total Item</h3> : role === "admin" || "super_admin" ? <h3>Installed</h3> : <h3></h3>}
-  //         {role === "member" ? getItemBranchCount(company, branch) : role === "super_member" ? getItemCompanyCount(company) : role === "admin" || "super_admin" ? getAllItemCompanyCount() : <h3></h3>}
-  //       </div>
-  //       <box-icon name={role === "member" || "super_member" ? "spray-can" : role === "admin" || "super_admin" ? "spray-can" : "question-mark"} color="white" size="lg"></box-icon>
-  //     </div>
-  //     <div className="flex justify-between items-center status-box">
-  //       <div className="count-title p-1 m-1">
-  //         {role === "member" ? <h3>Need Action</h3> : role === "super_member" ? <h3>Member</h3> : role === "admin" || "super_admin" ? <h3>All Action</h3> : <h3></h3>}
-  //         {role === "member" ? getLogReportPendingCount(company) : role === "super_member" ? getUserCount(company) : role === "admin" || "super_admin" ? getAllLogReportCount() : <h3></h3>}
-  //       </div>
-  //       <box-icon name={role === "member" ? "wrench" : role === "super_member" ? "user" : role === "admin" || "super_admin" ? "wrench" : "question-mark"} color="white" size="lg"></box-icon>
-  //     </div>
-  //     <div className="flex justify-between items-center status-box">
-  //       <div className="count-title p-1 m-1">
-  //         {role === "member" ? <h3>Report Sent</h3> : role === "super_member" ? <h3>Branch</h3> : role === "admin" || "super_admin" ? <h3>All Request</h3> : <h3></h3>}
-  //         {role === "member" ? getLogReportAcceptedCount(company) : role === "super_member" ? getBranchCount(company) : role === "admin" || "super_admin" ? getAllLogReportPendingCount() : <h3></h3>}
-  //       </div>
-  //       <box-icon name={role === "member" ? "send" : role === "super_member" ? "git-branch" : role === "admin" || "super_admin" ? "news" : "question-mark"} color="white" size="lg"></box-icon>
-  //     </div>
-  //     <div className="flex justify-between items-center status-box">
-  //       <div className="count-title p-1 m-1">
-  //         {role === "member" ? <h3>Next Check</h3> : role === "super_member" ? <h3>Report Sent</h3> : role === "admin" || "super_admin" ? <h3>All Member</h3> : <h3></h3>}
-  //         {role === "member" ? getNextCheck(company,branch) : role === "super_member" ? getLogReportPendingCount(company) : role === "admin" || "super_admin" ? getAllUserCount() : <h3></h3>}
-  //       </div>
-  //       <box-icon name={role === "member" ? "calendar" : role === "super_member" ? "send" : role === "admin" || "super_admin" ? "user" : "question-mark"} color="white" size="lg"></box-icon>
-  //     </div>
-  //   </div>
-  // );
+  return null;
 };
 
 export default Status;
