@@ -10,12 +10,12 @@ const ActivityLog = () => {
     return (
         <div className="flex flex-col gap-2 w-full h-fit rounded drop-shadow">
             <div className='w-full rounded drop-shadow'>
-            {Status(user.role, user.company)}
+                {Status(user.role, user.company)}
             </div>
             <div className="w-full rounded drop-shadow">
-            <div className='bg-white p-1 rounded drop-shadow'>
-            <DataTable tIcon={"revision"} tName={"Activity Log"} title={["Date", "Time", "Activity", "User", "Role"]} data={userActivityLog} hasButton={false} />
-            </div>
+                <div className='bg-white p-1 rounded drop-shadow'>
+                    <DataTable tIcon={"revision"} tName={"Activity Log"} title={["Date", "Time", "Activity", "User", "Role"]} data={userActivityLog} hasButton={false} />
+                </div>
             </div>
         </div>
     );

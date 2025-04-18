@@ -100,8 +100,8 @@ const DataTable = ({
     <div className="data-table-wrapper">
       <div className="table-title flex items-center justify-between flex-wrap">
         <div className="flex items-center">
-          {tIcon && <box-icon name={tIcon} size="sm" color="#4c3575"></box-icon>}
-          {tName && <h2 className="p-2 text-secondary">{tName}</h2>}
+          {tIcon && <box-icon name={tIcon} size="sm" color="1F2A44"></box-icon>}
+          {tName && <h2 className="p-2 text-primary">{tName}</h2>}
         </div>
         <div className="flex gap-2 justify-center items-center">
           {hasExport && (
