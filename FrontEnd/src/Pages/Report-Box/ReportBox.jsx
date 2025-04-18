@@ -225,7 +225,7 @@ const ReportBox = () => {
                 </span>
                 <span className="text-center">{report.client_id}</span>
                 <span className="text-center">{report.client_branch_id}</span>
-                <span className="text-center col-span-2">{report.assigner}</span>
+                <span className="text-center col-span-2">{report.send_by}</span>
                 <span className="text-center text-overflow-ellipsis col-span-2">{report.createAt}</span>
                 <span className="break-words  text-overflow-ellipsis col-span-2">{report.problem}</span>
               </div>
