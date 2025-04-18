@@ -207,10 +207,12 @@ const ReportBox = () => {
               <input type="checkbox" onChange={toggleAllItemCheckBox} />
               <label className="font-bold">Report Number</label>
             </div>
+            <div className="text-center font-bold">Serial Number</div>
             <div className="text-center font-bold">Company</div>
             <div className="text-center font-bold">Branch</div>
-            <div className="text-center font-bold col-span-2">Send By</div>
-            <div className="text-center font-bold col-span-2">Date</div>
+            <div className="text-center font-bold ">Send By</div>
+            <div className="text-center font-bold ">Date</div>
+            <div className="text-center font-bold ">Time</div>
             <div className="text-center font-bold col-span-2">Problem</div>
           </div>
 
@@ -223,10 +225,12 @@ const ReportBox = () => {
                   <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
                   {report.report_id}
                 </span>
+                <span className="text-center">{report.item_id}</span>
                 <span className="text-center">{report.client_id}</span>
                 <span className="text-center">{report.client_branch_id}</span>
-                <span className="text-center col-span-2">{report.send_by}</span>
-                <span className="text-center text-overflow-ellipsis col-span-2">{report.createAt}</span>
+                <span className="text-center ">{report.send_by}</span>
+                <span className="text-center text-overflow-ellipsis ">{report.createAt.split("T")[0].split("-").reverse().join("-")}</span>
+                <span className="text-center text-overflow-ellipsis ">{report.createAt.split("T")[1].split(".")[0]}</span>
                 <span className="break-words  text-overflow-ellipsis col-span-2">{report.problem}</span>
               </div>
             ))}
