@@ -90,7 +90,10 @@ const DashboardAdmin = () => {
   return (
     <div className="flex flex-col w-full h-fit rounded drop-shadow gap-2">
       <div className="w-full rounded drop-shadow">
-        {Status(user.role, user.company)}
+      <Status
+          role={user.role}
+          company={user.company}
+        />
       </div>
       <div className=" dashboard-container flex w-full rounded drop-shadow">
         <div className="big-item">

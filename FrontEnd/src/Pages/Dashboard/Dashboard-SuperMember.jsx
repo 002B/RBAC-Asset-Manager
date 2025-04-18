@@ -91,6 +91,7 @@ const DashboardSuperMember = () => {
   const [branchList, setBranchList] = useState([]);
   useEffect(() => {
     (async () => {
+      user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
       setTestActivity(await fetchInbox(user));
       setLoginActivity(await fetchLoginActivity());
       setBranchList(await fetchBranchWithItemCount(user));
@@ -103,7 +104,12 @@ const DashboardSuperMember = () => {
 
   return (
     <div className="flex flex-col w-full h-fit rounded drop-shadow">
-      <div className="w-full rounded drop-shadow">{Status(user.selectedRole, user.company, user.selectedBranch)}</div>
+      <div className="w-full rounded drop-shadow">
+        <Status
+          role={user.role}
+          company={user.company}
+          branch={user.selectedBranch}
+        /></div>
       <div className="dashboard-container flex w-full rounded drop-shadow mt-4">
         <div className="big-item">
           <div className="small-item-wrapper">

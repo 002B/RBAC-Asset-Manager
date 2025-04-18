@@ -44,7 +44,7 @@ const Status = ({ role, company, branch }) => {
   if (role === "member") {
     return (
       <div className="status-container flex w-full justify-between">
-        <div className="flex justify-between items-center status-box ">
+        <div className="flex justify-between items-center status-box bg-color-primary ">
           <div className="count-title p-1 m-1">
             <h3>Installed</h3>
             <h1>{itemCount}</h1>
