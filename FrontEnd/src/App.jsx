@@ -16,6 +16,7 @@ import UnassignedWork from "./Pages/Unassigned-Work/UnassignedWork.jsx";
 import SubmittedWork from "./Pages/Submitted-Work/Submitted-Work.jsx";
 import Setting from "./Pages/Setting/Setting.jsx";
 import ActivityLog from "./Pages/Activity-Log/ActivityLog";
+import ItemLog from "./Pages/Item-Log/ItemLog";
 import NotFound from './Pages/Not-Found/Not-Found';
 
 const router = createBrowserRouter(
@@ -112,13 +113,21 @@ const router = createBrowserRouter(
             <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
               <SubmittedWork />
             </ProtectedRoute>
-          )
+          ),
         },
         {
           path: "/activity-log",
           element: (
             <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
               <ActivityLog />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/item-log",
+          element: (
+            <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
+              <ItemLog />
             </ProtectedRoute>
           ),
         },
