@@ -24,4 +24,34 @@ router.get('/getAllBranch/:company', async (req, res) => {
     }
 });
 
+router.get('/getNextCheck/:company/:branch', async (req, res) => {
+    const { company, branch } = req.params;
+    try {
+        const nextCheck = await companyFunc.getNextCheck(company, branch);
+        res.json(nextCheck);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching next check' });
+    }
+});
+
+router.get('/getLastCheck/:company/:branch', async (req, res) => {
+    const { company, branch } = req.params;
+    try {
+        const lastCheck = await companyFunc.getLastCheck(company, branch);
+        res.json(lastCheck);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching last check' });
+    }
+});
+
+router.get('/getCompanyBranch/', async (req, res) => {
+    const { company } = req.params;
+    try {
+        const branches = await companyFunc.getCompanyBranch(company);
+        res.json(branches);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching company branches' });
+    }
+});
+
 module.exports = router;

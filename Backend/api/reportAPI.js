@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const reportFunc = require('./report');
 const itemFunc = require('./item');
+const { stat } = require('fs');
 
 const handleError = (res, message, error = null, statusCode = 500) => {
     console.error(message, error || '');
@@ -32,6 +33,78 @@ router.get('/getAllReport/count', async (req, res) => {
         res.json(count);
     } catch (error) {
         handleError(res, 'Error fetching report count', error);
+    }
+});
+
+router.get('/getAllReportByStatus/:status', async (req, res) => {
+    const { status } = req.params;
+    if (!status) {
+        return res.status(400).json({ message: "Status must not be empty" });
+    }
+    try {
+        const data = await reportFunc.getAllReportByStatus(status);
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by status', error);
+    }
+});
+
+router.get('/getAllReportByStatus/count/:status', async (req, res) => {
+    const { status } = req.params;
+    if (!status) {
+        return res.status(400).json({ message: "Status must not be empty" });
+    }
+    try {
+        const data = await reportFunc.getAllReportByStatus(status);
+        res.json(data.length);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by status', error);
+    }
+});
+
+router.get('/getReportByUserDone/:user', async (req, res) => {
+    const { user } = req.params;
+    if (!validateParams({ user }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportByUserDone(user);
+        if (!data || data.length === 0) {
+            return res.status(404).json({ message: 'No done reports found for this user' });
+        }
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching done reports by user', error);
+    }
+});
+
+router.get('/getReportByUserFixing/:user', async (req, res) => {
+    const { user } = req.params;
+    if (!validateParams({ user }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportByUserFixing(user);
+        if (!data || data.length === 0) {
+            return res.status(404).json({ message: 'No fixing reports found for this user' });
+        }
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching fixing reports by user', error);
+    }
+});
+
+
+router.get('/getReportByUser/:user', async (req, res) => {
+    const { user } = req.params;
+    if (!validateParams({ user }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportByUser(user);
+        if (!data || data.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by user', error);
     }
 });
 
@@ -68,6 +141,54 @@ router.get('/getReportByBranch/:company/:branch', async (req, res) => {
         res.json(data);
     } catch (error) {
         handleError(res, 'Error fetching reports by branch', error);
+    }
+});
+
+router.get('/getReportStatusByBranch/:company/:branch/:status', async (req, res) => {
+    const { company, branch, status } = req.params;
+    if (!validateParams({ company, branch, status }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportStatusByBranch(company, branch, status);
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by branch and status', error);
+    }
+});
+
+router.get('/getReportStatusByBranch/count/:company/:branch/:status', async (req, res) => {
+    const { company, branch, status } = req.params;
+    if (!validateParams({ company, branch, status }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportStatusByBranch(company, branch, status);
+        res.json(data.length);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by branch and status', error);
+    }
+});
+
+router.get('/getReportStatusByCom/:company/:status', async (req, res) => {
+    const { company, status } = req.params;
+    if (!validateParams({ company, status }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportStatusByCom(company, status);
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by company and status', error);
+    }
+});
+
+router.get('/getReportStatusByCom/count/:company/:status', async (req, res) => {
+    const { company, status } = req.params;
+    if (!validateParams({ company, status }, res)) return;
+
+    try {
+        const data = await reportFunc.getReportStatusByCom(company, status);
+        res.json(data.length);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by company and status', error);
     }
 });
 
@@ -119,6 +240,7 @@ router.post('/createReport/:id', async (req, res) => {
 
 router.get('/getReportByStatus/:status', async (req, res) => {
     const status = req.params.status;
+    
     if (!status) {
         return res.status(400).json({ message: "Status must not be empty" });
     }
@@ -126,13 +248,14 @@ router.get('/getReportByStatus/:status', async (req, res) => {
         const data = await reportFunc.getReportByStatus(status);
         res.json(data);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching reports by status' });
+        handleError(res, 'Error fetching reports by status', error);
     }
 });
 
 router.put('/updateReport/:status', async (req, res) => {
     const { status } = req.params;
-    const { ids, assigner } = req.body;  
+    const { ids, assigner } = req.body; 
+
     if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ message: 'IDs are required and should be an array' });
     }
@@ -141,23 +264,20 @@ router.put('/updateReport/:status', async (req, res) => {
     }
 
     const validStatuses = ['pending', 'accepted', 'fixing', 'done', 'rejected'];
-    
     if (!validStatuses.includes(status.toLowerCase())) {
         return res.status(400).json({ message: 'Invalid status' });
     }
-
     try {
         const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), assigner);
         if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
-
+        if (status.toLowerCase() === 'accepted') await reportFunc.deleteReport(updateResult.itemIds);
         const updateStatusResult = await itemFunc.updateStatus(updateResult.itemIds, updateResult.itemStatus);
 
         if (!updateStatusResult) return res.status(404).json({ message: 'Error updating item status' });
         
-        res.json({ message: 'Report and items updated successfully'});
+        res.json({ message: 'Report and items updated successfully' });
     } catch (error) {
-        console.error('Error updating report:', error);
-        res.status(500).json({ message: 'Error updating report' });
+        handleError(res, 'Error updating report', error);
     }
 });
 

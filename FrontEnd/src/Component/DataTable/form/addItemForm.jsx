@@ -1,85 +1,89 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const AddItemForm = ({ onClose, onSubmit }) => {
-  const [company, setCompany] = useState("ThaiBev");
-  const [branch, setBranch] = useState("ThaiBev_1");
-  const [id, setId] = useState("");
-  const today = new Date();
-  const expDate = new Date(
-    today.getFullYear() + 5,
-    today.getMonth(),
-    today.getDate()
-  );
-  const nextCheck = new Date(
-    today.getFullYear(),
-    today.getMonth() + 3,
-    today.getDate()
-  );
+  const [company, setCompany] = useState(""); 
+  const [branch, setBranch] = useState(""); 
 
-  const formattedToday = today.toISOString().split("T")[0];
-  const formattedExpDate = expDate.toISOString().split("T")[0];
-  const formattedNextCheck = nextCheck.toISOString().split("T")[0];
-
+  const [companyBranchData, setCompanyBranchData] = useState({});
+  const [isLoading, setIsLoading] = useState(true); 
   const [formData, setFormData] = useState({
-    brand: "SafetyPlus",
-    type: "Foam",
-    capacity: "3kg",
-    install_by: "admin",
-    install_date: formattedToday,
-    exp_date: formattedExpDate,
-    location: "",
-    color: "red",
-    next_check: formattedNextCheck,
-    last_check: formattedToday,
-    status: "Good",
-    log: {
-      Install: formattedToday,
-    },
+    item_client: "", 
+    item_client_branch: "", 
+    item_brand: "SafetyPlus",
+    item_capacity: "3kg",
+    item_color: "red",
+    item_type: "foam",
+    item_class: "ABC",
   });
+
+  useEffect(() => {
+    const fetchCompanyBranches = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/company/getCompanyBranch");
+        const data = await response.json();
+
+        if (response.ok) {
+          setCompanyBranchData(data);
+          setIsLoading(false); 
+        } else {
+          console.error("Failed to fetch company and branch data");
+        }
+      } catch (error) {
+        console.error("Error fetching company branches:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchCompanyBranches();
+  }, []); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name in formData.log) {
-      setFormData({
-        ...formData,
-        log: {
-          ...formData.log,
-          [name]: value,
-        },
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleCompanyChange = (e) => {
-    setCompany(e.target.value);
-    // Reset branch when company changes
-    setBranch(e.target.value === "ThaiBev" ? "ThaiBev_1" : "SCB_1");
+    const selectedCompany = e.target.value;
+    setCompany(selectedCompany);
+    setFormData({
+      ...formData,
+      item_client: selectedCompany,
+      item_client_branch: "", 
+    });
   };
 
   const handleBranchChange = (e) => {
     setBranch(e.target.value);
-  };
-
-  const handleIdChange = (e) => {
-    setId(e.target.value);
+    setFormData({
+      ...formData,
+      item_client_branch: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const requestBody = {
+        item_client: formData.item_client,
+        item_client_branch: formData.item_client_branch,
+        item_brand: formData.item_brand,
+        item_capacity: formData.item_capacity,
+        item_color: formData.item_color,
+        item_type: formData.item_type,
+        item_class: formData.item_class,
+      };
+
       const response = await fetch(
-        `http://localhost:3000/item/createItem/${company}/${branch}/${id}`,
+        `http://localhost:3000/item/createItem/${company}/${branch}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(requestBody),
         }
       );
 
@@ -94,6 +98,16 @@ const AddItemForm = ({ onClose, onSubmit }) => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <h2 className="text-xl font-bold text-primary mb-4">Loading...</h2>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
@@ -105,13 +119,17 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 Company
               </label>
               <select
-                name="company"
-                value={company}
+                name="item_client"
+                value={formData.item_client}
                 onChange={handleCompanyChange}
                 className="border-2 border-primary rounded w-full p-2"
               >
-                <option value="ThaiBev">ThaiBev</option>
-                <option value="SCB">SCB</option>
+                <option value="">Select Company</option>
+                {Object.keys(companyBranchData).map((companyName) => (
+                  <option key={companyName} value={companyName}>
+                    {companyName}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -119,44 +137,27 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 Branch
               </label>
               <select
-                name="branch"
-                value={branch}
+                name="item_client_branch"
+                value={formData.item_client_branch}
                 onChange={handleBranchChange}
                 className="border-2 border-primary rounded w-full p-2"
+                disabled={!company} 
               >
-                {company === "ThaiBev" ? (
-                  <>
-                    <option value="ThaiBev_1">ThaiBev_1</option>
-                    <option value="ThaiBev_2">ThaiBev_2</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="SCB_1">SCB_1</option>
-                    <option value="SCB_2">SCB_2</option>
-                  </>
-                )}
+                <option value="">Select Branch</option>
+                {companyBranchData[company]?.map((branchName) => (
+                  <option key={branchName} value={branchName}>
+                    {branchName}
+                  </option>
+                ))}
               </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Serial Number
-              </label>
-              <input
-                type="text"
-                name="id"
-                value={id}
-                onChange={handleIdChange}
-                className="border-2 border-primary rounded w-full p-2"
-                required
-              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Brand
               </label>
               <select
-                name="brand"
-                value={formData.brand}
+                name="item_brand"
+                value={formData.item_brand}
                 onChange={handleChange}
                 className="border-2 border-primary rounded w-full p-2"
               >
@@ -172,13 +173,13 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 Type
               </label>
               <select
-                name="type"
-                value={formData.type}
+                name="item_type"
+                value={formData.item_type}
                 onChange={handleChange}
                 className="border-2 border-primary rounded w-full p-2"
               >
-                <option value="Foam">Foam</option>
-                <option value="Liquid">Liquid</option>
+                <option value="foam">Foam</option>
+                <option value="liquid">Liquid</option>
               </select>
             </div>
             <div>
@@ -186,8 +187,8 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 Capacity
               </label>
               <select
-                name="capacity"
-                value={formData.capacity}
+                name="item_capacity"
+                value={formData.item_capacity}
                 onChange={handleChange}
                 className="border-2 border-primary rounded w-full p-2"
               >
@@ -202,8 +203,8 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 Color
               </label>
               <select
-                name="color"
-                value={formData.color}
+                name="item_color"
+                value={formData.item_color}
                 onChange={handleChange}
                 className="border-2 border-primary rounded w-full p-2"
               >
@@ -214,44 +215,16 @@ const AddItemForm = ({ onClose, onSubmit }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Expiration Date
-              </label>
-              <input
-                type="date"
-                name="exp_date"
-                value={formData.exp_date}
-                onChange={handleChange}
-                className="border-2 border-primary rounded w-full p-2"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Location
+                Item Class
               </label>
               <input
                 type="text"
-                name="location"
-                value={formData.location}
+                name="item_class"
+                value={formData.item_class}
                 onChange={handleChange}
                 className="border-2 border-primary rounded w-full p-2"
                 required
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Status
-              </label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="border-2 border-primary rounded w-full p-2"
-              >
-                <option value="Good">Good</option>
-                <option value="Need Maintenance">Need Maintenance</option>
-                <option value="Expired">Expired</option>
-              </select>
             </div>
           </div>
           <div className="flex justify-end space-x-2">
@@ -276,3 +249,4 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 };
 
 export default AddItemForm;
+

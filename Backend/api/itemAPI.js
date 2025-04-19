@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const itemFunc = require('./item');
 
+// Get all items
 router.get('/getAllItem', async (req, res) => {
     try {
         const items = await itemFunc.getAllItems();
@@ -11,6 +12,7 @@ router.get('/getAllItem', async (req, res) => {
     }
 });
 
+// Get count of all items
 router.get('/getAllItem/count', async (req, res) => {
     try {
         const count = await itemFunc.getAllItemCount();
@@ -20,6 +22,7 @@ router.get('/getAllItem/count', async (req, res) => {
     }
 });
 
+// Get items by company
 router.get('/getItemList/:company', async (req, res) => {
     const { company } = req.params;
     try {
@@ -31,6 +34,7 @@ router.get('/getItemList/:company', async (req, res) => {
     }
 });
 
+// Get count of items by company
 router.get('/getItemList/count/:company', async (req, res) => {
     const { company } = req.params;
     try {
@@ -42,6 +46,7 @@ router.get('/getItemList/count/:company', async (req, res) => {
     }
 });
 
+// Get items by company and branch
 router.get('/getItemList/:company/:branch', async (req, res) => {
     const { company, branch } = req.params;
     try {
@@ -53,6 +58,7 @@ router.get('/getItemList/:company/:branch', async (req, res) => {
     }
 });
 
+// Get count of items by company and branch
 router.get('/getItemList/count/:company/:branch', async (req, res) => {
     const { company, branch } = req.params;
     try {
@@ -64,6 +70,7 @@ router.get('/getItemList/count/:company/:branch', async (req, res) => {
     }
 });
 
+// Get item info by ID
 router.get('/getItemInfo/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -75,6 +82,7 @@ router.get('/getItemInfo/:id', async (req, res) => {
     }
 });
 
+// Create an item
 router.post('/createItem/:company/:branch', async (req, res) => {
     const { company, branch } = req.params;
     const data = req.body;
@@ -86,6 +94,7 @@ router.post('/createItem/:company/:branch', async (req, res) => {
     }
 });
 
+// Create many items
 router.post('/createItem/:company/:branch/:count', async (req, res) => {
     const { company, branch, count } = req.params;
     const data = req.body;
@@ -97,11 +106,12 @@ router.post('/createItem/:company/:branch/:count', async (req, res) => {
     }
 });
 
-router.put('/updateItem/:company/:branch/:id', async (req, res) => {
-    const { company, branch, id } = req.params;
+// Update an item
+router.put('/updateItem/:id', async (req, res) => {
+    const { id } = req.params;
     const data = req.body;
     try {
-        const items = await itemFunc.updateItem(company, branch, id, data);
+        const items = await itemFunc.updateItem(id, data);
         if (!items) return res.status(404).json({ message: 'Item not found' });
         res.json(items);
     } catch (error) {
@@ -109,6 +119,7 @@ router.put('/updateItem/:company/:branch/:id', async (req, res) => {
     }
 });
 
+// Update item status
 router.put('/updateStatus', async (req, res) => {
     const { item_ids, status } = req.body;
     try {
@@ -120,6 +131,7 @@ router.put('/updateStatus', async (req, res) => {
     }
 });
 
+// Delete an item
 router.delete('/deleteItem/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -131,4 +143,3 @@ router.delete('/deleteItem/:id', async (req, res) => {
 });
 
 module.exports = router;
-

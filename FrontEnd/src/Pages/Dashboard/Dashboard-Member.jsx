@@ -4,7 +4,7 @@ import DataTable from "../../Component/DataTable/DataTable";
 import CreateForm from "../../Component/CreateForm";
 import Status from "../../Component/Status/Status";
 import { useAuth } from "../../Auth/AuthProvider";
-import { getItemBranch } from "../../Component/file";
+
 const fetchInbox = async (user) => {
   try {
     const requestOptions = {
@@ -17,8 +17,10 @@ const fetchInbox = async (user) => {
     );
     const data = await response.json();
     const formattedData = data.map((item) => [
+      item.report_id,
       item.item_id,
-      item.createAt
+      item.createAt,
+      item.status,
     ]);
     return formattedData;
   } catch (error) {
@@ -28,13 +30,8 @@ const fetchInbox = async (user) => {
 
 const fetchInventory = async (user) => {
   try {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
     const response = await fetch(
-      `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`,
-      requestOptions
+      `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`
     );
     const data = await response.json();
     const formattedData = data.map((item) => [
@@ -47,48 +44,70 @@ const fetchInventory = async (user) => {
     return []
   }
 }
+const fetchNextCheck = async (user) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/company/getNextCheck/${user.company}/${user.selectedBranch}`
+    );
+    const data = await response.json();
+
+    const [day, month, year] = data.split('/');
+
+    const receivedDate = new Date(year, month - 1, day);
+    const today = new Date();
+    const differenceInTime = receivedDate.getTime() - today.getTime();
+    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+
+    return differenceInDays;
+  } catch (error) {
+    console.error('Error fetching next check:', error);
+    return null;
+  }
+}
+
+const fetchLastCheck = async (user) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/company/getLastCheck/${user.company}/${user.selectedBranch}`
+    );
+    const data = await response.json();
+    const transformedData = data.map(date => [date]);
+    return transformedData;
+  } catch (error) {
+    console.error('Error fetching last check:', error);
+    return null;
+  }
+}
+
 const DashboardMember = () => {
   const {user} = useAuth();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [testActivity, setTestActivity] = useState([]);
   const [inventory, setInventory] = useState([]);
+  const [checkUp, setCheckUp] = useState([]);
+  const [lastCheck, setLastCheck] = useState([]);
     useEffect(() => {
       (async () => {
-        user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
+        user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]
         setTestActivity(await fetchInbox(user));
         setInventory(await fetchInventory(user));
+        setCheckUp(await fetchNextCheck(user));
+        setLastCheck(await fetchLastCheck(user));
       })()
-    }, [user.company, user.selectedBranch])
+    }, [user.company, user.selectedBranch]);
   const handleButtonClick = () => {
     // setShowCreateForm(!showCreateForm);
     setShowCreateForm(true);
   };
 
-
-
-  const testCheckUp = [
-    [
-      "22/11/2022",
-      "2022/4 Check Up",
-    ],
-    [
-      "22/08/2022",
-      "2022/3 Check Up",
-    ],
-    [
-      "22/05/2022",
-      "2022/2 Check Up",
-    ],
-    [
-      "22/02/2022",
-      "2022/1 Check Up",
-    ],
-  ];
-
   return (
     <div className="flex flex-col w-full rounded drop-shadow">
       <div className="w-full rounded drop-shadow">
-        {Status(user.role, user.company, user.selectedBranch)}
+      <Status
+          role={user.role}
+          company={user.company}
+          branch={user.selectedBranch ? user.selectedBranch : user.branch[0]}
+        />
       </div>
       <div className=" dashboard-container flex w-full rounded drop-shadow mt-4">
         <div className="big-item">
@@ -96,9 +115,9 @@ const DashboardMember = () => {
           <div className="small-item h-fit">
             <DataTable
               tIcon="revision"
-              tName={"Recent Activity"}
+              tName={"Report Activity"}
               colIcon= {"import"}
-              title={["Activity", "Date"]}
+              title={["Report ID", "Item ID", "Time", "Status"]}
               data={testActivity}
               hasButton={false}
               itemPerPage={4}
@@ -112,7 +131,7 @@ const DashboardMember = () => {
             <div className="countdown w-full flex justify-center items-center flex-col gap-2">
               <div className="flex justify-center items-center">
                 <box-icon name="timer" color="#ff6700" size="lg"></box-icon>
-                <h1 className="text-primary">58</h1>
+                <h1 className="text-primary">{checkUp}</h1>
               </div>
               <span className="flex justify-center items-end">
                 <h2> Days </h2>
@@ -120,9 +139,9 @@ const DashboardMember = () => {
               </span>
             </div>
             <DataTable
-              title={[ "", ""]}
+              title={["Last Check"]}
               colIcon={"check-square"}
-              data={testCheckUp}
+              data={lastCheck}
               hasButton={false}
               hasPagination={false}
               itemPerPage={4}

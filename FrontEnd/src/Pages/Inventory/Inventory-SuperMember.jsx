@@ -22,8 +22,8 @@ const InventorySuperMember = () => {
         const data = await response.json();
         const formattedData = data.map((item) => [
           item.item_id,
-          item.client_branch_id,
           item.client_id,
+          item.client_branch_id,
           item.item_brand,
           item.item_capacity,
           item.item_color,
@@ -40,7 +40,7 @@ const InventorySuperMember = () => {
     };
 
     fetchData();
-  }, [user.company, user.selectedBranch]);
+  }, [user.company, user.selectedBranch, inventory]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -49,17 +49,21 @@ const InventorySuperMember = () => {
   return (
     <div className="flex flex-col w-full drop-shadow rounded-[8px]">
       <div className="bg-white rounded-[8px] drop-shadow">
-        {Status(user.role, user.company, user.selectedBranch)}
+      <Status
+          role={user.role}
+          company={user.company}
+          branch={user.selectedBranch}
+        />
       </div>
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
         <DataTable
           tIcon={"spray-can"}
-          colIcon={"spray-can"}
           tName="Fire Extinguisher List"
+          colIcon={"spray-can"}
           title={[
             "item_id",
-            "client_branch_id",
             "client_id",
+            "client_branch_id",
             "item_brand",
             "item_capacity",
             "item_color",
@@ -83,9 +87,11 @@ const InventorySuperMember = () => {
             Branch: user.selectedBranch,
             Name: user.display_name,
           }}
+          hasQr={true}
         />
       </div>
     </div>
   );
 }
 export default InventorySuperMember;
+

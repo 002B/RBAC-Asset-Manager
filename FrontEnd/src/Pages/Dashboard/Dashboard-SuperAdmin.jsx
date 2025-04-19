@@ -79,7 +79,10 @@ const DashboardSuperAdmin = () => {
   return (
     <div className="flex flex-col gap-2">
       <div className="w-full rounded-lg drop-shadow">
-        {Status(user.role, user.company)}
+        <Status
+          role={user.role}
+          company={user.company}
+        />
       </div>
       <div className="chart-container w-full bg-white p-1 rounded-lg drop-shadow">
       <Bar data={testData} options={chartOptions} />

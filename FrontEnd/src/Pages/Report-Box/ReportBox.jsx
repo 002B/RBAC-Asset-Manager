@@ -5,32 +5,89 @@ import "./ReportBox.css";
 
 const ReportBox = () => {
   const [reportList, setReportList] = useState([]);
+  const [companyList, setCompanyList] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
   const [searchReportTerm, setSearchReportTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
-    client_id: [],
-    client_branch_id: [],
+    Company: [],
+    Branch: [],
   });
 
   const filterBoxRef = useRef();
 
+  // ✅ ดึงข้อมูลรายงานแบบอัปเดตอัตโนมัติทุก 5 วินาที
   useEffect(() => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
+    const fetchReports = () => {
+      fetch("http://localhost:3000/report/getReportByStatus/pending")
+        .then((response) => response.json())
+        .then((data) => setReportList(data))
+        .catch((error) => console.error("Error fetching reports:", error));
     };
 
-    fetch("http://localhost:3000/report/getReportByStatus/pending", requestOptions)
-      .then((response) => response.json())
-      .then((data) => setReportList(data))
-      .catch((error) => console.error("Error fetching pending reports:", error));
+    const fetchCompanies = () => {
+      fetch("http://localhost:3000/client/getAllCompany")
+        .then((res) => res.json())
+        .then((data) => setCompanyList(data))
+        .catch((err) => console.error("Error fetching company list:", err));
+    };
+
+    fetchReports();     // โหลดครั้งแรก
+    fetchCompanies();   // โหลดข้อมูลบริษัท
+
+    const interval = setInterval(fetchReports, 1000); // ✅ ดึงซ้ำทุก 1 วิ
+
+    return () => clearInterval(interval); // เคลียร์ตอน unmount
   }, []);
 
-  const handleItemCheck = (serial) => {
-    setCheckedItems((prevState) => ({
-      ...prevState,
-      [serial]: !prevState[serial],
-    }));
+  const updateReportStatus = async (status) => {
+    const selectedIds = Object.keys(checkedItems).filter((id) => checkedItems[id]);
+    try {
+      const response = await fetch(`http://localhost:3000/report/updateReport/${status}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: selectedIds }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        SweetAlert.fire("Success", data.message, "success");
+        const newReports = await fetch("http://localhost:3000/report/getReportByStatus/pending").then((res) => res.json());
+        setReportList(newReports);
+        setCheckedItems({});
+      } else {
+        SweetAlert.fire("Error", data.message, "error");
+      }
+    } catch (error) {
+      console.error("Error updating report:", error);
+      SweetAlert.fire("Error", "Something went wrong!", "error");
+    }
+  };
+
+  const handleItemCheck = (reportId) => {
+    const selectedReport = reportList.find((r) => r.report_id === reportId);
+    if (!selectedReport) return;
+
+    const serial = selectedReport.item_id;
+
+    setCheckedItems((prev) => {
+      const newChecked = { ...prev };
+
+      for (let id in newChecked) {
+        const r = reportList.find((r) => r.report_id === id);
+        if (r && r.item_id === serial) {
+          delete newChecked[id];
+        }
+      }
+
+      if (!prev[reportId]) {
+        newChecked[reportId] = true;
+      }
+
+      return newChecked;
+    });
   };
 
   const toggleAllItemCheckBox = (e) => {
@@ -44,18 +101,13 @@ const ReportBox = () => {
 
   const handleConfirmAccept = () => {
     const checkedCount = Object.values(checkedItems).filter(Boolean).length;
-    confirmAccept(checkedCount);
-  };
-
-  const handleConfirmReject = () => {
-    const checkedCount = Object.values(checkedItems).filter(Boolean).length;
-    confirmReject(checkedCount);
-  };
-
-  function confirmAccept(totalReport) {
+    if (checkedCount === 0) {
+      SweetAlert.fire("Warning", "Please select at least one report", "warning");
+      return;
+    }
     SweetAlert.fire({
       title: "Are you sure?",
-      text: "You need to accept " + totalReport + " report(s)?",
+      text: `You need to accept ${checkedCount} report(s)?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#16a34a",
@@ -64,45 +116,39 @@ const ReportBox = () => {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        SweetAlert.fire({
-          title: "Congratulations! ",
-          text: "Report(s) Accepted!",
-          icon: "success",
-          confirmButtonColor: "#16a34a",
-        });
+        updateReportStatus("accepted");
       }
     });
-  }
+  };
 
-  function confirmReject(totalReport) {
+  const handleConfirmReject = () => {
+    const checkedCount = Object.values(checkedItems).filter(Boolean).length;
+    if (checkedCount === 0) {
+      SweetAlert.fire("Warning", "Please select at least one report", "warning");
+      return;
+    }
     SweetAlert.fire({
       title: "Are you sure?",
-      text: "You need to reject " + totalReport + " report(s)?",
+      text: `You need to reject ${checkedCount} report(s)?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#dc2626",
       cancelButtonColor: "#B3B4AD",
-      confirmButtonText: "Sure",
+      confirmButtonText: "Reject",
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        SweetAlert.fire({
-          title: "Congratulations! ",
-          text: "Report(s) Rejected!",
-          icon: "success",
-          confirmButtonColor: "#dc2626",
-        });
+        updateReportStatus("rejected");
       }
     });
-  }
+  };
 
   const toggleFilterBox = () => {
     filterBoxRef.current.classList.toggle("hidden");
   };
 
   const filterList = {
-    client_id: [...new Set(reportList.map((r) => r.client_id))],
-    client_branch_id: [...new Set(reportList.map((r) => r.client_branch_id))],
+    Company: [...new Set(reportList.map((r) => r.client_id))],
   };
 
   const handleCheckbox = (type, value) => {
@@ -121,7 +167,9 @@ const ReportBox = () => {
     .filter((report) =>
       Object.entries(selectedFilters).every(([key, selected]) => {
         if (selected.length === 0) return true;
-        return selected.includes(report[key]);
+        if (key === "Company") return selected.includes(report.client_id);
+        if (key === "Branch") return selected.includes(report.client_branch_id);
+        return true;
       })
     );
 
@@ -130,6 +178,7 @@ const ReportBox = () => {
   return (
     <div className="report-box-admin grid gap-2">
       <div className="report-box-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
+        {/* HEADER */}
         <div className="report-box-list-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
           <div className="report-box-list-header flex gap-1 justify-center items-center">
             <box-icon name="comment-error" type="regular" size="md" color="white"></box-icon>
@@ -138,13 +187,12 @@ const ReportBox = () => {
           <div className="report-box-list-tool flex gap-2 items-center">
             <div className="report-box-search flex flex-col justify-center items-center gap-2">
               <div className="report-box-search-box flex gap-2">
-                <button className="flex justify-center items-center w-fit h-fit" onClick={toggleFilterBox}>
+                <button onClick={toggleFilterBox}>
                   <box-icon name="filter" type="regular" size="sm" color="#FD6E28"></box-icon>
                 </button>
                 <input
                   type="text"
                   placeholder="Search"
-                  name="report-box-search"
                   value={searchReportTerm}
                   onChange={(e) => setSearchReportTerm(e.target.value)}
                 />
@@ -152,7 +200,9 @@ const ReportBox = () => {
                   <box-icon name="search" type="regular" size="sm" color="#FF6700"></box-icon>
                 </button>
               </div>
-              <div className="filter-box hidden bg-secondary p-2 rounded-md drop-shadow text-white max-w-xs" ref={filterBoxRef}>
+
+              {/* FILTER BOX */}
+              <div className="filter-box hidden bg-secondary p-2 rounded-md drop-shadow text-black max-w-xs" ref={filterBoxRef}>
                 {Object.keys(filterList).map((key) => (
                   <div className="filter-item flex flex-col gap-1 mb-2" key={key}>
                     <h4 className="text-white text-sm w-full text-center bg-primary rounded px-2 py-1">{key}</h4>
@@ -174,32 +224,42 @@ const ReportBox = () => {
           </div>
         </div>
 
+        {/* LIST HEADER */}
         <div className="report-box-list-body min-fit w-full gap-1 grid">
-          <div className="report-box-list-header min-w-fit grid grid-cols-10 w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-primary rounded-[8px] drop-shadow text-primary">
-            <div className="min-w-fit col-span-2 report-box-select-all rounded flex gap-1 items-center">
-              <input className="cursor-pointer" type="checkbox" name="report-box-select-all" id="report-select-all" value="" onChange={toggleAllItemCheckBox} />
-              <label htmlFor="report-select-all" className="text-center w-full font-bold text-primary">Serial Number</label>
+          <div className="report-box-list-header grid grid-cols-10 w-full h-[48px] p-2 bg-white border-2 border-secondary rounded-[8px] text-secondary">
+            <div className="col-span-2 flex gap-2 items-center">
+              <input type="checkbox" onChange={toggleAllItemCheckBox} />
+              <label className="font-bold">Report Number</label>
             </div>
-            <div className="min-w-fit w-full text-center font-bold">Company</div>
-            <div className="min-w-fit w-full text-center font-bold">Branch</div>
-            <div className="min-w-fit w-full text-center font-bold col-span-2">Sender Name</div>
-            <div className="min-w-fit w-full text-center font-bold">Date</div>
-            <div className="min-w-fit w-full text-center font-bold">Problem</div>
+            <div className="text-center font-bold">Serial Number</div>
+            <div className="text-center font-bold">Company</div>
+            <div className="text-center font-bold">Branch</div>
+            <div className="text-center font-bold ">Send By</div>
+            <div className="text-center font-bold ">Date</div>
+            <div className="text-center font-bold ">Time</div>
+            <div className="text-center font-bold col-span-2">Problem</div>
           </div>
 
+          {/* REPORT LIST */}
           <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-light gap-1 pt-1 pb-1">
             {filteredReports.map((report, index) => (
-              <div className="report-box-list-item min-w-fit grid grid-cols-10 w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-light rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200" key={index} onClick={() => handleItemCheck(report.report_id)}>
+              <div
+                className="report-box-list-item grid grid-cols-10 w-full h-fit items-center p-2 bg-white border-2 border-light rounded-[8px] cursor-pointer hover:brightness-90"
+                key={index}
+                onClick={() => handleItemCheck(report.report_id)}
+              >
                 <span className="flex gap-2 items-center col-span-2">
                   <input type="checkbox" checked={checkedItems[report.report_id] || false} onChange={() => handleItemCheck(report.report_id)} />
                   <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
                   {report.report_id}
                 </span>
-                <span className="min-w-fit w-full text-center">{report.client_id}</span>
-                <span className="min-w-fit w-full text-center">{report.client_branch_id}</span>
-                <span className="min-w-fit w-full text-center col-span-2">{report.assigner}</span>
-                <span className="min-w-fit w-full text-center">{report.createAt}</span>
-                <span className="min-w-fit w-full break-words">{report.problem}</span>
+                <span className="text-center">{report.item_id}</span>
+                <span className="text-center">{report.client_id}</span>
+                <span className="text-center">{report.client_branch_id}</span>
+                <span className="text-center ">{report.send_by}</span>
+                <span className="text-center">{report.createAt.split("T")[0].split("-").reverse().join("-")}</span>
+                <span className="text-center">{report.createAt.split("T")[1].split(".")[0]}</span>
+                <span className="break-words col-span-2">{report.problem}</span>
               </div>
             ))}
           </div>
@@ -210,11 +270,11 @@ const ReportBox = () => {
             <span className="text-white">{checkedCount} selected</span>
           </div>
           <div className="flex gap-2">
-            <button className="flex justify-center items-center gap-1 px-2 text-white rounded bg-red-600 hover:brightness-110" onClick={handleConfirmReject}>
+            <button className="px-2 text-white rounded bg-red-600 hover:brightness-110 flex items-center gap-1" onClick={handleConfirmReject}>
               <span>Reject</span>
               <box-icon name="x" type="regular" color="white"></box-icon>
             </button>
-            <button className="flex justify-center items-center gap-1 px-2 text-white rounded bg-green-600 hover:brightness-110" onClick={handleConfirmAccept}>
+            <button className="px-2 text-white rounded bg-green-600 hover:brightness-110 flex items-center gap-1" onClick={handleConfirmAccept}>
               <span>Accept</span>
               <box-icon name="check" type="regular" color="white"></box-icon>
             </button>

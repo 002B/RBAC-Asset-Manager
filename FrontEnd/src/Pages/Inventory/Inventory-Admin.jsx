@@ -23,8 +23,8 @@ const InventoryAdmin = () => {
         const data = await response.json();
         const formattedData = data.map((item) => [
           item.item_id,
-          item.client_branch_id,
           item.client_id,
+          item.client_branch_id,
           item.item_brand,
           item.item_capacity,
           item.item_color,
@@ -41,7 +41,7 @@ const InventoryAdmin = () => {
     };
 
     fetchData();
-  }, [user.company, user.selectedBranch]);
+  }, [user.company, user.selectedBranch, inventory]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -50,7 +50,10 @@ const InventoryAdmin = () => {
   return (
     <div className="flex flex-col w-full drop-shadow rounded-[8px]">
       <div className="bg-white rounded-[8px] drop-shadow">
-        {Status(user.role, user.company, user.selectedBranch)}
+      <Status
+          role={user.role}
+          company={user.company}
+        />
       </div>
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
         <DataTable
@@ -59,8 +62,8 @@ const InventoryAdmin = () => {
           tName="Fire Extinguisher List"
           title={[
             "item_id",
-            "client_branch_id",
             "client_id",
+            "client_branch_id",
             "item_brand",
             "item_capacity",
             "item_color",
@@ -84,6 +87,9 @@ const InventoryAdmin = () => {
             Branch: user.selectedBranch,
             Name: user.display_name,
           }}
+          hasEdit={true}
+          hasAddItem={true}
+          hasQr={true}
         />
       </div>
     </div>

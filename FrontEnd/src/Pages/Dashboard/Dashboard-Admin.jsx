@@ -67,8 +67,9 @@ const fetchAccepted = async () => {
     const data = await response.json();
     const formattedData = data.map((item) => [
       item.item_id,
-      item.assigner,
-      item.createAt,
+      item.send_to,
+      item.createAt.split("T")[0],
+      item.createAt.split("T")[1].split(".")[0],
     ]);
     return formattedData;
   } catch (error) {
@@ -90,7 +91,10 @@ const DashboardAdmin = () => {
   return (
     <div className="flex flex-col w-full h-fit rounded drop-shadow gap-2">
       <div className="w-full rounded drop-shadow">
-        {Status(user.role, user.company)}
+      <Status
+          role={user.role}
+          company={user.company}
+        />
       </div>
       <div className=" dashboard-container flex w-full rounded drop-shadow">
         <div className="big-item">
@@ -100,7 +104,7 @@ const DashboardAdmin = () => {
                 tIcon="wrench"
                 colIcon={"wrench"}
                 tName={"Submitted Work"}
-                title={["Serial Number", "Worker Name", "Date"]}
+                title={["Serial Number", "Worker Name", "Date", "Time"]}
                 data={submittedWork}
                 hasButton={false}
                 itemPerPage={10}

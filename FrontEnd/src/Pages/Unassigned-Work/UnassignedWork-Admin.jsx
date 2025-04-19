@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./UnassignedWork.css";
@@ -10,7 +10,6 @@ const UnassignedWorkAdmin = () => {
   const [selectedWorker, setSelectedWorker] = useState("");
   const [searchWorkerTerm, setSearchWorkerTerm] = useState("");
   const [searchWorkTerm, setSearchWorkTerm] = useState("");
-  const filterBoxRef = useRef();
 
   useEffect(() => {
     fetch("http://localhost:3000/report/getReportByStatus/accepted")
@@ -20,7 +19,7 @@ const UnassignedWorkAdmin = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/users/getOperatorUser")
+    fetch("http://localhost:3000/users/getWorkerUser")
       .then((res) => res.json())
       .then(setWorkerList)
       .catch((err) => console.error("Error fetching worker data:", err));
@@ -48,13 +47,23 @@ const UnassignedWorkAdmin = () => {
 
   const handleConfirmAssign = () => {
     const checkedCount = Object.values(checkedItems).filter(Boolean).length;
-    confirmAssign(selectedWorker, checkedCount);
+    if (selectedWorker && checkedCount > 0) {
+      confirmAssign(selectedWorker, checkedCount);
+    } else {
+      SweetAlert.fire({
+        title: "Warning!",
+        text: "Please select a worker and unassigned work to assign.",
+        icon: "warning",
+        confirmButtonColor: "#FD6E28",
+      });
+    }
   };
 
-  function confirmAssign(worker, totalWork) {
+  //ยังไม่สมบูรณ์ แต่ดูดี
+  function confirmAssign(worker,) {
     SweetAlert.fire({
       title: "Are you sure?",
-      text: `You need to assign ${totalWork} work(s) to ${worker}`,
+      text: `You need to assign work(s) to ${worker} ?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#FD6E28",
@@ -63,18 +72,62 @@ const UnassignedWorkAdmin = () => {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        SweetAlert.fire({
-          title: "Congratulations!",
-          text: "Work Assigned!",
-          icon: "success",
-          confirmButtonColor: "#FD6E28",
-        });
+        // ทำการอัปเดตสถานะและ assigner ที่ API
+        const selectedReportIds = Object.keys(checkedItems).filter(
+          (report_id) => checkedItems[report_id]
+        );
+
+        fetch("http://localhost:3000/report/updateReport/fixing", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ids: selectedReportIds,
+            assigner: selectedWorker, // ส่ง assigner เป็นชื่อของ worker
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.message === "Report and items updated successfully") {
+              SweetAlert.fire({
+                title: "Success!",
+                text: `work(s) assigned to ${worker}`,
+                icon: "success",
+                confirmButtonColor: "#FD6E28",
+              });
+              // ลบ work ที่ assign แล้วออกจาก list
+              setWorkList((prevList) =>
+                prevList.filter(
+                  (work) => !selectedReportIds.includes(work.report_id)
+                )
+              );
+              // Reset checked items and selected worker
+              setCheckedItems({});
+              setSelectedWorker("");
+            } else {
+              SweetAlert.fire({
+                title: "Error!",
+                text: data.message,
+                icon: "error",
+                confirmButtonColor: "#FD6E28",
+              });
+            }
+          })
+          .catch((error) => {
+            SweetAlert.fire({
+              title: "Error!",
+              text: "An error occurred while assigning work.",
+              icon: "error",
+              confirmButtonColor: "#FD6E28",
+            });
+          });
       }
     });
   }
 
   const filteredWorkerList = workerList.filter((worker) =>
-    worker.display_name.toLowerCase().includes(searchWorkerTerm.toLowerCase())
+    worker.username.toLowerCase().includes(searchWorkerTerm.toLowerCase())
   );
 
   const filteredWorkList = workList.filter((work) =>
@@ -87,7 +140,12 @@ const UnassignedWorkAdmin = () => {
       <div className="worker-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
         <div className="worker-list-bar bg-secondary p-2 rounded-[8px] drop-shadow flex items-center border-2 border-white justify-between sticky top-0 z-10">
           <div className="worker-list-header flex gap-1 justify-center items-center">
-            <box-icon name="user" type="regular" size="md" color="white"></box-icon>
+            <box-icon
+              name="user"
+              type="regular"
+              size="md"
+              color="white"
+            ></box-icon>
             <h2 className="text-white">Worker</h2>
           </div>
           <div className="filter-bar">
@@ -105,21 +163,23 @@ const UnassignedWorkAdmin = () => {
           {filteredWorkerList.map((worker) => (
             <div
               className={`worker-list-item grid grid-cols-4 w-full h-[48px] justify-between items-center p-2 border-2 border-secondary rounded-[8px] cursor-pointer drop-shadow transition-all duration-200 ${
-                selectedWorker === worker.display_name
+                selectedWorker === worker.username
                   ? "text-white bg-secondary"
                   : "text-black bg-white"
               }`}
               key={worker._id}
-              onClick={() => toggleSelectedWorker(worker.display_name)}
+              onClick={() => toggleSelectedWorker(worker.username)}
             >
               <span className="col-span-2 flex gap-2 items-center">
                 <box-icon
                   name="user-circle"
                   type="regular"
                   size="sm"
-                  color={selectedWorker === worker.display_name ? "white" : "#68A4D4"}
+                  color={
+                    selectedWorker === worker.username ? "white" : "#473366"
+                  }
                 ></box-icon>
-                <span>{worker.display_name}</span>
+                <span>{worker.username}</span>
               </span>
               <span className="w-full flex gap-2 items-center justify-center">
                 <span>{worker.role}</span>
@@ -133,7 +193,12 @@ const UnassignedWorkAdmin = () => {
       <div className="unassigned-work-list flex flex-col gap-2 min-w-fit flex-1 bg-white p-1 drop-shadow-md rounded-lg">
         <div className="unassigned-work-list-bar bg-highlight p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
           <div className="unassigned-work-list-header flex gap-1 justify-center items-center">
-            <box-icon name="list-plus" type="regular" size="md" color="white"></box-icon>
+            <box-icon
+              name="list-plus"
+              type="regular"
+              size="md"
+              color="white"
+            ></box-icon>
             <h2 className="text-white">Unassigned Work</h2>
           </div>
           <div className="filter-bar">
@@ -160,12 +225,18 @@ const UnassignedWorkAdmin = () => {
                   checked={checkedItems[work.report_id] || false}
                   onChange={() => handleItemCheck(work.report_id)}
                 />
-                <box-icon name="spray-can" type="regular" size="sm" color="#F4A261"></box-icon>
+                <box-icon
+                  name="spray-can"
+                  type="regular"
+                  size="sm"
+                  color="#FD6E28"
+                ></box-icon>
                 {work.report_id}
               </span>
               <span className="col-span-2">{work.client_id}</span>
               <span className="col-span-2">{work.client_branch_id}</span>
-              <span className="col-span-2">{work.createAt}</span>
+              <span className="text-center text-overflow-ellipsis  ">{work.createAt.split("T")[0].split("-").reverse().join("-")}</span>
+              <span className="text-center text-overflow-ellipsis ">{work.createAt.split("T")[1].split(".")[0]}</span>
             </div>
           ))}
         </div>
