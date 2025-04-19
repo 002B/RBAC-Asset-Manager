@@ -326,7 +326,7 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers }) => {
                           <b>{formData.client_access.length}</b>
                         </span>
                         <div className="border-secondary border-2 hover:border-primary flex w-full p-1 rounded flex-col max-h-40 overflow-y-auto">
-                          {branches.map((branch, index) => (
+                          {formData.client_access.map((branch, index) => (
                             <label
                               className="flex gap-2 items-center p-1 hover:bg-gray-100 rounded"
                               key={index}
@@ -343,7 +343,7 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers }) => {
                                 }
                                 className="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
                               />
-                              <span className="text-sm">{branch}</span>
+                              <span className="text-sm">{branch}dfghjk</span>
                             </label>
                           ))}
                         </div>
@@ -716,7 +716,7 @@ const MemberManagementAdmin = () => {
                     Branch Assigned : <b>{formData.client_access.length}</b>
                   </span>
                   <div className="border-secondary border-2 hover:border-primary flex w-full p-1 rounded flex-col max-h-40 overflow-y-auto">
-                    {branches.map((branch, index) => (
+                    {formData.client_access.map((branch, index) => (
                       <label className="flex gap-2" key={index}>
                         <input
                           type="checkbox"
