@@ -168,6 +168,13 @@ const DataTable = (props) => {
                     </button>
                   </td>
                 )}
+                {hasEdit && (
+                  <td className="bg-white sticky -right-1">
+                    <button onClick={() => handleEditClick(row)} className="flex justify-center items-center">
+                      <box-icon type="regular" name="edit" size="sm" color="#FD6E28"></box-icon>
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
