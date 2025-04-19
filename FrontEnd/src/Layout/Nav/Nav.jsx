@@ -1,5 +1,5 @@
 import React from "react";
-import Logo from "../../assets/Logo/Logo-no-tg.png";
+import Logo from "../../assets/Logo/Logo1.png";
 import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../../Auth/AuthProvider";
 import "./Nav.css";
