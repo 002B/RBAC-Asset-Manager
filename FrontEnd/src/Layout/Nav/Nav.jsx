@@ -49,6 +49,12 @@ const navList = [
     iconType: "solid",
   },
   {
+    name: "Item Log",
+    path: "item-log",
+    icon: "time",
+    iconType: "solid",
+  },
+  {
     name: "Setting",
     path: "setting",
     icon: "cog",
@@ -65,7 +71,7 @@ function getNavListByRole(userRole) {
     case "worker":
       return navList.filter(item => ["Dashboard", "Inventory" , "Unassigned Work", "Setting"].includes(item.name));
     case "admin":
-      return navList.filter(item => ["Dashboard", "Inventory", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log", "Setting"].includes(item.name));
+      return navList.filter(item => ["Dashboard", "Inventory", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log","Item Log", "Setting"].includes(item.name));
     case "super_admin":
       return navList.filter(item => ["Dashboard", "Data Analysis", "Inventory", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log", "Setting"].includes(item.name));
     default:
@@ -93,7 +99,7 @@ const Nav = () => {
                   className={({ isActive }) => {
                     return isActive
                       ? "text-light font-bold w-full flex justify-between items-center active-bar nav-Active"
-                      : "w-full text-gray nav-unActive";
+                      : "w-full text-gray-400 nav-unActive";
                   }}
                 >
                   <div className="p-2 flex items-center ">

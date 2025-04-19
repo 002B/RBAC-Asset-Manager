@@ -54,11 +54,11 @@ const Header = () => {
   return (
     <div className="header flex justify-between items-center">
       <div className="header-text flex flex-col justify-center h-28">
-        <p className="ml-2">
-          Hi {user.user} from {user.company}
-        </p>
+        { user.company != "" && <p className="ml-2">
+          Hi {user.display_name} from {user.company}
+        </p>}
         <span className="ml-2 text-4xl">
-          Welcome to <span className="text-highlight font-bold">SUGARRIDER</span>!
+          Welcome to <span className="text-highlight font-bold">FEMS</span>!
         </span>
       </div>
       {user.branch.length > 1 && (

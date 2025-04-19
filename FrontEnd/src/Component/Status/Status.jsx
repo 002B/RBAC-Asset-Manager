@@ -121,7 +121,7 @@ const Status = ({ role, company, branch }) => {
           </div>
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Next Check</h3>
             <h1>{memberNextCheck}</h1>

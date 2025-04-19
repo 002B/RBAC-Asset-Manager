@@ -3,7 +3,7 @@ import DataTable from '../../Component/DataTable/DataTable';
 import Status from '../../Component/Status/Status';
 import { useAuth } from '../../Auth/AuthProvider';
 
-const ActivityLog = () => {
+const ItemLog = () => {
     const { user } = useAuth();
     const [activityLog, setActivityLog] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,11 +12,12 @@ const ActivityLog = () => {
             try {
                 user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]
                 const response = await fetch(
-                    `http://localhost:3000/activitylog/all`
+                    `http://localhost:3000/itemlog/getAllLog`
                 );
                 const data = await response.json();
                 const formattedData = data.map((item) => [
                     item.log_id,
+                    item.item_id,
                     item.date.split("T")[0],
                     item.date.split("T")[1].split(".")[0],
                     item.activity,
@@ -44,11 +45,11 @@ const ActivityLog = () => {
             </div>
             <div className="w-full rounded drop-shadow">
                 <div className='bg-white p-1 rounded drop-shadow'>
-                    <DataTable tIcon={"revision"} tName={"Activity Log"} title={["Log_ID", "Date", "Time", "Activity", "Username", "Role"]} data={activityLog} hasButton={false} />
+                    <DataTable tIcon={"revision"} tName={"Activity Log"} title={["Log_ID", "Item ID", "Date", "Time", "Activity", "Username", "Role"]} data={activityLog} hasButton={false} />
                 </div>
             </div>
         </div>
     );
 }
 
-export default ActivityLog;
+export default ItemLog;
