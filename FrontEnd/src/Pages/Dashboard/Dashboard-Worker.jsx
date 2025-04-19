@@ -11,6 +11,7 @@ const DashboardWorker = () => {
   const [workList, setWorkList] = useState([]);
   const itemsPerPage = 8;
 
+
   const currentData = workList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -98,6 +99,8 @@ const DashboardWorker = () => {
           await axios.put("http://localhost:3000/report/updateReport/done", {
             ids: [reportId],
           });
+          setWorkList((prevList) => prevList.filter((item) => item.report_id !== reportId));
+
 
           SweetAlert.fire({
             title: "Congratulations!",
