@@ -1,6 +1,5 @@
 const itemModel = require('./DB/item.js');
 
-// Fetch all items
 async function getAllItems() {
     try {
         return await itemModel.find({}, { _id: 0 }).lean();
@@ -10,7 +9,6 @@ async function getAllItems() {
     }
 }
 
-// Count all items
 async function getAllItemCount() {
     try {
         return await itemModel.countDocuments();
@@ -20,7 +18,6 @@ async function getAllItemCount() {
     }
 }
 
-// Get items by company
 async function getItemCompany(company) {
     try {
         return await itemModel.find({ client_id: company }, { _id: 0 }).lean();
@@ -30,7 +27,6 @@ async function getItemCompany(company) {
     }
 }
 
-// Count items by company
 async function getItemCompanyCount(company) {
     try {
         return await itemModel.countDocuments({ client_id: company });
@@ -40,7 +36,6 @@ async function getItemCompanyCount(company) {
     }
 }
 
-// Get items by company and branch
 async function getItemCompanyBranch(company, branch) {
     try {
         return await itemModel.find({ client_id: company, client_branch_id: branch }, { _id: 0 }).lean();
@@ -50,7 +45,6 @@ async function getItemCompanyBranch(company, branch) {
     }
 }
 
-// Count items by company and branch
 async function getItemBranchCount(company, branch) {
     try {
         return await itemModel.countDocuments({ client_id: company, client_branch_id: branch });
@@ -60,7 +54,6 @@ async function getItemBranchCount(company, branch) {
     }
 }
 
-// Get item info by ID
 async function getItemInfo(id) {
     try {
         return await itemModel.findOne({ item_id: id }, { _id: 0 }).lean() || null;
@@ -70,7 +63,6 @@ async function getItemInfo(id) {
     }
 }
 
-// Check if item exists by ID
 async function checkItemExist(id) {
     try {
         return await itemModel.findOne({ item_id: id });
@@ -80,10 +72,9 @@ async function checkItemExist(id) {
     }
 }
 
-// Create a new item
 async function createItem(company, branch, data) {
     try {
-        const lastItem = await itemModel.countDocuments({});
+        const lastItem = await itemModel.countDocuments({ "item_id": { $regex: `TH-${new Date().getFullYear()}`, $options: "i" } });
         const lastNumber = lastItem+1;
         const newId = `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`;
 
@@ -105,10 +96,9 @@ async function createItem(company, branch, data) {
     }
 }
 
-// Create many items
 async function createManyItem(company, branch, data, count) {
     try {
-        const lastItem = await itemModel.countDocuments({});
+        const lastItem = await itemModel.countDocuments({ "item_id": { $regex: `TH-${new Date().getFullYear()}`, $options: "i" } });
         const lastNumber = lastItem;
         const items = [];
 
@@ -134,7 +124,6 @@ async function createManyItem(company, branch, data, count) {
     }
 }
 
-// Update an item
 async function updateItem(id, data) {
     try {
         const doc = await itemModel.findOne({ item_id: id });
@@ -156,7 +145,6 @@ async function updateItem(id, data) {
     }
 }
 
-// Delete an item
 async function deleteItem(id) {
     try {
         const result = await itemModel.deleteOne({ item_id: id });
@@ -167,7 +155,6 @@ async function deleteItem(id) {
     }
 }
 
-// Update item status
 async function updateStatus(itemIds, itemStatus) {
     try {
         const result = await itemModel.updateMany(
@@ -196,3 +183,4 @@ module.exports = {
     deleteItem, 
     updateStatus
 };
+

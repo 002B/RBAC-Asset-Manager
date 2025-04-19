@@ -38,13 +38,13 @@ const DataTable = (props) => {
   const sortedData = useMemo(() => {
     return [...normalizedData]
       .filter((row) => {
-        const value = isObjectData ? row[title[0]] : row[0];
-        return value?.toString().toLowerCase().includes(searchQuery.toLowerCase());
+        const rowValues = isObjectData ? Object.values(row) : row;
+        return rowValues.some((value) => value?.toString().toLowerCase().includes(searchQuery.toLowerCase()));
       })
       .sort((a, b) => {
         if (sortConfig.key === null) return 0;
         const itemA = isObjectData ? a[sortConfig.key] : a[title.indexOf(sortConfig.key)];
-        const itemB = isObjectData ? b[sortConfig.key] : b[title.indexOf(sortConfig.key)];
+        const itemB = isObjectData ? b[sortConfig.key] : a[title.indexOf(sortConfig.key)];
         return typeof itemA === "number" && typeof itemB === "number"
           ? sortConfig.direction === "asc" ? itemA - itemB : itemB - itemA
           : sortConfig.direction === "asc"
@@ -52,6 +52,7 @@ const DataTable = (props) => {
             : itemB?.toString().localeCompare(itemA);
       });
   }, [normalizedData, sortConfig, searchQuery, title, isObjectData]);
+
 
   const currentData = useMemo(() => {
     return sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
