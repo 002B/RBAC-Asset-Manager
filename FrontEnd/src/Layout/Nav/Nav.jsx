@@ -93,7 +93,7 @@ const Nav = () => {
                   className={({ isActive }) => {
                     return isActive
                       ? "text-light font-bold w-full flex justify-between items-center active-bar nav-Active"
-                      : "w-full text-gray nav-unActive";
+                      : "w-full text-gray-400 nav-unActive";
                   }}
                 >
                   <div className="p-2 flex items-center ">

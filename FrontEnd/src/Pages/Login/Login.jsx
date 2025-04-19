@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useAuth } from "../../Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import SweetAlert from "sweetalert2";
-import Logo from '../../assets/login-assets/SecondaryLogo/Sugar-rider-logo2.png'
+import Logo from '../../assets/login-assets/SecondaryLogo/Sugar-rider-logo2-2.png'
 import hide from '../../assets/login-assets/hide.png'
 import showIcon from '../../assets/login-assets/show.png'
 import userIcon from '../../assets/login-assets/user-solid-24.png'
