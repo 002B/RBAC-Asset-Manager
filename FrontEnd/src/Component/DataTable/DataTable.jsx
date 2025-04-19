@@ -148,13 +148,6 @@ const DataTable = (props) => {
                 {title.map((key, colIndex) => (
                   <td key={colIndex}>{isObjectData ? row[key] || "-" : row[colIndex] || "-"}</td>
                 ))}
-                {hasEdit && (
-                  <td className="bg-white sticky -right-1">
-                    <button onClick={() => handleEditClick(row)} className="flex justify-center items-center">
-                      <box-icon type="regular" name="edit" size="sm" color="#FF6700"></box-icon>
-                    </button>
-                  </td>
-                )}
                 {hasQr && (
                   <td className="bg-white sticky -right-1">
                     <button
