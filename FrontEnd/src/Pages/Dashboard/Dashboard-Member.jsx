@@ -94,7 +94,7 @@ const DashboardMember = () => {
         setCheckUp(await fetchNextCheck(user));
         setLastCheck(await fetchLastCheck(user));
       })()
-    }, [user.company, user.selectedBranch])
+    }, [user.company, user.selectedBranch]);
   const handleButtonClick = () => {
     // setShowCreateForm(!showCreateForm);
     setShowCreateForm(true);

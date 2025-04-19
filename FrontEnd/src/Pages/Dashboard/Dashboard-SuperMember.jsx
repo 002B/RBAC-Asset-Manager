@@ -90,7 +90,7 @@ const DashboardSuperMember = () => {
   const [branchList, setBranchList] = useState([]);
   useEffect(() => {
     (async () => {
-      user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
+      // user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
       setTestActivity(await fetchInbox(user));
       setLoginActivity(await fetchLoginActivity());
       setBranchList(await fetchBranchWithItemCount(user));

@@ -1,34 +1,24 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./DataTable.css";
 import CreateForm from "../CreateForm";
 import "boxicons";
 import ExportExcel from "../ExcelExport";
-import AddItemForm from "../addItemForm";
-import EditItemForm from "../editItemForm";
+import AddItemForm from "./form/addItemForm";
+import EditItemForm from "./form/editItemForm";
+import QRCodeModal from "./form/QRCodeModal";
 
-const DataTable = ({
-  tIcon,
-  tName,
-  colIcon,
-  title = [],
-  data = [],
-  itemPerPage,
-  hasButton = true,
-  hasPagination = true,
-  hasSearch = true,
-  formData = [],
-  formPlaceholder = {},
-  hasExport = false,
-  hasAddItem = false,
-  hasEdit = false,
-}) => {
+const DataTable = (props) => {
+  const { tIcon, tName, colIcon, title = [], data = [], itemPerPage, hasButton = true, hasPagination = true, hasSearch = true, formData = [], formPlaceholder = {}, hasExport = false, hasAddItem = false, hasEdit = false, hasQr = false } = props;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showAddItemForm, setShowAddItemForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAddItemForm, setShowAddItemForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [showQRCodeModal, setShowQRCodeModal] = useState(false); // สถานะในการแสดง QRCodeModal
+  const [selectedItemId, setSelectedItemId] = useState(null); // เก็บ id ของรายการที่เลือก
 
   const itemsPerPage = itemPerPage || 10;
   const headerHeight = 32;
@@ -58,8 +48,8 @@ const DataTable = ({
         return typeof itemA === "number" && typeof itemB === "number"
           ? sortConfig.direction === "asc" ? itemA - itemB : itemB - itemA
           : sortConfig.direction === "asc"
-          ? itemA?.toString().localeCompare(itemB)
-          : itemB?.toString().localeCompare(itemA);
+            ? itemA?.toString().localeCompare(itemB)
+            : itemB?.toString().localeCompare(itemA);
       });
   }, [normalizedData, sortConfig, searchQuery, title, isObjectData]);
 
@@ -71,8 +61,8 @@ const DataTable = ({
     const value = isObjectData ? rowData : Object.fromEntries(title.map((key, i) => [key, rowData[i]]));
     setEditingItem({
       ...value,
-      company: value.company || "ThaiBev",
-      branch: value.branch || "ThaiBev_1",
+      company: value.company,
+      branch: value.branch,
       log: { Install: value.install_date },
     });
     setShowEditForm(true);
@@ -164,10 +154,16 @@ const DataTable = ({
                     </button>
                   </td>
                 )}
-                {hasButton && (
+                {hasQr && (
                   <td className="bg-white sticky -right-1">
-                    <button onClick={() => setShowCreateForm(true)} className="flex justify-center items-center">
-                      <box-icon type="regular" name="edit" size="sm" color="#FD6E28"></box-icon>
+                    <button
+                      className="flex justify-center items-center"
+                      onClick={() => {
+                        setSelectedItemId(row[0]);
+                        setShowQRCodeModal(true);
+                      }}
+                    >
+                      <box-icon name="qr-scan" color="#FD6E28"></box-icon>
                     </button>
                   </td>
                 )}
@@ -176,6 +172,12 @@ const DataTable = ({
           </tbody>
         </table>
       </div>
+      {showQRCodeModal && (
+        <QRCodeModal
+          onClose={() => setShowQRCodeModal(false)}
+          id={selectedItemId} // ส่ง selectedItemId ไปที่ QRCodeModal
+        />
+      )}
       {hasPagination && (
         <div className="pagination">
           <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
@@ -214,4 +216,3 @@ const DataTable = ({
 };
 
 export default DataTable;
-

@@ -83,8 +83,8 @@ async function checkItemExist(id) {
 // Create a new item
 async function createItem(company, branch, data) {
     try {
-        const lastItem = await itemModel.findOne().sort({ item_id: -1 });
-        const lastNumber = lastItem ? parseInt(lastItem.item_id.split('-').pop()) : 0;
+        const lastItem = await itemModel.countDocuments({});
+        const lastNumber = lastItem+1;
         const newId = `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`;
 
         await itemModel.create({
@@ -95,7 +95,8 @@ async function createItem(company, branch, data) {
             item_capacity: data.item_capacity,
             item_color: data.item_color,
             item_type: data.item_type,
-            item_class: data.item_class
+            item_class: data.item_class,
+            item_status: "ok"
         });
         return newId;
     } catch (error) {
@@ -107,8 +108,8 @@ async function createItem(company, branch, data) {
 // Create many items
 async function createManyItem(company, branch, data, count) {
     try {
-        const lastItem = await itemModel.findOne().sort({ item_id: -1 });
-        let lastNumber = lastItem ? parseInt(lastItem.item_id.split('-').pop()) : 0;
+        const lastItem = await itemModel.countDocuments({});
+        const lastNumber = lastItem;
         const items = [];
 
         for (let i = 0; i < count; i++) {
@@ -139,7 +140,7 @@ async function updateItem(id, data) {
         const doc = await itemModel.findOne({ item_id: id });
         if (!doc) return false;
 
-        Object.assign(doc, {
+        doc.set({
             item_brand: data.item_brand || doc.item_brand,
             item_capacity: data.item_capacity || doc.item_capacity,
             item_color: data.item_color || doc.item_color,

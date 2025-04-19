@@ -23,8 +23,8 @@ const InventoryWorker = () => {
         const data = await response.json();
         const formattedData = data.map((item) => [
           item.item_id,
-          item.client_branch_id,
           item.client_id,
+          item.client_branch_id,
           item.item_brand,
           item.item_capacity,
           item.item_color,
@@ -41,7 +41,7 @@ const InventoryWorker = () => {
     };
 
     fetchData();
-  }, [user.company]);
+  }, [user.company, inventory]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -59,8 +59,8 @@ const InventoryWorker = () => {
           tName="Fire Extinguisher List"
           title={[
             "item_id",
-            "client_branch_id",
             "client_id",
+            "client_branch_id",
             "item_brand",
             "item_capacity",
             "item_color",
@@ -84,6 +84,9 @@ const InventoryWorker = () => {
             Branch: user.selectedBranch,
             Name: user.display_name,
           }}
+          hasEdit={true}
+          hasAddItem={true}
+          hasQr={true}
         />
       </div>
     </div>

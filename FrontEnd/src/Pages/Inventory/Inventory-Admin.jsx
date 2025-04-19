@@ -23,8 +23,8 @@ const InventoryAdmin = () => {
         const data = await response.json();
         const formattedData = data.map((item) => [
           item.item_id,
-          item.client_branch_id,
           item.client_id,
+          item.client_branch_id,
           item.item_brand,
           item.item_capacity,
           item.item_color,
@@ -41,7 +41,7 @@ const InventoryAdmin = () => {
     };
 
     fetchData();
-  }, [user.company, user.selectedBranch]);
+  }, [user.company, user.selectedBranch, inventory]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -62,8 +62,8 @@ const InventoryAdmin = () => {
           tName="Fire Extinguisher List"
           title={[
             "item_id",
-            "client_branch_id",
             "client_id",
+            "client_branch_id",
             "item_brand",
             "item_capacity",
             "item_color",
@@ -87,6 +87,9 @@ const InventoryAdmin = () => {
             Branch: user.selectedBranch,
             Name: user.display_name,
           }}
+          hasEdit={true}
+          hasAddItem={true}
+          hasQr={true}
         />
       </div>
     </div>
