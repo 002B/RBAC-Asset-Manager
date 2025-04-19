@@ -210,7 +210,7 @@ const MemberManagementSuperMember = () => {
       )}
 
       <div className="flex flex-col gap-2">
-        <div className="member-management-bar bg-highlight p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
+        <div className="member-management-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
           <div className="member-management-header flex gap-2 justify-center items-center">
             <box-icon
               name="group"
@@ -293,7 +293,7 @@ const MemberManagementSuperMember = () => {
                   </div>
                 </div>
                 <div className="user-card-body flex flex-col justify-center items-center">
-                  <h3 className="text-secondary text-nowrap">
+                  <h3 className="text-primary text-nowrap">
                     {user.display_name}
                   </h3>
                   <h4>ID : {user.user}</h4>

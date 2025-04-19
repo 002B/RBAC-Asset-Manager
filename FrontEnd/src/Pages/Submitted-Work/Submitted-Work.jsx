@@ -272,7 +272,7 @@ const SubmittedWork = () => {
           </div>
         </div>
         <div className="report-box-footer flex  justify-between w-full bottom-0 h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
-          <div className="report-box-checked-count flex justify-start items-center bg-primary rounded px-2">
+          <div className="report-box-checked-count flex justify-start items-center bg-highlight rounded px-2">
             <span className="text-white">{checkedCount} selected</span>
           </div>
           <div className="flex gap-2">

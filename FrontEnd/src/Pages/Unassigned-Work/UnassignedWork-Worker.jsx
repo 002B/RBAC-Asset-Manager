@@ -265,7 +265,7 @@ const UnassignedWork = () => {
                     <span>View Details</span>
                   </button>
                   <button
-                    className="submit-button flex w-full justify-center items-center w-ful text-white p-1 rounded gap-2 bg-primary hover:brightness-110"
+                    className="submit-button flex w-full justify-center items-center w-ful text-white p-1 rounded gap-2 bg-green-600 hover:brightness-110"
                     onClick={() => Confirm()}
                   >
                     <box-icon

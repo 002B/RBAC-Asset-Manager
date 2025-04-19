@@ -130,7 +130,7 @@ const ReportBox = () => {
   return (
     <div className="report-box-admin grid gap-2">
       <div className="report-box-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
-        <div className="report-box-list-bar bg-highlight p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
+        <div className="report-box-list-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
           <div className="report-box-list-header flex gap-1 justify-center items-center">
             <box-icon name="comment-error" type="regular" size="md" color="white"></box-icon>
             <h2 className="text-white">Report List</h2>
@@ -149,7 +149,7 @@ const ReportBox = () => {
                   onChange={(e) => setSearchReportTerm(e.target.value)}
                 />
                 <button className="flex justify-center items-center w-fit h-fit">
-                  <box-icon name="search" type="regular" size="sm" color="#FD6E28"></box-icon>
+                  <box-icon name="search" type="regular" size="sm" color="#FF6700"></box-icon>
                 </button>
               </div>
               <div className="filter-box hidden bg-secondary p-2 rounded-md drop-shadow text-white max-w-xs" ref={filterBoxRef}>
@@ -187,9 +187,9 @@ const ReportBox = () => {
             <div className="min-w-fit w-full text-center font-bold">Problem</div>
           </div>
 
-          <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-highlight gap-1 pt-1 pb-1">
+          <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-light gap-1 pt-1 pb-1">
             {filteredReports.map((report, index) => (
-              <div className="report-box-list-item min-w-fit grid grid-cols-10 w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-highlight rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200" key={index} onClick={() => handleItemCheck(report.report_id)}>
+              <div className="report-box-list-item min-w-fit grid grid-cols-10 w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-light rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200" key={index} onClick={() => handleItemCheck(report.report_id)}>
                 <span className="flex gap-2 items-center col-span-2">
                   <input type="checkbox" checked={checkedItems[report.report_id] || false} onChange={() => handleItemCheck(report.report_id)} />
                   <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
@@ -205,7 +205,7 @@ const ReportBox = () => {
           </div>
         </div>
 
-        <div className="report-box-footer flex justify-between w-full bottom-0 h-[48px] bg-white p-1 border-2 border-highlight rounded-[8px]">
+        <div className="report-box-footer flex justify-between w-full bottom-0 h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
           <div className="report-box-checked-count flex justify-start items-center bg-highlight rounded px-2">
             <span className="text-white">{checkedCount} selected</span>
           </div>

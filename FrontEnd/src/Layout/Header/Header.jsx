@@ -69,7 +69,7 @@ const Header = () => {
               <select
                 name={"branch-selector"}
                 id="branch-selector"
-                className="border-2 border-secondary p-1 px-2 rounded w-full"
+                className="border-2 border-primary p-1 px-2 rounded w-full"
                 onChange={handleBranchChange}
                 value={user.selectedBranch}
               >
@@ -84,7 +84,7 @@ const Header = () => {
               <select
                 name={"branch-selector"}
                 id="branch-selector"
-                className="border-2 border-secondary p-1 px-2 rounded w-full"
+                className="border-2 border-primary p-1 px-2 rounded w-full"
                 onChange={handleBranchChange}
                 value={user.selectedBranch}
               >
