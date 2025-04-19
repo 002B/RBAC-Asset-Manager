@@ -90,7 +90,7 @@ const DashboardSuperMember = () => {
   const [branchList, setBranchList] = useState([]);
   useEffect(() => {
     (async () => {
-      user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
+      // user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
       setTestActivity(await fetchInbox(user));
       setLoginActivity(await fetchLoginActivity());
       setBranchList(await fetchBranchWithItemCount(user));
@@ -139,10 +139,10 @@ const DashboardSuperMember = () => {
             </div>
             <div className="small-item flex flex-col justify-center items-center gap-4">
               <span className="report-icon">
-                <box-icon name="comment-error" size="6rem" color="#f16e3d"></box-icon>
+                <box-icon name="comment-error" size="6rem" color="#ff6700"></box-icon>
               </span>
               <div className="flex flex-col justify-center items-center">
-                <h2>Send Request</h2>
+                <h2 className="text-dark">Send Request</h2>
                 <span className="text-gray">Having problems with our product?</span>
                 <span className="text-gray">Send us request for an action</span>
               </div>
@@ -163,7 +163,7 @@ const DashboardSuperMember = () => {
             colIcon="buildings"
             tIcon="buildings"
             tName="Branch"
-            title={["Branch", <box-icon name="spray-can" size="sm" color="#473366"></box-icon>]}
+            title={["Branch", <box-icon name="spray-can" size="sm" color="#16425b"></box-icon>]}
             data={branchList}
             hasButton={false}
             itemPerPage={10}

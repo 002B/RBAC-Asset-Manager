@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Auth/AuthProvider";
 import DataTable from "../../Component/DataTable/DataTable";
-import { getItemCompany, getItemBranch } from "../../Component/file";
 import Status from "../../Component/Status/Status";
 
 const InventorySuperMember = () => {
@@ -9,7 +8,6 @@ const InventorySuperMember = () => {
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
     const fetchData = async () => {
       try {
         const requestOptions = {
@@ -23,8 +21,8 @@ const InventorySuperMember = () => {
         const data = await response.json();
         const formattedData = data.map((item) => [
           item.item_id,
-          item.client_branch_id,
           item.client_id,
+          item.client_branch_id,
           item.item_brand,
           item.item_capacity,
           item.item_color,
@@ -41,7 +39,7 @@ const InventorySuperMember = () => {
     };
 
     fetchData();
-  }, [user.company, user.selectedBranch]);
+  }, [user.company, user.selectedBranch, inventory]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -59,12 +57,12 @@ const InventorySuperMember = () => {
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
         <DataTable
           tIcon={"spray-can"}
-          colIcon={"spray-can"}
           tName="Fire Extinguisher List"
+          colIcon={"spray-can"}
           title={[
             "item_id",
-            "client_branch_id",
             "client_id",
+            "client_branch_id",
             "item_brand",
             "item_capacity",
             "item_color",
@@ -88,9 +86,11 @@ const InventorySuperMember = () => {
             Branch: user.selectedBranch,
             Name: user.display_name,
           }}
+          hasQr={true}
         />
       </div>
     </div>
   );
 }
 export default InventorySuperMember;
+

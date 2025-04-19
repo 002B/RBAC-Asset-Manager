@@ -44,4 +44,14 @@ router.get('/getLastCheck/:company/:branch', async (req, res) => {
     }
 });
 
+router.get('/getCompanyBranch/', async (req, res) => {
+    const { company } = req.params;
+    try {
+        const branches = await companyFunc.getCompanyBranch(company);
+        res.json(branches);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching company branches' });
+    }
+});
+
 module.exports = router;

@@ -145,16 +145,13 @@ const router = createBrowserRouter(
 );
 
 const queryParameters = new URLSearchParams(window.location.search);
-const company = queryParameters.get("company");
-const branch = queryParameters.get("branch");
 const id = queryParameters.get("id");
-console.log(company, branch, id);
 
 function App() {
-  if (company && branch && id) {
+  if (id) {
     return (
       <div>
-        <ProductPage company={company} branch={branch} id={id}/>
+        <ProductPage id={id}/>
       </div>
     )
   } else {

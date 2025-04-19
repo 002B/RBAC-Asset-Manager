@@ -1,34 +1,24 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./DataTable.css";
 import CreateForm from "../CreateForm";
 import "boxicons";
 import ExportExcel from "../ExcelExport";
-import AddItemForm from "../addItemForm";
-import EditItemForm from "../editItemForm";
+import AddItemForm from "./form/addItemForm";
+import EditItemForm from "./form/editItemForm";
+import QRCodeModal from "./form/QRCodeModal";
 
-const DataTable = ({
-  tIcon,
-  tName,
-  colIcon,
-  title = [],
-  data = [],
-  itemPerPage,
-  hasButton = true,
-  hasPagination = true,
-  hasSearch = true,
-  formData = [],
-  formPlaceholder = {},
-  hasExport = false,
-  hasAddItem = false,
-  hasEdit = false,
-}) => {
+const DataTable = (props) => {
+  const { tIcon, tName, colIcon, title = [], data = [], itemPerPage, hasButton = true, hasPagination = true, hasSearch = true, formData = [], formPlaceholder = {}, hasExport = false, hasAddItem = false, hasEdit = false, hasQr = false } = props;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showAddItemForm, setShowAddItemForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAddItemForm, setShowAddItemForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [showQRCodeModal, setShowQRCodeModal] = useState(false); // สถานะในการแสดง QRCodeModal
+  const [selectedItemId, setSelectedItemId] = useState(null); // เก็บ id ของรายการที่เลือก
 
   const itemsPerPage = itemPerPage || 10;
   const headerHeight = 32;
@@ -48,20 +38,21 @@ const DataTable = ({
   const sortedData = useMemo(() => {
     return [...normalizedData]
       .filter((row) => {
-        const value = isObjectData ? row[title[0]] : row[0];
-        return value?.toString().toLowerCase().includes(searchQuery.toLowerCase());
+        const rowValues = isObjectData ? Object.values(row) : row;
+        return rowValues.some((value) => value?.toString().toLowerCase().includes(searchQuery.toLowerCase()));
       })
       .sort((a, b) => {
         if (sortConfig.key === null) return 0;
         const itemA = isObjectData ? a[sortConfig.key] : a[title.indexOf(sortConfig.key)];
-        const itemB = isObjectData ? b[sortConfig.key] : b[title.indexOf(sortConfig.key)];
+        const itemB = isObjectData ? b[sortConfig.key] : a[title.indexOf(sortConfig.key)];
         return typeof itemA === "number" && typeof itemB === "number"
           ? sortConfig.direction === "asc" ? itemA - itemB : itemB - itemA
           : sortConfig.direction === "asc"
-          ? itemA?.toString().localeCompare(itemB)
-          : itemB?.toString().localeCompare(itemA);
+            ? itemA?.toString().localeCompare(itemB)
+            : itemB?.toString().localeCompare(itemA);
       });
   }, [normalizedData, sortConfig, searchQuery, title, isObjectData]);
+
 
   const currentData = useMemo(() => {
     return sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -71,8 +62,8 @@ const DataTable = ({
     const value = isObjectData ? rowData : Object.fromEntries(title.map((key, i) => [key, rowData[i]]));
     setEditingItem({
       ...value,
-      company: value.company || "ThaiBev",
-      branch: value.branch || "ThaiBev_1",
+      company: value.company,
+      branch: value.branch,
       log: { Install: value.install_date },
     });
     setShowEditForm(true);
@@ -83,7 +74,7 @@ const DataTable = ({
     if (/Good|Login|Install|Report Accepted/.test(value)) return "green";
     if (/Fixing|Change/.test(value)) return "#EEE150";
     if (/Bad|Uninstall|Logout|Rejected/.test(value)) return "red";
-    return "#FD6E28";
+    return "#FF6700";
   };
 
   const getPaginationRange = () => {
@@ -100,8 +91,8 @@ const DataTable = ({
     <div className="data-table-wrapper">
       <div className="table-title flex items-center justify-between flex-wrap">
         <div className="flex items-center">
-          {tIcon && <box-icon name={tIcon} size="sm" color="1F2A44"></box-icon>}
-          {tName && <h2 className="p-2 text-primary">{tName}</h2>}
+          {tIcon && <box-icon name={tIcon} size="sm" color="#16425b"></box-icon>}
+          {tName && <h2 className="p-2 text-dark">{tName}</h2>}
         </div>
         <div className="flex gap-2 justify-center items-center">
           {hasExport && (
@@ -112,14 +103,14 @@ const DataTable = ({
           )}
           {hasSearch && (
             <div className="search-bar">
-              <box-icon name="filter" type="regular" size="sm" color="#FD6E28"></box-icon>
+              <box-icon name="filter" type="regular" size="sm" color="#FF6700"></box-icon>
               <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-              <box-icon name="search" type="regular" size="sm" color="#FD6E28"></box-icon>
+              <box-icon name="search" type="regular" size="sm" color="#FF6700"></box-icon>
             </div>
           )}
           {hasAddItem && (
             <button className="border-2 border-primary bg-white rounded flex p-1 hover:bg-secondary" onClick={() => setShowAddItemForm(true)}>
-              <box-icon name="plus" color="#FD6E28"></box-icon>
+              <box-icon name="plus" color="#FF6700"></box-icon>
               <span className="px-1 text-primary">Add</span>
             </button>
           )}
@@ -135,10 +126,10 @@ const DataTable = ({
                   key: header,
                   direction: sortConfig.key === header && sortConfig.direction === "asc" ? "desc" : "asc",
                 })}>
-                  <span className="flex justify-center items-center">
+                  <span className="flex justify-center items-center text-dark">
                     {header}
                     {sortConfig.key === header && (
-                      <box-icon name={sortConfig.direction === "asc" ? "caret-up" : "caret-down"} size="16px" color="#f16e3d"></box-icon>
+                      <box-icon name={sortConfig.direction === "asc" ? "caret-up" : "caret-down"} size="16px" color="#FF6700"></box-icon>
                     )}
                   </span>
                 </th>
@@ -160,14 +151,20 @@ const DataTable = ({
                 {hasEdit && (
                   <td className="bg-white sticky -right-1">
                     <button onClick={() => handleEditClick(row)} className="flex justify-center items-center">
-                      <box-icon type="regular" name="edit" size="sm" color="#FD6E28"></box-icon>
+                      <box-icon type="regular" name="edit" size="sm" color="#FF6700"></box-icon>
                     </button>
                   </td>
                 )}
-                {hasButton && (
+                {hasQr && (
                   <td className="bg-white sticky -right-1">
-                    <button onClick={() => setShowCreateForm(true)} className="flex justify-center items-center">
-                      <box-icon type="regular" name="edit" size="sm" color="#FD6E28"></box-icon>
+                    <button
+                      className="flex justify-center items-center"
+                      onClick={() => {
+                        setSelectedItemId(row[0]);
+                        setShowQRCodeModal(true);
+                      }}
+                    >
+                      <box-icon name="qr-scan" color="#FF6700"></box-icon>
                     </button>
                   </td>
                 )}
@@ -176,6 +173,12 @@ const DataTable = ({
           </tbody>
         </table>
       </div>
+      {showQRCodeModal && (
+        <QRCodeModal
+          onClose={() => setShowQRCodeModal(false)}
+          id={selectedItemId} // ส่ง selectedItemId ไปที่ QRCodeModal
+        />
+      )}
       {hasPagination && (
         <div className="pagination">
           <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
@@ -214,4 +217,3 @@ const DataTable = ({
 };
 
 export default DataTable;
-
