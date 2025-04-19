@@ -234,7 +234,7 @@ const SubmittedWork = ({ username = "worker" }) => {
         </div>
 
         <div className="report-box-footer flex justify-between w-full h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
-          <div className="bg-primary text-white px-2 rounded flex items-center">
+          <div className="bg-highlight text-white px-2 rounded flex items-center">
             {checkedCount} selected
           </div>
         </div>

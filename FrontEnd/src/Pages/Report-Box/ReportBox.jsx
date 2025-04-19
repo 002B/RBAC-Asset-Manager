@@ -196,8 +196,8 @@ const ReportBox = () => {
                   value={searchReportTerm}
                   onChange={(e) => setSearchReportTerm(e.target.value)}
                 />
-                <button>
-                  <box-icon name="search" type="regular" size="sm" color="#FD6E28"></box-icon>
+                <button className="flex justify-center items-center w-fit h-fit">
+                  <box-icon name="search" type="regular" size="sm" color="#FF6700"></box-icon>
                 </button>
               </div>
 
@@ -241,10 +241,10 @@ const ReportBox = () => {
           </div>
 
           {/* REPORT LIST */}
-          <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-primary gap-1 pt-1 pb-1">
+          <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-light gap-1 pt-1 pb-1">
             {filteredReports.map((report, index) => (
               <div
-                className="report-box-list-item grid grid-cols-10 w-full h-fit items-center p-2 bg-white border-2 border-primary rounded-[8px] cursor-pointer hover:brightness-90"
+                className="report-box-list-item grid grid-cols-10 w-full h-fit items-center p-2 bg-white border-2 border-light rounded-[8px] cursor-pointer hover:brightness-90"
                 key={index}
                 onClick={() => handleItemCheck(report.report_id)}
               >
@@ -265,9 +265,10 @@ const ReportBox = () => {
           </div>
         </div>
 
-        {/* FOOTER */}
-        <div className="report-box-footer flex justify-between w-full h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
-          <div className="flex items-center bg-primary rounded px-2 text-white">{checkedCount} selected</div>
+        <div className="report-box-footer flex justify-between w-full bottom-0 h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
+          <div className="report-box-checked-count flex justify-start items-center bg-highlight rounded px-2">
+            <span className="text-white">{checkedCount} selected</span>
+          </div>
           <div className="flex gap-2">
             <button className="px-2 text-white rounded bg-red-600 hover:brightness-110 flex items-center gap-1" onClick={handleConfirmReject}>
               <span>Reject</span>

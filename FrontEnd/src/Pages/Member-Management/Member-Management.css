@@ -78,11 +78,11 @@
 }
 .user-card .edit-button {
   justify-self: end;
-  background-color: var(--accent-color);
+  background-color: var(--secondary-color);
   transition: all 0.1s ease-in-out;
 }
 .user-card .edit-button:hover {
-  background-color: var(--primary-color);
+  background-color: var(--dark-color);
 }
 
 /* Tablet */

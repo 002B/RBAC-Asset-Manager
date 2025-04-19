@@ -135,8 +135,8 @@ async function getReportByUserFixing(user) {
 
 async function createReport(company, branch, id, data ) {
     try {
-        const lastItem = await reportModel.find({}, { sort: { createAt: -1 } }).lean();
-        const lastNumber = lastItem.length;
+        const lastItem = await reportModel.countDocuments({ "report_id": { $regex: `RP-${new Date().getFullYear()}`, $options: "i" } });
+        const lastNumber = lastItem+1;
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(parseInt(lastNumber, 10) + 1).toString().padStart(7, '0')}`,
             "item_id": id,
@@ -147,7 +147,6 @@ async function createReport(company, branch, id, data ) {
             "send_by": data.send_by,
             "problem": data.problem
         });
-       
         return true;
     } catch (error) {
         console.log("Error adding new report:", error);

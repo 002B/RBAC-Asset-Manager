@@ -716,7 +716,7 @@ const MemberManagementSuperMember = () => {
       )}
 
       <div className="flex flex-col gap-2">
-        <div className="member-management-bar bg-highlight p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
+        <div className="member-management-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
           <div className="member-management-header flex gap-2 justify-center items-center">
             <box-icon
               name="group"

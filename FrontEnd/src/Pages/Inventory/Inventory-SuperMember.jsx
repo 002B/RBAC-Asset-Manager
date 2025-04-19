@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Auth/AuthProvider";
 import DataTable from "../../Component/DataTable/DataTable";
-import { getItemCompany, getItemBranch } from "../../Component/file";
 import Status from "../../Component/Status/Status";
 
 const InventorySuperMember = () => {
