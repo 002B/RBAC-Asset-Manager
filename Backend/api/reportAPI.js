@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const reportFunc = require('./report');
 const itemFunc = require('./item');
-const { stat } = require('fs');
+const logItemFunc = require('./itemLog');
+const activityLogFunc = require('./activityLog');
 
 const handleError = (res, message, error = null, statusCode = 500) => {
     console.error(message, error || '');
@@ -83,7 +84,7 @@ router.get('/getReportByUserFixing/:user', async (req, res) => {
 
     try {
         const data = await reportFunc.getReportByUserFixing(user);
-        if (!data || data.length === 0) {
+        if (!data) {
             return res.status(404).json({ message: 'No fixing reports found for this user' });
         }
         res.json(data);
@@ -220,6 +221,7 @@ router.get('/getReportByUser/:userId', async (req, res) => {
 router.post('/createReport/:id', async (req, res) => {
     const { id } = req.params;
     const { data } = req.body;
+    const user = req.body.user;
 
     if (!validateParams({ id }, res) || !data || !data.problem) {
         return res.status(400).json({ message: 'Incomplete data' });
@@ -232,30 +234,19 @@ router.post('/createReport/:id', async (req, res) => {
         }
         const report = await reportFunc.createReport(item.client_id, item.client_branch_id, id, data);
         await itemFunc.updateStatus([id], 'reporting');
+        await logItemFunc.createLog([item.item_id,'reporting', user.user, user.role]);
+        await activityLogFunc.createLog(['reporting', user.user, user.role]);
         res.json(report);
     } catch (error) {
         handleError(res, 'Error creating report', error);
     }
 });
 
-router.get('/getReportByStatus/:status', async (req, res) => {
-    const status = req.params.status;
-    
-    if (!status) {
-        return res.status(400).json({ message: "Status must not be empty" });
-    }
-    try {
-        const data = await reportFunc.getReportByStatus(status);
-        res.json(data);
-    } catch (error) {
-        handleError(res, 'Error fetching reports by status', error);
-    }
-});
-
 router.put('/updateReport/:status', async (req, res) => {
     const { status } = req.params;
     const { ids, send_to } = req.body; 
-
+    const { user } = req.body;
+    
     if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ message: 'IDs are required and should be an array' });
     }
@@ -270,14 +261,28 @@ router.put('/updateReport/:status', async (req, res) => {
     try {
         const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), send_to);
         if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
-        if (status.toLowerCase() === 'accepted') await reportFunc.deleteReport(updateResult.itemIds);
+        if (status.toLowerCase() !== 'pending') await reportFunc.deleteReport(updateResult.itemIds,updateResult.status);
         const updateStatusResult = await itemFunc.updateStatus(updateResult.itemIds, updateResult.itemStatus);
-
         if (!updateStatusResult) return res.status(404).json({ message: 'Error updating item status' });
-        
+        await activityLogFunc.createLog([status.toLowerCase(), user.user, user.role]);
+        await logItemFunc.createLog([updateStatusResult[0],updateResult.itemStatus, user.user, user.role]);
         res.json({ message: 'Report and items updated successfully' });
     } catch (error) {
         handleError(res, 'Error updating report', error);
+    }
+});
+
+router.get('/getReportByStatus/:status', async (req, res) => {
+    const status = req.params.status;
+    
+    if (!status) {
+        return res.status(400).json({ message: "Status must not be empty" });
+    }
+    try {
+        const data = await reportFunc.getReportByStatus(status);
+        res.json(data);
+    } catch (error) {
+        handleError(res, 'Error fetching reports by status', error);
     }
 });
 

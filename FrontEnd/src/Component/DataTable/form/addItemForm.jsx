@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../../Auth/AuthProvider";
 
 const AddItemForm = ({ onClose, onSubmit }) => {
+  const { user } = useAuth();
   const [company, setCompany] = useState(""); 
   const [branch, setBranch] = useState(""); 
 
@@ -14,6 +16,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
     item_color: "red",
     item_type: "foam",
     item_class: "ABC",
+    item_quantity: 1, // เพิ่มจำนวนใน formData
   });
 
   useEffect(() => {
@@ -63,6 +66,13 @@ const AddItemForm = ({ onClose, onSubmit }) => {
     });
   };
 
+  const handleQuantityChange = (e) => {
+    setFormData({
+      ...formData,
+      item_quantity: e.target.value,  // ปรับจำนวนใน formData
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -74,16 +84,17 @@ const AddItemForm = ({ onClose, onSubmit }) => {
         item_color: formData.item_color,
         item_type: formData.item_type,
         item_class: formData.item_class,
+        item_quantity: formData.item_quantity, // ส่งจำนวนไปใน body ของ request
       };
 
       const response = await fetch(
-        `http://localhost:3000/item/createItem/${company}/${branch}`,
+        `http://localhost:3000/item/createItem/${company}/${branch}/${formData.item_quantity}`,  // ส่งจำนวนใน URL
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify({"data":requestBody,"user":user}),
         }
       );
 
@@ -226,6 +237,22 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
+            {/* Quantity Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Quantity
+              </label>
+              <input
+                type="number"
+                name="item_quantity"
+                value={formData.item_quantity}
+                onChange={handleQuantityChange}
+                className="border-2 border-primary rounded w-full p-2"
+                min="1"
+                required
+              />
+            </div>
           </div>
           <div className="flex justify-end space-x-2">
             <button
@@ -249,4 +276,3 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 };
 
 export default AddItemForm;
-

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../Auth/AuthProvider";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "../Report-Box/ReportBox.css";
 
 const SubmittedWork = ({ username = "worker" }) => {
+  const {user} = useAuth();
   const [reports, setReports] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
   const [searchQuery, setSearchQuery] = useState("");

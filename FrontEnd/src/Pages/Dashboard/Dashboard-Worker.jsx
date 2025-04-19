@@ -3,9 +3,11 @@ import axios from "axios";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./Dashboard-Worker.css";
+import { useAuth } from "../../Auth/AuthProvider";
 import placeholderImg from "../../assets/img/placeholder.png";
 
 const DashboardWorker = () => {
+  const { user } = useAuth();
   const filterBoxRef = useRef();
   const [currentPage, setCurrentPage] = useState(1);
   const [workList, setWorkList] = useState([]);
@@ -31,6 +33,7 @@ const DashboardWorker = () => {
         const res = await axios.get(
           "http://localhost:3000/report/getReportByUserFixing/worker"
         );
+
         const transformed = res.data.map((report) => ({
           report_id: report.report_id,
           serial: report.item_id,
@@ -45,7 +48,7 @@ const DashboardWorker = () => {
     };
 
     fetchData();
-  }, []);
+  }, [workList]);
 
   const getPaginationRange = () => {
     const start = Math.max(currentPage - 1, 1);
@@ -98,6 +101,7 @@ const DashboardWorker = () => {
         try {
           await axios.put("http://localhost:3000/report/updateReport/done", {
             ids: [reportId],
+            user : user
           });
           setWorkList((prevList) => prevList.filter((item) => item.report_id !== reportId));
 

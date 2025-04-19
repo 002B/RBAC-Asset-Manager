@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../Auth/AuthProvider";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./UnassignedWork.css";
 
 const UnassignedWorkAdmin = () => {
+  const { user } = useAuth();
   const [workList, setWorkList] = useState([]);
   const [workerList, setWorkerList] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
@@ -84,7 +86,8 @@ const UnassignedWorkAdmin = () => {
           },
           body: JSON.stringify({
             ids: selectedReportIds,
-            assigner: selectedWorker, // ส่ง assigner เป็นชื่อของ worker
+            send_to: selectedWorker, 
+            user: user
           }),
         })
           .then((res) => res.json())

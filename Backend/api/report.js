@@ -180,7 +180,7 @@ async function updateReport(ids, status, send_to) {
         }
 
         const itemStatus = getItemStatusByReportStatus(status);
-        return { success: true, itemIds, itemStatus };
+        return { success: true, itemIds, itemStatus ,status : docs[0].status};
     } catch (error) {
         console.error('Error updating report:', error);
         return { success: false, message: 'Error updating report' };
@@ -204,10 +204,10 @@ function getItemStatusByReportStatus(reportStatus) {
     }
 }
 
-async function deleteReport(id) {
+async function deleteReport(id, status) {
     try {
-        const result = await reportModel.deleteMany({ "item_id": { $in: id }, status: "pending" });
-        return result.deletedCount; // Returns how many documents were deleted
+        const result = await reportModel.deleteMany({ "item_id": { $in: id }, status: status });
+        return result.deletedCount;
     } catch (error) {
         console.error("Error deleting report:", error);
         throw new Error("Failed to delete report");

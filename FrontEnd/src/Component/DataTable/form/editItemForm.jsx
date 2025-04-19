@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-
+import { useAuth } from "../../../Auth/AuthProvider";
 const EditItemForm = ({ onClose, onSubmit, initialData }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     item_id: initialData?.item_id || "",
     client_id: initialData?.client_id || "",
@@ -42,7 +43,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData), // Only includes the fields we want to update
+          body: JSON.stringify({"data":formData,"user":user}),
         }
       );
 
@@ -71,6 +72,10 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
         `http://localhost:3000/item/deleteItem/${formData.item_id}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({"user":user}),
         }
       );
 

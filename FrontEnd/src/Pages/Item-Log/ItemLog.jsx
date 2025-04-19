@@ -35,7 +35,7 @@ const ItemLog = () => {
         };
 
         fetchData();
-    }, [user.company, user.selectedBranch]);
+    }, [user.company, user.selectedBranch, activityLog]);
 
     if (loading) return <div>Loading...</div>;
     return (
