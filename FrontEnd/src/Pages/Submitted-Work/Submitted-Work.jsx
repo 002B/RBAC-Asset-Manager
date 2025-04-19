@@ -26,6 +26,7 @@ const SubmittedWork = ({ username = "worker" }) => {
       console.error("Error fetching reports", err);
     }
   };
+
   const handleViewDetails = (report) => {
     SweetAlert.fire({
       title: `<strong>Report Details</strong>`,
@@ -49,59 +50,8 @@ const SubmittedWork = ({ username = "worker" }) => {
     });
   };
 
-  const handleItemCheck = (id) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
   const toggleFilterBox = () => {
     filterBoxRef.current.classList.toggle("hidden");
-  };
-
-  const confirmAccept = (count) => {
-    SweetAlert.fire({
-      title: "Are you sure?",
-      text: `You need to approve ${count} work(s)?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#16a34a",
-      cancelButtonColor: "#B3B4AD",
-      confirmButtonText: "Accept",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        SweetAlert.fire({
-          title: "Congratulations!",
-          text: "Work(s) Approved!",
-          icon: "success",
-          confirmButtonColor: "#16a34a",
-        });
-      }
-    });
-  };
-
-  const confirmReject = (count) => {
-    SweetAlert.fire({
-      title: "Are you sure?",
-      text: `You need to reject ${count} work(s)?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#B3B4AD",
-      confirmButtonText: "Sure",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        SweetAlert.fire({
-          title: "Rejected!",
-          text: `${count} Work(s) Rejected!`,
-          icon: "success",
-          confirmButtonColor: "#dc2626",
-        });
-      }
-    });
   };
 
   const companyList = Array.from(new Set(reports.map((r) => r.client_id)));
@@ -192,7 +142,6 @@ const SubmittedWork = ({ username = "worker" }) => {
             <div className="text-center font-bold">Branch</div>
             <div className="text-center font-bold">Status</div>
             <div className="text-center font-bold">send_by</div>
-            <div className="text-center font-bold">Action</div>
           </div>
 
           <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-y-2 border-primary gap-1 py-1">
@@ -200,7 +149,10 @@ const SubmittedWork = ({ username = "worker" }) => {
               <div
                 key={index}
                 className="report-box-list-item grid grid-cols-7 w-full h-[48px] items-center p-2 bg-white border-2 border-primary rounded-[8px] drop-shadow hover:brightness-90 transition-all duration-200 cursor-pointer"
-                onClick={() => handleItemCheck(report.report_id)}
+                onDoubleClick={(e) => {
+                  if (e.target.tagName.toLowerCase() === "input") return;
+                  handleViewDetails(report);
+                }}
               >
                 <span className="flex items-center gap-2">
                   <box-icon name="file" color="#FD6E28" size="sm" />
@@ -211,23 +163,6 @@ const SubmittedWork = ({ username = "worker" }) => {
                 <span className="text-center">{report.client_branch_id}</span>
                 <span className="text-center">{report.status}</span>
                 <span className="text-center">{report.send_by}</span>
-                <span className="flex justify-center">
-                  <button
-                    className="flex items-center gap-1 text-white text-sm font-medium bg-secondary  px-4 py-1.5 rounded-lg shadow hover:bg-secondary  transition duration-200"
-                    onClick={(e) => {
-                      e.stopPropagation(); // ป้องกันไม่ให้ checkbox ติดด้วย
-                      handleViewDetails(report);
-                    }}
-                  >
-                    <box-icon
-                      name="show"
-                      type="regular"
-                      color="white"
-                      size="sm"
-                    />
-                    View
-                  </button>
-                </span>
               </div>
             ))}
           </div>
