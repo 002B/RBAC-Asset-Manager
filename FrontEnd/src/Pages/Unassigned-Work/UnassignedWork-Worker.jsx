@@ -90,7 +90,7 @@ const UnassignedWork = () => {
       try {
         await axios.put("http://localhost:3000/report/updateReport/fixing", {
           ids: [id],
-          send_by: user.user
+          send_to: user.user
         });
         SweetAlert.fire({
           title: "Congratulations!",
