@@ -3,12 +3,24 @@ const CompanyModel = require('./DB/client.js');
 async function getAllCompany() {
     try {
         const data = await CompanyModel.find({}, {client_id: 1, _id: 0}).lean();
-        // Extract client_ids, convert to Set to remove duplicates, then back to array
         const uniqueCompanies = [...new Set(data.map(item => item.client_id))];
         return uniqueCompanies.map(client_id => ({ client_id }));
     } catch (error) {
-        console.log(error);
-        throw error; // Make sure to throw so the route can catch it
+        throw error; 
+    }
+}
+
+async function getCompanyBranch() {
+    try {
+        const data = await CompanyModel.find({}, { client_id: 1, client_branch_id: 1, _id: 0 }).lean();
+        const uniqueCompanies = [...new Set(data.map(item => item.client_id))];
+        const result = {};
+        uniqueCompanies.forEach(client_id => {
+            result[client_id] = data.filter(item => item.client_id === client_id).map(item => item.client_branch_id);
+        });
+        return result;
+    } catch (error) {
+        throw error; 
     }
 }
 
@@ -45,4 +57,4 @@ async function getLastCheck(company) {
         return null;
     }
 }
-module.exports = {getAllCompany,getBranchList,getNextCheck,getLastCheck};
+module.exports = {getAllCompany,getBranchList,getCompanyBranch,getNextCheck,getLastCheck};

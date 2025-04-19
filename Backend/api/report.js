@@ -99,7 +99,7 @@ async function getReportById(id) {
 
 async function getReportByUser(user) {
     try {
-        return await reportModel.find({ "send_by": user }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_to": user }, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
@@ -117,7 +117,7 @@ async function getReportByStatus(status) {
 
 async function getReportByUserDone(user) {
     try{
-        return await reportModel.find({ "assigner":user , "status": "done" }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_to":user , "status": "done" }, { _id: 0 }).lean();
     }catch(error){
         console.error('Error fetching data:', error); 
         return [];
@@ -126,7 +126,7 @@ async function getReportByUserDone(user) {
 
 async function getReportByUserFixing(user) {
     try{
-        return await reportModel.find({ "assigner": user, "status": "fixing" }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_to": user, "status": "fixing" }, { _id: 0 }).lean();
     }catch(error){
         console.error('Error fetching data:', error); 
         return [];
@@ -135,9 +135,8 @@ async function getReportByUserFixing(user) {
 
 async function createReport(company, branch, id, data ) {
     try {
-        const lastItem = await reportModel.find({}, { sort: { createAt: -1 } }).lean();
-        const lastNumber = lastItem.length;
-        console.log(lastNumber);
+        const lastItem = await reportModel.countDocuments({ "report_id": { $regex: `RP-${new Date().getFullYear()}`, $options: "i" } });
+        const lastNumber = lastItem+1;
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(parseInt(lastNumber, 10) + 1).toString().padStart(7, '0')}`,
             "item_id": id,
@@ -148,11 +147,9 @@ async function createReport(company, branch, id, data ) {
             "send_by": data.send_by,
             "problem": data.problem
         });
-       
         return true;
     } catch (error) {
         console.log("Error adding new report:", error);
-        
         return false;
     }
 }
@@ -190,6 +187,8 @@ async function updateReport(ids, status, send_to) {
     }
 }
 
+
+
 function getItemStatusByReportStatus(reportStatus) {
     switch (reportStatus) {
         case 'pending':
@@ -204,6 +203,17 @@ function getItemStatusByReportStatus(reportStatus) {
             return 'OK';
     }
 }
+
+async function deleteReport(id) {
+    try {
+        const result = await reportModel.deleteMany({ "item_id": { $in: id }, status: "pending" });
+        return result.deletedCount; // Returns how many documents were deleted
+    } catch (error) {
+        console.error("Error deleting report:", error);
+        throw new Error("Failed to delete report");
+    }
+}
+
 
 module.exports = {
     createReport,
@@ -222,6 +232,7 @@ module.exports = {
     getReportByUserDone,
     getReportStatusByBranch,
     getReportStatusByCom,
-    updateReport
+    updateReport,
+    deleteReport
 };
 

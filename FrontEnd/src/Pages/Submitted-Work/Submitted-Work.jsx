@@ -8,7 +8,7 @@ const SubmittedWork = ({ username = "worker" }) => {
   const [reports, setReports] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [companyFilter, setCompanyFilter] = useState("all");
+  const [companyFilter, setCompanyFilter] = useState("All");
 
   const filterBoxRef = useRef();
 
@@ -26,6 +26,7 @@ const SubmittedWork = ({ username = "worker" }) => {
       console.error("Error fetching reports", err);
     }
   };
+
   const handleViewDetails = (report) => {
     SweetAlert.fire({
       title: `<strong>Report Details</strong>`,
@@ -36,7 +37,7 @@ const SubmittedWork = ({ username = "worker" }) => {
           <p><strong>Company:</strong> ${report.client_id}</p>
           <p><strong>Branch:</strong> ${report.client_branch_id}</p>
           <p><strong>Status:</strong> ${report.status}</p>
-          <p><strong>Assigner:</strong> ${report.assigner}</p>
+          <p><strong>Assigner:</strong> ${report.send_by}</p>
           <p><strong>Problem:</strong> ${report.problem}</p>
           <p><strong>Created At:</strong> ${new Date(
             report.createAt
@@ -49,60 +50,8 @@ const SubmittedWork = ({ username = "worker" }) => {
     });
   };
 
-  const handleItemCheck = (id) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-
   const toggleFilterBox = () => {
     filterBoxRef.current.classList.toggle("hidden");
-  };
-
-  const confirmAccept = (count) => {
-    SweetAlert.fire({
-      title: "Are you sure?",
-      text: `You need to approve ${count} work(s)?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#16a34a",
-      cancelButtonColor: "#B3B4AD",
-      confirmButtonText: "Accept",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        SweetAlert.fire({
-          title: "Congratulations!",
-          text: "Work(s) Approved!",
-          icon: "success",
-          confirmButtonColor: "#16a34a",
-        });
-      }
-    });
-  };
-
-  const confirmReject = (count) => {
-    SweetAlert.fire({
-      title: "Are you sure?",
-      text: `You need to reject ${count} work(s)?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#B3B4AD",
-      confirmButtonText: "Sure",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        SweetAlert.fire({
-          title: "Rejected!",
-          text: `${count} Work(s) Rejected!`,
-          icon: "success",
-          confirmButtonColor: "#dc2626",
-        });
-      }
-    });
   };
 
   const companyList = Array.from(new Set(reports.map((r) => r.client_id)));
@@ -163,22 +112,16 @@ const SubmittedWork = ({ username = "worker" }) => {
                   <h4 className="text-white w-full text-center bg-primary rounded-[4px]">
                     Company
                   </h4>
-                  <div className="filter-list">
-                    <input
-                      type="radio"
-                      name="company"
-                      checked={companyFilter === "all"}
-                      onChange={() => setCompanyFilter("all")}
-                    />
-                    <label>Company</label>
-                  </div>
                   {companyList.map((company) => (
                     <div className="filter-list" key={company}>
                       <input
-                        type="radio"
-                        name="company"
+                        type="checkbox"
                         checked={companyFilter === company}
-                        onChange={() => setCompanyFilter(company)}
+                        onChange={() =>
+                          setCompanyFilter((prev) =>
+                            prev === company ? "All" : company
+                          )
+                        }
                       />
                       <label>{company}</label>
                     </div>
@@ -198,8 +141,7 @@ const SubmittedWork = ({ username = "worker" }) => {
             <div className="text-center font-bold">Company</div>
             <div className="text-center font-bold">Branch</div>
             <div className="text-center font-bold">Status</div>
-            <div className="text-center font-bold">Assigner</div>
-            <div className="text-center font-bold">Action</div>
+            <div className="text-center font-bold">send_by</div>
           </div>
 
           <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-y-2 border-primary gap-1 py-1">
@@ -207,10 +149,12 @@ const SubmittedWork = ({ username = "worker" }) => {
               <div
                 key={index}
                 className="report-box-list-item grid grid-cols-7 w-full h-[48px] items-center p-2 bg-white border-2 border-primary rounded-[8px] drop-shadow hover:brightness-90 transition-all duration-200 cursor-pointer"
-                onClick={() => handleItemCheck(report.report_id)}
+                onDoubleClick={(e) => {
+                  if (e.target.tagName.toLowerCase() === "input") return;
+                  handleViewDetails(report);
+                }}
               >
                 <span className="flex items-center gap-2">
-                  
                   <box-icon name="file" color="#FD6E28" size="sm" />
                   {report.report_id}
                 </span>
@@ -218,30 +162,14 @@ const SubmittedWork = ({ username = "worker" }) => {
                 <span className="text-center">{report.client_id}</span>
                 <span className="text-center">{report.client_branch_id}</span>
                 <span className="text-center">{report.status}</span>
-                <span className="text-center">{report.assigner}</span>
-                <span className="flex justify-end">
-                  <button
-                    className="text-white rounded bg-secondary px-2 py-1 hover:brightness-110"
-                    onClick={(e) => {
-                      e.stopPropagation(); // ป้องกันไม่ให้ checkbox ติดด้วย
-                      handleViewDetails(report);
-                    }}
-                  >
-                    <box-icon
-                      name="show"
-                      type="regular"
-                      color="white"
-                      size="sm"
-                    />
-                  </button>
-                </span>
+                <span className="text-center">{report.send_by}</span>
               </div>
             ))}
           </div>
         </div>
 
         <div className="report-box-footer flex justify-between w-full h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
-          <div className="bg-primary text-white px-2 rounded flex items-center">
+          <div className="bg-highlight text-white px-2 rounded flex items-center">
             {checkedCount} selected
           </div>
         </div>

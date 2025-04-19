@@ -107,11 +107,11 @@ router.post('/createItem/:company/:branch/:count', async (req, res) => {
 });
 
 // Update an item
-router.put('/updateItem/:company/:branch/:id', async (req, res) => {
-    const { company, branch, id } = req.params;
+router.put('/updateItem/:id', async (req, res) => {
+    const { id } = req.params;
     const data = req.body;
     try {
-        const items = await itemFunc.updateItem(company, branch, id, data);
+        const items = await itemFunc.updateItem(id, data);
         if (!items) return res.status(404).json({ message: 'Item not found' });
         res.json(items);
     } catch (error) {

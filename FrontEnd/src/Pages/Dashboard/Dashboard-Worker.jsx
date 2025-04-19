@@ -11,6 +11,7 @@ const DashboardWorker = () => {
   const [workList, setWorkList] = useState([]);
   const itemsPerPage = 8;
 
+
   const currentData = workList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -98,6 +99,8 @@ const DashboardWorker = () => {
           await axios.put("http://localhost:3000/report/updateReport/done", {
             ids: [reportId],
           });
+          setWorkList((prevList) => prevList.filter((item) => item.report_id !== reportId));
+
 
           SweetAlert.fire({
             title: "Congratulations!",
@@ -105,9 +108,22 @@ const DashboardWorker = () => {
             icon: "success",
             confirmButtonColor: "#FD6E28",
           });
-
           // ลบรายการที่ submit แล้วออกจาก list
-          setWorkList((prev) => prev.filter((item) => item.report_id !== reportId));
+          try {
+            const res = await axios.get(
+              "http://localhost:3000/report/getReportByUserFixing/worker"
+            );
+            const transformed = res.data.map((report) => ({
+              report_id: report.report_id,
+              serial: report.item_id,
+              company: report.client_id,
+              branch: report.client_branch_id,
+              date: new Date(report.createAt).toLocaleDateString(),
+            }));
+            setWorkList(transformed);
+          } catch (error) {
+            console.error("Error fetching report data:", error);
+          }          
         } catch (error) {
           console.error("Error submitting report:", error);
           SweetAlert.fire({
@@ -174,7 +190,7 @@ const DashboardWorker = () => {
               </div>
               <div className="work-card-body flex flex-col justify-center items-center">
                 <h3 className="text-secondary text-nowrap">{item.company}</h3>
-                <h4>{item.branch}</h4>
+                <h4 className="text-dark">{item.branch}</h4>
                 <div className="flex items-center justify-center">
                   <box-icon name="time" type="regular" color="#FD6E28" size="sm"></box-icon>
                   <span>{item.date}</span>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const reportFunc = require('./report');
 const itemFunc = require('./item');
+const { stat } = require('fs');
 
 const handleError = (res, message, error = null, statusCode = 500) => {
     console.error(message, error || '');
@@ -253,7 +254,7 @@ router.get('/getReportByStatus/:status', async (req, res) => {
 
 router.put('/updateReport/:status', async (req, res) => {
     const { status } = req.params;
-    const { ids, assigner } = req.body; 
+    const { ids, send_to } = req.body; 
 
     if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ message: 'IDs are required and should be an array' });
@@ -266,11 +267,10 @@ router.put('/updateReport/:status', async (req, res) => {
     if (!validStatuses.includes(status.toLowerCase())) {
         return res.status(400).json({ message: 'Invalid status' });
     }
-
     try {
-        const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), assigner);
+        const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), send_to);
         if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
-
+        if (status.toLowerCase() === 'accepted') await reportFunc.deleteReport(updateResult.itemIds);
         const updateStatusResult = await itemFunc.updateStatus(updateResult.itemIds, updateResult.itemStatus);
 
         if (!updateStatusResult) return res.status(404).json({ message: 'Error updating item status' });

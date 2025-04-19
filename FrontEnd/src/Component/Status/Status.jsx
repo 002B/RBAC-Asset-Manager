@@ -82,7 +82,7 @@ const Status = ({ role, company, branch }) => {
         const badItemInBranchCount = await badItemInBranchCountResponse.text();
         setAdminBadItemCount(parseInt(badItemInBranchCount));
 
-        const totalUserResponse = await fetch(`http://localhost:3000/users/getOperatorUser`);
+        const totalUserResponse = await fetch(`http://localhost:3000/users/getAllUsers`);
         const totalUser = await totalUserResponse.json();
         adminSetTotalUser(totalUser.length);
       }
@@ -93,21 +93,28 @@ const Status = ({ role, company, branch }) => {
   if (role === "member") {
     return (
       <div className="status-container flex w-full justify-between">
-        <div className="flex justify-between items-center status-box bg-color-primary ">
+        <div className="flex justify-between items-center status-box bg-primary ">
           <div className="count-title p-1 m-1">
             <h3>Installed</h3>
             <h1>{memberItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-secondary">
+          <div className="count-title p-1 m-1">
+            <h3>Need Action</h3>
+            <h1>{(getBadItemBranch(company, branch)).length}</h1>
+          </div>
+          <box-icon name="wrench" color="white" size="lg"></box-icon>
+        </div>
+        <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Report Sent</h3>
             <h1>{memberReportPendingCount}</h1>
           </div>
           <box-icon name="send" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
             <h1>{memberBadItemCount}</h1>
@@ -128,21 +135,35 @@ const Status = ({ role, company, branch }) => {
   if (role === "super_member") {
     return (
       <div className="status-container flex w-full justify-between">
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total Item</h3>
             <h1>{superMemberItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">  
+        <div className="flex justify-between items-center status-box bg-secondary">
+          <div className="count-title p-1 m-1">
+            <h3>Member</h3>
+            <h1>{getUserCount(company)}</h1>
+          </div>
+          <box-icon name="user" color="white" size="lg"></box-icon>
+        </div>
+        <div className="flex justify-between items-center status-box bg-primary">
+          <div className="count-title p-1 m-1">
+            <h3>Branch</h3>
+            <h1>{getBranchCount(company)}</h1>
+          </div>
+          <box-icon name="git-branch" color="white" size="lg"></box-icon>
+        </div>
+        <div className="flex justify-between items-center status-box bg-secondary">  
           <div className="count-title p-1 m-1"> 
             <h3>Report Sent</h3>
             <h1>{superMemberReportPendingCount}</h1>
           </div>
           <box-icon name="send" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
             <h1>{superMemberBadItemCount}</h1>
@@ -158,28 +179,28 @@ const Status = ({ role, company, branch }) => {
   if (role === "admin") {
     return (
       <div className="status-container flex w-full justify-between">
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total Installed</h3>
             <h1>{adminItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Report</h3>
             <h1>{adminReportPendingCount}</h1>
           </div>
           <box-icon name="news" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
             <h1>{adminBadItemCount}</h1>
           </div>  
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box">
+        <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total User</h3>
             <h1>{adminTotalUser}</h1>
@@ -193,28 +214,28 @@ const Status = ({ role, company, branch }) => {
   if (role === "super_admin") {
     return (
       <div className="status-container flex w-full justify-between">
-        <div className="flex justify-between items-center status-box bg-secondary">
+        <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total Installed</h3>
             <h1>{getAllItemCompanyCount()}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box bg-accent">
+        <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Client</h3>
             <h1>{getCompanyCount()}</h1>
           </div>
           <box-icon name="buildings" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box bg-highlight">
+        <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total User</h3>
             <h1>{getAllUserCount()}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box bg-error">
+        <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Actions</h3>
             <h1>{getAllLogReportPendingCount()}</h1>

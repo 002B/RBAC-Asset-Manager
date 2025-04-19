@@ -4,33 +4,6 @@ import DataTable from "../../Component/DataTable/DataTable.jsx";
 import Status from "../../Component/Status/Status.jsx";
 import { useAuth } from "../../Auth/AuthProvider.jsx";
 
-// const submittedWork = [
-//   ["FTX=2023-001", "worker001", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-002", "worker002", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-003", "worker003", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-004", "worker004", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-005", "worker005", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-006", "worker006", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-007", "worker007", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-008", "worker008", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-009", "worker009", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-010", "worker010", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-011", "worker011", "14/11/2022", "12:45:32"],
-// ];
-
-// const testUnReadReport = [
-//   ["FTX=2023-001", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-002", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-003", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-004", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-005", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-006", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-007", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-008", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-009", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-010", "User Name", "14/11/2022", "12:45:32"],
-//   ["FTX=2023-011", "User Name", "14/11/2022", "12:45:32"],
-// ];
 const fetchReport = async () => {
   try {
     const requestOptions = {
@@ -67,8 +40,9 @@ const fetchAccepted = async () => {
     const data = await response.json();
     const formattedData = data.map((item) => [
       item.item_id,
-      item.assigner,
-      item.createAt,
+      item.send_to,
+      item.createAt.split("T")[0],
+      item.createAt.split("T")[1].split(".")[0],
     ]);
     return formattedData;
   } catch (error) {
@@ -103,7 +77,7 @@ const DashboardAdmin = () => {
                 tIcon="wrench"
                 colIcon={"wrench"}
                 tName={"Submitted Work"}
-                title={["Serial Number", "Worker Name", "Date"]}
+                title={["Serial Number", "Worker Name", "Date", "Time"]}
                 data={submittedWork}
                 hasButton={false}
                 itemPerPage={10}
