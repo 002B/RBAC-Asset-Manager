@@ -803,7 +803,7 @@ const MemberManagementAdmin = () => {
       )}
 
       <div className="flex flex-col gap-2">
-        <div className="member-management-bar bg-highlight p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
+        <div className="member-management-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
           <div className="member-management-header flex gap-2 justify-center items-center">
             <box-icon
               name="group"
@@ -817,7 +817,7 @@ const MemberManagementAdmin = () => {
           <div className="member-management-tool flex gap-2">
             <div className="member-add flex justify-center items-center rounded">
               <button
-                className="flex justify-center items-center p-2 w-fit h-fit bg-primary"
+                className="flex justify-center items-center p-2 w-fit h-fit bg-highlight"
                 name="add-user"
                 onClick={() => setShowCreateUser(true)}
               >
@@ -922,17 +922,17 @@ const MemberManagementAdmin = () => {
                   </div>
                 </div>
                 <div className="user-card-body flex flex-col justify-center items-center">
-                  <h3 className="text-primary text-nowrap">
+                  <h3 className="text-black text-nowrap">
                     {user.display_name}
                   </h3>
-                  <h4>{user.username}</h4>
+                  <h4 className="text-dark">{user.username}</h4>
                 </div>
                 <div className="user-card-footer flex flex-col w-full gap-1 py-1">
                   <div className="flex items-center gap-2 justify-center ">
                     <box-icon
                       name="buildings"
                       type="regular"
-                      color="#DF7A61"
+                      color="#FF6700"
                     ></box-icon>
                     <span className="font-bold">{user.client || "System"}</span>
                   </div>
@@ -940,7 +940,7 @@ const MemberManagementAdmin = () => {
                     <box-icon
                       name="user"
                       type="regular"
-                      color="#DF7A61"
+                      color="#FF6700"
                     ></box-icon>{" "}
                     <span>{user.role}</span>
                   </div>

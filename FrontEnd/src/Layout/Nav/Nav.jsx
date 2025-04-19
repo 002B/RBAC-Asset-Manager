@@ -1,5 +1,5 @@
 import React from "react";
-import Logo from "../../assets/Logo/Logo-no-tg.png";
+import Logo from "../../assets/Logo/Logo1.png";
 import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../../Auth/AuthProvider";
 import "./Nav.css";
@@ -83,7 +83,7 @@ const Nav = () => {
   const { user, handleLogout } = useAuth();
   const userNavList =getNavListByRole(user.role);
   return (
-    <div className="navbar bg-white flex flex-col h-full justify-between">
+    <div className="navbar bg-dark flex flex-col h-full justify-between">
       <div className="navigator m-2 flex flex-col gap-4">
         <div className="logo-container flex w-full justify-center items-center">
           <div className="logo-img  w-4/5">
@@ -98,13 +98,13 @@ const Nav = () => {
                   to={item.path}
                   className={({ isActive }) => {
                     return isActive
-                      ? "text-secondary font-bold w-full flex justify-between items-center active-bar nav-Active"
+                      ? "text-light font-bold w-full flex justify-between items-center active-bar nav-Active"
                       : "w-full text-gray nav-unActive";
                   }}
                 >
                   <div className="p-2 flex items-center ">
                     <box-icon
-                      color="#FD6E28"
+                      color="#FF6700"
                       type={item.iconType}
                       name={item.icon}
                     ></box-icon>
@@ -122,7 +122,7 @@ const Nav = () => {
             <box-icon size="lg" color="#FD6E28" name="user-circle"></box-icon>
           </div>
           <div className="profile-name">
-            <p className="font-bold text-lg">{user.display_name}</p>
+            <p className="font-bold text-lg text-light">{user.display_name}</p>
             <p>{user.display_role}</p>
           </div>
         </div>

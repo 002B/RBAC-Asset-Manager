@@ -90,7 +90,7 @@ const UnassignedWork = () => {
       try {
         await axios.put("http://localhost:3000/report/updateReport/fixing", {
           ids: [id],
-          send_by: user.user
+          send_to: user.user
         });
         SweetAlert.fire({
           title: "Congratulations!",
@@ -213,7 +213,7 @@ const UnassignedWork = () => {
                     <box-icon name="show" type="regular" color="white"></box-icon>
                     <span>View Details</span>
                   </button>
-                  <button className="submit-button flex justify-center items-center w-full text-white p-1 rounded gap-2 bg-primary hover:brightness-110" onClick={() => handleAccept(item.report_id)}>
+                  <button className="submit-button flex justify-center items-center w-full text-white p-1 rounded gap-2 bg-green-600 hover:brightness-110" onClick={() => handleAccept(item.report_id)}>
                     <box-icon name="plus" type="regular" color="white"></box-icon>
                     <span>Accept</span>
                   </button>

@@ -74,7 +74,7 @@ const DataTable = (props) => {
     if (/Good|Login|Install|Report Accepted/.test(value)) return "green";
     if (/Fixing|Change/.test(value)) return "#EEE150";
     if (/Bad|Uninstall|Logout|Rejected/.test(value)) return "red";
-    return "#FD6E28";
+    return "#FF6700";
   };
 
   const getPaginationRange = () => {
@@ -91,8 +91,8 @@ const DataTable = (props) => {
     <div className="data-table-wrapper">
       <div className="table-title flex items-center justify-between flex-wrap">
         <div className="flex items-center">
-          {tIcon && <box-icon name={tIcon} size="sm" color="1F2A44"></box-icon>}
-          {tName && <h2 className="p-2 text-primary">{tName}</h2>}
+          {tIcon && <box-icon name={tIcon} size="sm" color="#16425b"></box-icon>}
+          {tName && <h2 className="p-2 text-dark">{tName}</h2>}
         </div>
         <div className="flex gap-2 justify-center items-center">
           {hasExport && (
@@ -103,14 +103,14 @@ const DataTable = (props) => {
           )}
           {hasSearch && (
             <div className="search-bar">
-              <box-icon name="filter" type="regular" size="sm" color="#FD6E28"></box-icon>
+              <box-icon name="filter" type="regular" size="sm" color="#FF6700"></box-icon>
               <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-              <box-icon name="search" type="regular" size="sm" color="#FD6E28"></box-icon>
+              <box-icon name="search" type="regular" size="sm" color="#FF6700"></box-icon>
             </div>
           )}
           {hasAddItem && (
             <button className="border-2 border-primary bg-white rounded flex p-1 hover:bg-secondary" onClick={() => setShowAddItemForm(true)}>
-              <box-icon name="plus" color="#FD6E28"></box-icon>
+              <box-icon name="plus" color="#FF6700"></box-icon>
               <span className="px-1 text-primary">Add</span>
             </button>
           )}
@@ -126,10 +126,10 @@ const DataTable = (props) => {
                   key: header,
                   direction: sortConfig.key === header && sortConfig.direction === "asc" ? "desc" : "asc",
                 })}>
-                  <span className="flex justify-center items-center">
+                  <span className="flex justify-center items-center text-dark">
                     {header}
                     {sortConfig.key === header && (
-                      <box-icon name={sortConfig.direction === "asc" ? "caret-up" : "caret-down"} size="16px" color="#f16e3d"></box-icon>
+                      <box-icon name={sortConfig.direction === "asc" ? "caret-up" : "caret-down"} size="16px" color="#FF6700"></box-icon>
                     )}
                   </span>
                 </th>
@@ -148,6 +148,13 @@ const DataTable = (props) => {
                 {title.map((key, colIndex) => (
                   <td key={colIndex}>{isObjectData ? row[key] || "-" : row[colIndex] || "-"}</td>
                 ))}
+                {hasEdit && (
+                  <td className="bg-white sticky -right-1">
+                    <button onClick={() => handleEditClick(row)} className="flex justify-center items-center">
+                      <box-icon type="regular" name="edit" size="sm" color="#FF6700"></box-icon>
+                    </button>
+                  </td>
+                )}
                 {hasQr && (
                   <td className="bg-white sticky -right-1">
                     <button
@@ -157,7 +164,7 @@ const DataTable = (props) => {
                         setShowQRCodeModal(true);
                       }}
                     >
-                      <box-icon name="qr-scan" color="#FD6E28"></box-icon>
+                      <box-icon name="qr-scan" color="#FF6700"></box-icon>
                     </button>
                   </td>
                 )}

@@ -105,7 +105,7 @@ function CreateForm({ data, placeholderData, array, status }) {
   return (
     <div className="absolute p-8 border-2 w-1/2 h-fit border-secondary rounded-lg min-w-[380px] bg-white shadow-md">
       <div className="flex justify-center items-center mb-4 text-center gap-2">
-        <box-icon name="send" type="solid" color="#FD6E28"></box-icon>
+        <box-icon name="send" type="solid" color="#ff6700"></box-icon>
         <span className="text-3xl font-bold text-primary uppercase">
           Send Report
         </span>

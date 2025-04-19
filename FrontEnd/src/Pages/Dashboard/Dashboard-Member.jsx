@@ -102,13 +102,13 @@ const DashboardMember = () => {
 
   return (
     <div className="flex flex-col w-full rounded drop-shadow">
-      <div className="w-full rounded drop-shadow">
+      {/* <div className="w-full rounded drop-shadow">
       <Status
           role={user.role}
           company={user.company}
           branch={user.selectedBranch ? user.selectedBranch : user.branch[0]}
         />
-      </div>
+      </div> */}
       <div className=" dashboard-container flex w-full rounded drop-shadow mt-4">
         <div className="big-item">
           <div className="small-item-wrapper">
@@ -130,7 +130,7 @@ const DashboardMember = () => {
           <div className="small-item">
             <div className="countdown w-full flex justify-center items-center flex-col gap-2">
               <div className="flex justify-center items-center">
-                <box-icon name="timer" color="#f16e3d" size="lg"></box-icon>
+                <box-icon name="timer" color="#ff6700" size="lg"></box-icon>
                 <h1 className="text-primary">{checkUp}</h1>
               </div>
               <span className="flex justify-center items-end">
@@ -153,11 +153,11 @@ const DashboardMember = () => {
                 <box-icon
                   name="comment-error"
                   size="6rem"
-                  color="#f16e3d"
+                  color="#ff6700"
                 ></box-icon>
               </span>
               <div className="flex flex-col justify-center items-center">
-                <h2>Send Request</h2>
+                <h2 className="text-dark">Send Request</h2>
                 <span className="text-gray">
                   Having problems with our product?
                 </span>

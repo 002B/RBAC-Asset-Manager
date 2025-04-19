@@ -165,7 +165,7 @@ const UnassignedWorkAdmin = () => {
               className={`worker-list-item grid grid-cols-4 w-full h-[48px] justify-between items-center p-2 border-2 border-secondary rounded-[8px] cursor-pointer drop-shadow transition-all duration-200 ${
                 selectedWorker === worker.username
                   ? "text-white bg-secondary"
-                  : "text-secondary bg-white"
+                  : "text-black bg-white"
               }`}
               key={worker._id}
               onClick={() => toggleSelectedWorker(worker.username)}

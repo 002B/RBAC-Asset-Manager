@@ -9,7 +9,7 @@
 
 .data-table-container {
   text-align: center;
-  color: #4c3575;
+  color: var(--primary-color);
 }
 
 .table-title {
@@ -74,7 +74,7 @@
   border-radius: 8px;
 }
 .data-table tbody tr:nth-child(odd) {
-  background-color: var(--light-color);
+  background-color: var(--BG-color);
 }
 .data-table tbody tr td {
   height: 40px;
@@ -90,7 +90,7 @@
   height: 32px;
   background-color: #ddd;
   border: none;
-  color: #4c3575;
+  color: var(--dark-color);
   font-size: 16px;
   font-weight: bold;
   border-radius: 16px;
@@ -102,7 +102,7 @@
 }
 
 .pagination button.active {
-  background-color: #f16e3d;
+  background-color: #ff6700;
   color: #fff;
 }
 
@@ -113,5 +113,5 @@
 }
 
 .pagination button:focus {
-  outline: 2px solid #4c3575;
+  outline: 2px solid var(--dark-color);
 }
