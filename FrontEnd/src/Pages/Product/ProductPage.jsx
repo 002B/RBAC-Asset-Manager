@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getItemInfo } from "../../Component/file";
 import CreateForm from "../../Component/CreateForm";
 import Logo from "../../assets/Logo/Logo.png";
 import placeholder from "../../assets/img/placeholder.png";
