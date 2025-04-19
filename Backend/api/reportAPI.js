@@ -267,13 +267,10 @@ router.put('/updateReport/:status', async (req, res) => {
     if (!validStatuses.includes(status.toLowerCase())) {
         return res.status(400).json({ message: 'Invalid status' });
     }
-
     try {
         const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), assigner);
         if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
-        
-        if (status.toLowerCase() === 'accepted') await reportFunc.deleteReport(ids);
-        
+        if (status.toLowerCase() === 'accepted') await reportFunc.deleteReport(updateResult.itemIds);
         const updateStatusResult = await itemFunc.updateStatus(updateResult.itemIds, updateResult.itemStatus);
 
         if (!updateStatusResult) return res.status(404).json({ message: 'Error updating item status' });

@@ -19,7 +19,7 @@ const UnassignedWorkAdmin = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/users/getOperatorUser")
+    fetch("http://localhost:3000/users/getWorkerUser")
       .then((res) => res.json())
       .then(setWorkerList)
       .catch((err) => console.error("Error fetching worker data:", err));
@@ -127,7 +127,7 @@ const UnassignedWorkAdmin = () => {
   }
 
   const filteredWorkerList = workerList.filter((worker) =>
-    worker.display_name.toLowerCase().includes(searchWorkerTerm.toLowerCase())
+    worker.username.toLowerCase().includes(searchWorkerTerm.toLowerCase())
   );
 
   const filteredWorkList = workList.filter((work) =>
@@ -163,12 +163,12 @@ const UnassignedWorkAdmin = () => {
           {filteredWorkerList.map((worker) => (
             <div
               className={`worker-list-item grid grid-cols-4 w-full h-[48px] justify-between items-center p-2 border-2 border-secondary rounded-[8px] cursor-pointer drop-shadow transition-all duration-200 ${
-                selectedWorker === worker.display_name
+                selectedWorker === worker.username
                   ? "text-white bg-secondary"
                   : "text-secondary bg-white"
               }`}
               key={worker._id}
-              onClick={() => toggleSelectedWorker(worker.display_name)}
+              onClick={() => toggleSelectedWorker(worker.username)}
             >
               <span className="col-span-2 flex gap-2 items-center">
                 <box-icon
@@ -176,10 +176,10 @@ const UnassignedWorkAdmin = () => {
                   type="regular"
                   size="sm"
                   color={
-                    selectedWorker === worker.display_name ? "white" : "#473366"
+                    selectedWorker === worker.username ? "white" : "#473366"
                   }
                 ></box-icon>
-                <span>{worker.display_name}</span>
+                <span>{worker.username}</span>
               </span>
               <span className="w-full flex gap-2 items-center justify-center">
                 <span>{worker.role}</span>
@@ -235,7 +235,8 @@ const UnassignedWorkAdmin = () => {
               </span>
               <span className="col-span-2">{work.client_id}</span>
               <span className="col-span-2">{work.client_branch_id}</span>
-              <span className="col-span-2">{work.createAt}</span>
+              <span className="text-center text-overflow-ellipsis  ">{work.createAt.split("T")[0].split("-").reverse().join("-")}</span>
+              <span className="text-center text-overflow-ellipsis ">{work.createAt.split("T")[1].split(".")[0]}</span>
             </div>
           ))}
         </div>

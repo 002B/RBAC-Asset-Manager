@@ -15,18 +15,28 @@ const ReportBox = () => {
 
   const filterBoxRef = useRef();
 
+  // ✅ ดึงข้อมูลรายงานแบบอัปเดตอัตโนมัติทุก 5 วินาที
   useEffect(() => {
-    // ดึงรายงานที่มี status = pending
-    fetch("http://localhost:3000/report/getReportByStatus/pending")
-      .then((response) => response.json())
-      .then((data) => setReportList(data))
-      .catch((error) => console.error("Error fetching reports:", error));
+    const fetchReports = () => {
+      fetch("http://localhost:3000/report/getReportByStatus/pending")
+        .then((response) => response.json())
+        .then((data) => setReportList(data))
+        .catch((error) => console.error("Error fetching reports:", error));
+    };
 
-    // ดึงชื่อบริษัททั้งหมด
-    fetch("http://localhost:3000/client/getAllCompany")
-      .then((res) => res.json())
-      .then((data) => setCompanyList(data))
-      .catch((err) => console.error("Error fetching company list:", err));
+    const fetchCompanies = () => {
+      fetch("http://localhost:3000/client/getAllCompany")
+        .then((res) => res.json())
+        .then((data) => setCompanyList(data))
+        .catch((err) => console.error("Error fetching company list:", err));
+    };
+
+    fetchReports();     // โหลดครั้งแรก
+    fetchCompanies();   // โหลดข้อมูลบริษัท
+
+    const interval = setInterval(fetchReports, 1000); // ✅ ดึงซ้ำทุก 1 วิ
+
+    return () => clearInterval(interval); // เคลียร์ตอน unmount
   }, []);
 
   const updateReportStatus = async (status) => {
@@ -56,11 +66,28 @@ const ReportBox = () => {
     }
   };
 
-  const handleItemCheck = (serial) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [serial]: !prev[serial],
-    }));
+  const handleItemCheck = (reportId) => {
+    const selectedReport = reportList.find((r) => r.report_id === reportId);
+    if (!selectedReport) return;
+
+    const serial = selectedReport.item_id;
+
+    setCheckedItems((prev) => {
+      const newChecked = { ...prev };
+
+      for (let id in newChecked) {
+        const r = reportList.find((r) => r.report_id === id);
+        if (r && r.item_id === serial) {
+          delete newChecked[id];
+        }
+      }
+
+      if (!prev[reportId]) {
+        newChecked[reportId] = true;
+      }
+
+      return newChecked;
+    });
   };
 
   const toggleAllItemCheckBox = (e) => {
@@ -122,8 +149,6 @@ const ReportBox = () => {
 
   const filterList = {
     Company: [...new Set(reportList.map((r) => r.client_id))],
-    //กันเหนียว
-    // Branch: [...new Set(reportList.map((r) => r.client_branch_id))],
   };
 
   const handleCheckbox = (type, value) => {
@@ -143,7 +168,6 @@ const ReportBox = () => {
       Object.entries(selectedFilters).every(([key, selected]) => {
         if (selected.length === 0) return true;
         if (key === "Company") return selected.includes(report.client_id);
-        //กันเหนียว
         if (key === "Branch") return selected.includes(report.client_branch_id);
         return true;
       })
@@ -207,27 +231,35 @@ const ReportBox = () => {
               <input type="checkbox" onChange={toggleAllItemCheckBox} />
               <label className="font-bold">Report Number</label>
             </div>
+            <div className="text-center font-bold">Serial Number</div>
             <div className="text-center font-bold">Company</div>
             <div className="text-center font-bold">Branch</div>
-            <div className="text-center font-bold col-span-2">Send By</div>
-            <div className="text-center font-bold col-span-2">Date</div>
+            <div className="text-center font-bold ">Send By</div>
+            <div className="text-center font-bold ">Date</div>
+            <div className="text-center font-bold ">Time</div>
             <div className="text-center font-bold col-span-2">Problem</div>
           </div>
 
           {/* REPORT LIST */}
-          <div className="report-box-list-container  overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-primary gap-1 pt-1 pb-1">
+          <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-primary gap-1 pt-1 pb-1">
             {filteredReports.map((report, index) => (
-              <div className="report-box-list-item grid grid-cols-10 w-full h-fit items-center p-2 bg-white border-2 border-primary rounded-[8px] cursor-pointer hover:brightness-90" key={index} onClick={() => handleItemCheck(report.report_id)}>
+              <div
+                className="report-box-list-item grid grid-cols-10 w-full h-fit items-center p-2 bg-white border-2 border-primary rounded-[8px] cursor-pointer hover:brightness-90"
+                key={index}
+                onClick={() => handleItemCheck(report.report_id)}
+              >
                 <span className="flex gap-2 items-center col-span-2">
                   <input type="checkbox" checked={checkedItems[report.report_id] || false} onChange={() => handleItemCheck(report.report_id)} />
                   <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
                   {report.report_id}
                 </span>
+                <span className="text-center">{report.item_id}</span>
                 <span className="text-center">{report.client_id}</span>
                 <span className="text-center">{report.client_branch_id}</span>
-                <span className="text-center col-span-2">{report.send_by}</span>
-                <span className="text-center text-overflow-ellipsis col-span-2">{report.createAt}</span>
-                <span className="break-words  text-overflow-ellipsis col-span-2">{report.problem}</span>
+                <span className="text-center ">{report.send_by}</span>
+                <span className="text-center">{report.createAt.split("T")[0].split("-").reverse().join("-")}</span>
+                <span className="text-center">{report.createAt.split("T")[1].split(".")[0]}</span>
+                <span className="break-words col-span-2">{report.problem}</span>
               </div>
             ))}
           </div>

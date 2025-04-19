@@ -8,7 +8,7 @@ const SubmittedWork = ({ username = "worker" }) => {
   const [reports, setReports] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [companyFilter, setCompanyFilter] = useState("all");
+  const [companyFilter, setCompanyFilter] = useState("All");
 
   const filterBoxRef = useRef();
 
@@ -36,7 +36,7 @@ const SubmittedWork = ({ username = "worker" }) => {
           <p><strong>Company:</strong> ${report.client_id}</p>
           <p><strong>Branch:</strong> ${report.client_branch_id}</p>
           <p><strong>Status:</strong> ${report.status}</p>
-          <p><strong>Assigner:</strong> ${report.assigner}</p>
+          <p><strong>Assigner:</strong> ${report.send_by}</p>
           <p><strong>Problem:</strong> ${report.problem}</p>
           <p><strong>Created At:</strong> ${new Date(
             report.createAt
@@ -55,7 +55,6 @@ const SubmittedWork = ({ username = "worker" }) => {
       [id]: !prev[id],
     }));
   };
-
 
   const toggleFilterBox = () => {
     filterBoxRef.current.classList.toggle("hidden");
@@ -163,22 +162,16 @@ const SubmittedWork = ({ username = "worker" }) => {
                   <h4 className="text-white w-full text-center bg-primary rounded-[4px]">
                     Company
                   </h4>
-                  <div className="filter-list">
-                    <input
-                      type="radio"
-                      name="company"
-                      checked={companyFilter === "all"}
-                      onChange={() => setCompanyFilter("all")}
-                    />
-                    <label>Company</label>
-                  </div>
                   {companyList.map((company) => (
                     <div className="filter-list" key={company}>
                       <input
-                        type="radio"
-                        name="company"
+                        type="checkbox"
                         checked={companyFilter === company}
-                        onChange={() => setCompanyFilter(company)}
+                        onChange={() =>
+                          setCompanyFilter((prev) =>
+                            prev === company ? "All" : company
+                          )
+                        }
                       />
                       <label>{company}</label>
                     </div>
@@ -198,7 +191,7 @@ const SubmittedWork = ({ username = "worker" }) => {
             <div className="text-center font-bold">Company</div>
             <div className="text-center font-bold">Branch</div>
             <div className="text-center font-bold">Status</div>
-            <div className="text-center font-bold">Assigner</div>
+            <div className="text-center font-bold">send_by</div>
             <div className="text-center font-bold">Action</div>
           </div>
 
@@ -210,7 +203,6 @@ const SubmittedWork = ({ username = "worker" }) => {
                 onClick={() => handleItemCheck(report.report_id)}
               >
                 <span className="flex items-center gap-2">
-                  
                   <box-icon name="file" color="#FD6E28" size="sm" />
                   {report.report_id}
                 </span>
@@ -218,10 +210,10 @@ const SubmittedWork = ({ username = "worker" }) => {
                 <span className="text-center">{report.client_id}</span>
                 <span className="text-center">{report.client_branch_id}</span>
                 <span className="text-center">{report.status}</span>
-                <span className="text-center">{report.assigner}</span>
-                <span className="flex justify-end">
+                <span className="text-center">{report.send_by}</span>
+                <span className="flex justify-center">
                   <button
-                    className="text-white rounded bg-secondary px-2 py-1 hover:brightness-110"
+                    className="flex items-center gap-1 text-white text-sm font-medium bg-secondary  px-4 py-1.5 rounded-lg shadow hover:bg-secondary  transition duration-200"
                     onClick={(e) => {
                       e.stopPropagation(); // ป้องกันไม่ให้ checkbox ติดด้วย
                       handleViewDetails(report);
@@ -233,6 +225,7 @@ const SubmittedWork = ({ username = "worker" }) => {
                       color="white"
                       size="sm"
                     />
+                    View
                   </button>
                 </span>
               </div>

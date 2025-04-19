@@ -99,7 +99,7 @@ async function getReportById(id) {
 
 async function getReportByUser(user) {
     try {
-        return await reportModel.find({ "send_by": user }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_to": user }, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
@@ -117,7 +117,7 @@ async function getReportByStatus(status) {
 
 async function getReportByUserDone(user) {
     try{
-        return await reportModel.find({ "assigner":user , "status": "done" }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_to":user , "status": "done" }, { _id: 0 }).lean();
     }catch(error){
         console.error('Error fetching data:', error); 
         return [];
@@ -126,7 +126,7 @@ async function getReportByUserDone(user) {
 
 async function getReportByUserFixing(user) {
     try{
-        return await reportModel.find({ "assigner": user, "status": "fixing" }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_to": user, "status": "fixing" }, { _id: 0 }).lean();
     }catch(error){
         console.error('Error fetching data:', error); 
         return [];
@@ -187,6 +187,8 @@ async function updateReport(ids, status, send_to) {
         return { success: false, message: 'Error updating report' };
     }
 }
+
+
 
 function getItemStatusByReportStatus(reportStatus) {
     switch (reportStatus) {
