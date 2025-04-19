@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const activityLogModal = require('./DB/activityLogModal.js');
+const activityFunc = require('./activityLog');
 
 router.get('/all', async (req, res) => {
     try {
-        const logs = await activityLogModal.find();
+        const logs = await activityFunc.getActivityLog();
         if (!logs || logs.length === 0) {
             return res.status(404).json({ 
                 message: 'No activity logs found',
@@ -23,7 +23,7 @@ router.get('/all', async (req, res) => {
 
 router.get('/login-logout', async (req, res) => {
     try {
-        const logs = await activityLogModal.find({ action: { $in: ['login', 'logout'] } });
+        const logs = await activityFunc.getActivityLoginLogout();
         if (!logs || logs.length === 0) {
             return res.status(404).json({ 
                 message: 'No activity logs found',
@@ -39,5 +39,20 @@ router.get('/login-logout', async (req, res) => {
         });
     }
 });
+
+router.post('/create', async (req, res) => {
+    try {
+        const logData = req.body;
+        const newLog = await activityFunc.createLog(logData);
+        res.status(201).json(newLog);
+    } catch (error) {
+        console.error('Error creating activity log:', error);
+        res.status(500).json({
+            message: 'Error creating activity log',
+            error: error.message
+        });
+    }
+});
+
 
 module.exports = router;

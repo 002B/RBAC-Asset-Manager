@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const itemFunc = require('./item');
+const activityFunc = require('./activityLog');
 
 // Get all items
 router.get('/getAllItem', async (req, res) => {
@@ -85,7 +86,7 @@ router.get('/getItemInfo/:id', async (req, res) => {
 // Create an item
 router.post('/createItem/:company/:branch', async (req, res) => {
     const { company, branch } = req.params;
-    const data = req.body;
+    const data = req.body.data;
     try {
         const itemDetails = await itemFunc.createItem(company, branch, data);
         res.json(itemDetails);
@@ -97,7 +98,7 @@ router.post('/createItem/:company/:branch', async (req, res) => {
 // Create many items
 router.post('/createItem/:company/:branch/:count', async (req, res) => {
     const { company, branch, count } = req.params;
-    const data = req.body;
+    const data = req.body.data;
     try {
         const itemDetails = await itemFunc.createManyItem(company, branch, data, count);
         res.json(itemDetails);
