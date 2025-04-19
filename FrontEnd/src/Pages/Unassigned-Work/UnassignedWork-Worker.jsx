@@ -186,7 +186,8 @@ const UnassignedWork = () => {
 
       {/* Cards */}
       <div className="unassigned-work-card-container grid grid-cols-4 gap-2">
-        {currentData.map((item, index) => (
+        {currentData.length > 0 ?
+          currentData.map((item, index) => (
           <div className="unassigned-work-card h-fit flex flex-col items-center bg-white drop-shadow-md" key={index}>
             <div className="unassigned-work-card-detail flex flex-col w-full h-full">
               <div className="unassigned-work-card-header flex justify-center items-center h-1/2">
@@ -222,7 +223,12 @@ const UnassignedWork = () => {
               </div>
             </div>
           </div>
-        ))}
+        )) : (
+          <div className="col-span-4 text-center text-3xl font-semibold text-light bg-gradient-to-r from-primary to-secondary p-6 rounded-lg shadow-md">
+            ขณะนี้ยังไม่มี Report
+            <div className="text-center text-sm">โปรดใช้เวลานี้เพื่อพักผ่อน</div>
+          </div>
+        )}
       </div>
 
       {/* Pagination */}

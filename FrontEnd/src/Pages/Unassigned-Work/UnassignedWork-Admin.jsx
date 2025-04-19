@@ -215,7 +215,7 @@ const UnassignedWorkAdmin = () => {
           </div>
         </div>
 
-        <div className="unassigned-work-list-container grid max-h-[552px] overflow-scroll border-b-2 border-t-2 border-highlight gap-1 pt-1 pb-1">
+        <div className="unassigned-work-list-container flex flex-col max-h-[552px] overflow-y-scroll border-b-2 border-t-2 border-highlight space-y-1 pt-1 pb-1">
           {filteredWorkList.map((work) => (
             <div
               className="unassigned-work-list-item grid grid-cols-10 overflow-scroll w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-highlight rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200"
