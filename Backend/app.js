@@ -6,11 +6,11 @@ const port = 3000;
 
 connectDB();
 
-const log = require('./api/log');
+const log = require('./api/itemLogAPI');
 const item = require('./api/itemAPI');
 const company = require('./api/companyAPI');
 const report = require('./api/reportAPI');
-const activityLog = require('./api/activity_log');
+const activityLog = require('./api/activityLogAPI');
 const users = require('./api/usersAPI');
 // const Test = require('./api/DB/companyModal');
 
@@ -18,9 +18,9 @@ app.use(cors());
 app.use(express.json());
 app.use('/users', users);
 app.use('/company', company);
-app.use('/log', log);
 app.use('/item', item);
 app.use('/report', report);
+app.use('/itemlog', log);
 app.use('/activitylog', activityLog);
 
 
