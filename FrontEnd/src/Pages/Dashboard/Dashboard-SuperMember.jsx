@@ -12,12 +12,18 @@ const fetchInbox = async (user) => {
       method: "GET",
       redirect: "follow",
     };
-    const url = user.selectedBranch === "All Branches" || !user.selectedBranch
-      ? `http://localhost:3000/report/getReportByCom/${user.company}`
-      : `http://localhost:3000/report/getReportByBranch/${user.company}/${user.selectedBranch}`;
+    const url =
+      user.selectedBranch === "All Branches" || !user.selectedBranch
+        ? `http://localhost:3000/report/getReportByCom/${user.company}`
+        : `http://localhost:3000/report/getReportByBranch/${user.company}/${user.selectedBranch}`;
     const response = await fetch(url, requestOptions);
     const data = await response.json();
-    return data.map((item) => [item.report_id, item.item_id, item.createAt, item.status]);
+    return data.map((item) => [
+      item.report_id,
+      item.item_id,
+      item.createAt,
+      item.status,
+    ]);
   } catch (error) {
     console.error("Error fetching inbox data:", error);
     return [];
@@ -30,7 +36,10 @@ const fetchLoginActivity = async () => {
       method: "GET",
       redirect: "follow",
     };
-    const response = await fetch("http://localhost:3000/activitylog/login-logout", requestOptions);
+    const response = await fetch(
+      "http://localhost:3000/activitylog/login-logout",
+      requestOptions
+    );
     const data = await response.json();
     return data.map((item) => [
       item.activity === "Log in" ? (
@@ -49,10 +58,13 @@ const fetchLoginActivity = async () => {
 
 async function fetchBranchWithItemCount(user) {
   try {
-    const branchResponse = await fetch(`http://localhost:3000/company/getAllBranch/${user.company}`, {
-      method: "GET",
-      redirect: "follow",
-    });
+    const branchResponse = await fetch(
+      `http://localhost:3000/company/getAllBranch/${user.company}`,
+      {
+        method: "GET",
+        redirect: "follow",
+      }
+    );
     const branches = await branchResponse.json();
 
     const branchWithCounts = await Promise.all(
@@ -68,7 +80,10 @@ async function fetchBranchWithItemCount(user) {
           const itemCount = await itemRes.text();
           return [branch.client_branch_id, itemCount];
         } catch (err) {
-          console.error(`Error fetching count for ${branch.client_branch_id}`, err);
+          console.error(
+            `Error fetching count for ${branch.client_branch_id}`,
+            err
+          );
           return [branch.client_branch_id, "Error"];
         }
       })
@@ -80,7 +95,6 @@ async function fetchBranchWithItemCount(user) {
     return [];
   }
 }
-
 
 const DashboardSuperMember = () => {
   const { user } = useAuth();
@@ -97,6 +111,10 @@ const DashboardSuperMember = () => {
     })();
   }, [user.company, user.selectedBranch]);
 
+  const handleCloseForm = () => {
+    setShowCreateForm(false);
+  };
+
   const handleButtonClick = () => {
     setShowCreateForm(true);
   };
@@ -108,7 +126,8 @@ const DashboardSuperMember = () => {
           role={user.role}
           company={user.company}
           branch={user.selectedBranch ? user.selectedBranch : "All Branches"}
-        /></div>
+        />
+      </div>
       <div className="dashboard-container flex w-full rounded drop-shadow mt-4">
         <div className="big-item">
           <div className="small-item-wrapper">
@@ -139,11 +158,17 @@ const DashboardSuperMember = () => {
             </div>
             <div className="small-item flex flex-col justify-center items-center gap-4">
               <span className="report-icon">
-                <box-icon name="comment-error" size="6rem" color="#ff6700"></box-icon>
+                <box-icon
+                  name="comment-error"
+                  size="6rem"
+                  color="#ff6700"
+                ></box-icon>
               </span>
               <div className="flex flex-col justify-center items-center">
                 <h2 className="text-dark">Send Request</h2>
-                <span className="text-gray">Having problems with our product?</span>
+                <span className="text-gray">
+                  Having problems with our product?
+                </span>
                 <span className="text-gray">Send us request for an action</span>
               </div>
               <div>
@@ -163,7 +188,10 @@ const DashboardSuperMember = () => {
             colIcon="buildings"
             tIcon="buildings"
             tName="Branch"
-            title={["Branch", <box-icon name="spray-can" size="sm" color="#16425b"></box-icon>]}
+            title={[
+              "Branch",
+              <box-icon name="spray-can" size="sm" color="#16425b"></box-icon>,
+            ]}
             data={branchList}
             hasButton={false}
             itemPerPage={10}
@@ -171,15 +199,31 @@ const DashboardSuperMember = () => {
         </div>
       </div>
       {showCreateForm && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0"
-            onClick={() => setShowCreateForm(false)}
-          ></div>
-          <CreateForm
-            data={["Name", "Company", "Subject", "Problems", "File", "Submit"]}
-            placeholderData={{ Name: user.display_name, Company: user.company }}
+            className="absolute inset-0 bg-black/10"
+            onClick={handleCloseForm}
           />
+          <div
+            className="relative z-10 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl bg-white border border-gray-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <CreateForm
+              onClose={handleCloseForm}
+              data={[
+                "Name",
+                "Company",
+                "Subject",
+                "Problems",
+                "File",
+                "Submit",
+              ]}
+              placeholderData={{
+                Name: user.display_name,
+                Company: user.company,
+              }}
+            />
+          </div>
         </div>
       )}
     </div>
@@ -187,5 +231,3 @@ const DashboardSuperMember = () => {
 };
 
 export default DashboardSuperMember;
-
-
