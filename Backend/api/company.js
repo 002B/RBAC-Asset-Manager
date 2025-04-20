@@ -109,4 +109,4 @@ async function deleteCompany(company, branch) {
 }
 
 
-module.exports = { getAllCompany, getBranchList, getCompanyBranch, getNextCheck, getLastCheck, createCompany, deleteCompany };
+module.exports = { getAllCompany, getBranchList, getCompanyBranch, getNextCheck, getLastCheck, createCompany, updateCompany, deleteCompany };

@@ -75,13 +75,28 @@ async function checkItemExist(id) {
 
 async function createManyItem(company, branch, data, count) {
     try {
-        let lastItem = await itemModel.countDocuments({ "item_id": { $regex: `TH-${new Date().getFullYear()}`, $options: "i" } });
+        const year = new Date().getFullYear();
+        const regex = new RegExp(`^TH-${year}-\\d{7}$`, "i");
+
+        const lastItem = await itemModel.findOne({ item_id: { $regex: regex } })
+            .sort({ item_id: -1 }) 
+            .lean();
+
+        let lastNumber = 0;
+
+        if (lastItem && lastItem.item_id) {
+            const parts = lastItem.item_id.split("-");
+            if (parts.length === 3) {
+                lastNumber = parseInt(parts[2], 10);
+            }
+        }
+
         const items = [];
 
         for (let i = 0; i < count; i++) {
-            lastItem++;
+            lastNumber++;
             items.push({
-                item_id: `TH-${new Date().getFullYear()}-${lastItem.toString().padStart(7, '0')}`,
+                item_id: `TH-${year}-${lastNumber.toString().padStart(7, '0')}`,
                 client_id: company,
                 client_branch_id: branch,
                 item_brand: data.item_brand,
@@ -92,8 +107,10 @@ async function createManyItem(company, branch, data, count) {
                 item_status: "available"
             });
         }
+
         await itemModel.insertMany(items);
         return items;
+
     } catch (error) {
         console.error("Error adding new items:", error);
         return false;
@@ -133,12 +150,12 @@ async function deleteItem(id) {
 async function updateStatus(itemIds, itemStatus) {
     try {
         const result = await itemModel.updateMany(
-            { 
+            {
                 item_id: { $in: itemIds },
                 item_status: { $ne: itemStatus }
             },
-            { 
-                $set: { item_status: itemStatus } 
+            {
+                $set: { item_status: itemStatus }
             }
         );
 
@@ -151,18 +168,18 @@ async function updateStatus(itemIds, itemStatus) {
 }
 
 
-module.exports = { 
-    getAllItems, 
-    getAllItemCount, 
-    getItemCompany, 
-    getItemCompanyCount, 
-    getItemCompanyBranch, 
-    getItemBranchCount, 
+module.exports = {
+    getAllItems,
+    getAllItemCount,
+    getItemCompany,
+    getItemCompanyCount,
+    getItemCompanyBranch,
+    getItemBranchCount,
     getItemInfo,
     checkItemExist,
-    createManyItem, 
-    updateItem, 
-    deleteItem, 
+    createManyItem,
+    updateItem,
+    deleteItem,
     updateStatus
 };
 
