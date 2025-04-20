@@ -5,23 +5,29 @@ import "boxicons";
 import "./CreateForm.css";
 import { useAuth } from "../Auth/AuthProvider";
 
-async function sendReport(data) {
+async function sendReport(data, isGuest = false) {
   console.log("Sending report:", data);
   try {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // เพิ่ม Authorization header เฉพาะกรณีไม่ใช่ Guest
+    if (!isGuest) {
+      headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+    }
+
     const res = await fetch(
-      "http://localhost:3000/report/createReport/" + data.serialNumber,
+      `http://localhost:3000/report/createReport/${data.serialNumber}`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // เพิ่ม authorization
-        },
+        headers,
         body: JSON.stringify({
           data: {
-            send_by: data.user.user,
+            send_by: data.user?.user || 'guest',
             problem: data.problem,
           },
-          user: data.user,
+          user: data.user || { user: 'guest', role: 'guest' },
         }),
       }
     );
@@ -38,15 +44,15 @@ async function sendReport(data) {
   }
 }
 
-function CreateForm({ onClose }) {
-  const { user } = useAuth();
+function CreateForm({ onClose, initialData }) {
+  const { user: authUser } = useAuth();
+  // ใช้ user จาก initialData (สำหรับ Guest) หรือจาก authUser (สำหรับผู้ที่ล็อกอิน)
+  const user = initialData?.user || authUser;
+  
   const [forms, setForms] = useState([
     {
       id: 1,
-      serialNumber: "",
-      company: "",
-      branch: "",
-      username: "",
+      serialNumber: initialData?.serialNumber || "",
       problem: "",
       isCollapsed: false,
     },
@@ -65,9 +71,6 @@ function CreateForm({ onClose }) {
       {
         id: newId,
         serialNumber: "",
-        company: "",
-        branch: "",
-        username: "",
         problem: "",
         isCollapsed: false,
       },
@@ -123,11 +126,13 @@ function CreateForm({ onClose }) {
       return;
     }
 
+    const isGuest = !authUser; // ตรวจสอบว่าเป็น Guest หรือไม่
+
     const result = await SweetAlert.fire({
       title: "Are you sure?",
       text: `You want to send ${forms.length} report${
         forms.length > 1 ? "s" : ""
-      }?`,
+      }${isGuest ? ' as Guest' : ''}?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#4F46E5",
@@ -141,28 +146,29 @@ function CreateForm({ onClose }) {
       setIsSending(true);
       try {
         const results = await Promise.all(
-          forms.map((form) =>
-            sendReport({
+          forms.map(async (form) =>
+            await sendReport({
               serialNumber: form.serialNumber,
               problem: form.problem,
               user: user,
-            })
+            }, isGuest)
           )
         );
-        
+
         SweetAlert.fire({
           title: "Success!",
           text: `Your ${forms.length} report${
             forms.length > 1 ? "s were" : " was"
-          } sent successfully`,
+          } sent successfully${isGuest ? ' as Guest' : ''}`,
           icon: "success",
           confirmButtonColor: "#4F46E5",
         });
 
-        // Reset forms
         setForms([
           {
-            serialNumber: "",
+            id: 1,
+            serialNumber: initialData?.serialNumber || "",
+            problem: "",
             isCollapsed: false,
           },
         ]);
@@ -171,7 +177,7 @@ function CreateForm({ onClose }) {
         if (error.message.includes("Network Error")) {
           errorMessage =
             "Network error. Please check your internet connection.";
-        } else if (error.message.includes("401")) {
+        } else if (error.message.includes("401") && !isGuest) {
           errorMessage = "Session expired. Please login again.";
         }
 
@@ -226,6 +232,14 @@ function CreateForm({ onClose }) {
         className="relative w-full max-w-4xl max-h-[90vh] rounded-2xl bg-white shadow-xl overflow-hidden border-gray-100 flex flex-col form-container"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* แสดงสถานะ Guest ถ้าไม่ได้ล็อกอิน */}
+        {!authUser && (
+          <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center gap-2 z-20">
+            <box-icon name="user" size="xs"></box-icon>
+            <span>Guest Mode</span>
+          </div>
+        )}
+
         {/* Header */}
         <div className="sticky top-0 z-10 p-6 bg-[#2f6690] text-white">
           <div className="flex justify-between items-center">
@@ -300,11 +314,12 @@ function CreateForm({ onClose }) {
                   </button>
                 </div>
 
-                <div className={`${form.isCollapsed ? "hidden" : "p-5"}`}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="space-y-4">
+                <div className={`${form.isCollapsed ? "hidden" : "p-6"}`}>
+                  <div className="space-y-6">
+                    {/* Serial Number Field */}
+                    <div className="space-y-2">
                       <label className="block">
-                        <span className="text-sm font-medium text-gray-700 mb-2 block flex items-center">
+                        <span className="text-sm font-medium text-gray-700 flex items-center">
                           Serial Number
                           <span className="text-red-500 ml-1">*</span>
                         </span>
@@ -313,16 +328,17 @@ function CreateForm({ onClose }) {
                           name="serialNumber"
                           value={form.serialNumber}
                           onChange={(e) => handleChange(form.id, e)}
-                          className="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-[#81c3d7] focus:border-[#3a7ca5] p-3 bg-white text-sm shadow-sm border transition-all duration-200"
+                          className="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#81c3d7] focus:border-[#3a7ca5] px-4 py-3 bg-white text-sm shadow-sm transition-all duration-200"
                           placeholder="Enter Serial Number"
                           required
                         />
                       </label>
                     </div>
 
-                    <div className="space-y-4">
+                    {/* Problem Description Field */}
+                    <div className="space-y-2">
                       <label className="block">
-                        <span className="text-sm font-medium text-gray-700 mb-2 block flex items-center">
+                        <span className="text-sm font-medium text-gray-700 flex items-center">
                           Problem Description
                           <span className="text-red-500 ml-1">*</span>
                         </span>
@@ -330,24 +346,35 @@ function CreateForm({ onClose }) {
                           name="problem"
                           value={form.problem}
                           onChange={(e) => handleChange(form.id, e)}
-                          className="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-[#81c3d7] focus:border-[#3a7ca5] p-3 bg-white text-sm shadow-sm min-h-[120px] border transition-all duration-200"
+                          className="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#81c3d7] focus:border-[#3a7ca5] px-4 py-3 bg-white text-sm shadow-sm min-h-[120px] transition-all duration-200"
                           placeholder="Describe the problem in detail..."
                           required
                         />
                       </label>
+                    </div>
 
-                      <div className="mt-4 p-4 bg-[#81c3d7] bg-opacity-30 rounded-lg flex items-start gap-3 border border-[#3a7ca5] border-opacity-30 shadow-inner">
+                    {/* Information Box */}
+                    <div className="p-4 bg-[#81c3d7] bg-opacity-30 rounded-lg border border-[#3a7ca5] border-opacity-30 shadow-inner">
+                      <div className="flex items-start gap-3">
                         <box-icon
                           name="info-circle"
                           type="solid"
                           color="#16425b"
-                          class="flex-shrink-0"
+                          class="flex-shrink-0 mt-0.5"
                         ></box-icon>
-                        <p className="text-sm text-[#16425b] leading-relaxed">
-                          <span className="font-medium">Include:</span> When it
-                          occurred, error messages, and steps to reproduce. We
-                          will respond within 24 hrs.
-                        </p>
+                        <div className="space-y-2">
+                          <p className="text-sm text-[#16425b] font-medium">
+                            Include in your description:
+                          </p>
+                          <ul className="text-sm text-[#16425b] leading-relaxed list-disc pl-5 space-y-1">
+                            <li>When the problem occurred</li>
+                            <li>Error messages you received</li>
+                            <li>Steps to reproduce the issue</li>
+                          </ul>
+                          <p className="text-sm text-[#16425b] pt-2">
+                            We will respond within 24 hours.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -416,6 +443,15 @@ function CreateForm({ onClose }) {
 
 CreateForm.propTypes = {
   onClose: PropTypes.func.isRequired,
+  initialData: PropTypes.shape({
+    serialNumber: PropTypes.string,
+    user: PropTypes.shape({
+      user: PropTypes.string,
+      role: PropTypes.string,
+      name: PropTypes.string,
+      email: PropTypes.string
+    })
+  }),
 };
 
 export default CreateForm;
