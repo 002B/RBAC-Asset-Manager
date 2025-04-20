@@ -100,13 +100,6 @@ const Status = ({ role, company, branch }) => {
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
-        <div className="flex justify-between items-center status-box bg-secondary">
-          <div className="count-title p-1 m-1">
-            <h3>Need Action</h3>
-            <h1>{(getBadItemBranch(company, branch)).length}</h1>
-          </div>
-          <box-icon name="wrench" color="white" size="lg"></box-icon>
-        </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Report Sent</h3>

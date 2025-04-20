@@ -20,10 +20,16 @@ async function getActivityLoginLogout() {
 
 async function createLog(data) {
     try {
-        const lastItem = await activityLogModal.countDocuments({ "log_id": { $regex: `AL-${new Date().getFullYear()}`, $options: "i" } });
+        const lastItem = await activityLogModal.countDocuments({ "log_id": { $regex: `LOG-${new Date().getFullYear()}`, $options: "i" } });
         const lastNumber = lastItem + 1;
-        const newId = `LOG-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`;
-        return await activityLogModal.create({ log_id: newId, ...data });
+        const newId = `LOG-${new Date().getFullYear()}-${(lastNumber).toString().padStart(7, '0')}`;
+        return await activityLogModal.create({ 
+            log_id: newId,
+            date: new Date().toISOString(),
+            activity: data[0],
+            username: data[1],
+            role: data[2],
+        });
     } catch (error) {
         console.error('Error creating log:', error);
         return null;

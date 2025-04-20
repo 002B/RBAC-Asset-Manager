@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "../../Auth/AuthProvider";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./ReportBox.css";
 
 const ReportBox = () => {
+  const { user } = useAuth();
   const [reportList, setReportList] = useState([]);
   const [companyList, setCompanyList] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
@@ -25,7 +27,7 @@ const ReportBox = () => {
     };
 
     const fetchCompanies = () => {
-      fetch("http://localhost:3000/client/getAllCompany")
+      fetch("http://localhost:3000/company/getAllCompany")
         .then((res) => res.json())
         .then((data) => setCompanyList(data))
         .catch((err) => console.error("Error fetching company list:", err));
@@ -47,7 +49,7 @@ const ReportBox = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ids: selectedIds }),
+        body: JSON.stringify({ ids: selectedIds , user: user }),
       });
 
       const data = await response.json();

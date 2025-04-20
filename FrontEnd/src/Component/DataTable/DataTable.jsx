@@ -36,21 +36,30 @@ const DataTable = (props) => {
   const totalPages = useMemo(() => Math.ceil(normalizedData.length / itemsPerPage), [normalizedData.length, itemsPerPage]);
 
   const sortedData = useMemo(() => {
-    return [...normalizedData]
-      .filter((row) => {
-        const rowValues = isObjectData ? Object.values(row) : row;
-        return rowValues.some((value) => value?.toString().toLowerCase().includes(searchQuery.toLowerCase()));
-      })
-      .sort((a, b) => {
-        if (sortConfig.key === null) return 0;
-        const itemA = isObjectData ? a[sortConfig.key] : a[title.indexOf(sortConfig.key)];
-        const itemB = isObjectData ? b[sortConfig.key] : a[title.indexOf(sortConfig.key)];
-        return typeof itemA === "number" && typeof itemB === "number"
-          ? sortConfig.direction === "asc" ? itemA - itemB : itemB - itemA
-          : sortConfig.direction === "asc"
-            ? itemA?.toString().localeCompare(itemB)
-            : itemB?.toString().localeCompare(itemA);
-      });
+    const filteredData = normalizedData.filter((row) => {
+      const rowValues = isObjectData ? Object.values(row) : row;
+      if (searchQuery === "") {
+        return true;
+      }
+      return rowValues.some((value) =>
+        value?.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+
+    return filteredData.sort((a, b) => {
+      if (sortConfig.key === null) return 0;
+
+      const itemA = isObjectData ? a[sortConfig.key] : a[title.indexOf(sortConfig.key)];
+      const itemB = isObjectData ? b[sortConfig.key] : b[title.indexOf(sortConfig.key)];
+
+      if (typeof itemA === "number" && typeof itemB === "number") {
+        return sortConfig.direction === "asc" ? itemA - itemB : itemB - itemA;
+      }
+
+      return sortConfig.direction === "asc"
+        ? itemA?.toString().localeCompare(itemB)
+        : itemB?.toString().localeCompare(itemA);
+    });
   }, [normalizedData, sortConfig, searchQuery, title, isObjectData]);
 
 
@@ -92,7 +101,7 @@ const DataTable = (props) => {
       <div className="table-title flex items-center justify-between flex-wrap">
         <div className="flex items-center">
           {tIcon && <box-icon name={tIcon} size="sm" color="#16425b"></box-icon>}
-          {tName && <h2 className="p-2 text-dark">{tName}</h2>}
+          {tName && <h2 className="p-2 text-dark">{tName} [{data.length}]</h2>}
         </div>
         <div className="flex gap-2 justify-center items-center">
           {hasExport && (
@@ -122,10 +131,16 @@ const DataTable = (props) => {
             <tr>
               {colIcon && <th></th>}
               {title.map((header, index) => (
-                <th key={index} onClick={() => setSortConfig({
-                  key: header,
-                  direction: sortConfig.key === header && sortConfig.direction === "asc" ? "desc" : "asc",
-                })}>
+                <th
+                  key={index}
+                  onClick={() => {
+                    const isSameColumn = sortConfig.key === header;
+                    setSortConfig({
+                      key: header,
+                      direction: isSameColumn && sortConfig.direction === "asc" ? "desc" : "asc",  // Toggle between asc and desc
+                    });
+                  }}
+                >
                   <span className="flex justify-center items-center text-dark">
                     {header}
                     {sortConfig.key === header && (
@@ -133,44 +148,55 @@ const DataTable = (props) => {
                     )}
                   </span>
                 </th>
+
               ))}
               {(hasButton || hasEdit) && <th className="bg-transparent sticky -right-1"></th>}
             </tr>
           </thead>
+
           <tbody>
-            {currentData.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {colIcon && (
-                  <td className="flex justify-center items-center">
-                    <box-icon name={colIcon} size="sm" color={colorIcon(row)} type="regular"></box-icon>
-                  </td>
-                )}
-                {title.map((key, colIndex) => (
-                  <td key={colIndex}>{isObjectData ? row[key] || "-" : row[colIndex] || "-"}</td>
-                ))}
-                {hasQr && (
-                  <td className="bg-white sticky -right-1">
-                    <button
-                      className="flex justify-center items-center"
-                      onClick={() => {
-                        setSelectedItemId(row[0]);
-                        setShowQRCodeModal(true);
-                      }}
-                    >
-                      <box-icon name="qr-scan" color="#FF6700"></box-icon>
-                    </button>
-                  </td>
-                )}
-                {hasEdit && (
-                  <td className="bg-white sticky -right-1">
-                    <button onClick={() => handleEditClick(row)} className="flex justify-center items-center">
-                      <box-icon type="regular" name="edit" size="sm" color="#FD6E28"></box-icon>
-                    </button>
-                  </td>
-                )}
+            {currentData.length === 0 ? (
+              <tr>
+                <td colSpan={title.length + (colIcon ? 1 : 0) + (hasEdit ? 1 : 0) + (hasQr ? 1 : 0)} className="text-center text-gray-500 py-4">
+                  No data available
+                </td>
               </tr>
-            ))}
+            ) : (
+              currentData.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {colIcon && (
+                    <td className="flex justify-center items-center">
+                      <box-icon name={colIcon} size="sm" color={colorIcon(row)} type="regular"></box-icon>
+                    </td>
+                  )}
+                  {title.map((key, colIndex) => (
+                    <td key={colIndex}>{isObjectData ? row[key] || "-" : row[colIndex] || "-"}</td>
+                  ))}
+                  {hasQr && (
+                    <td className="bg-white sticky -right-1">
+                      <button
+                        className="flex justify-center items-center"
+                        onClick={() => {
+                          setSelectedItemId(row[0]);
+                          setShowQRCodeModal(true);
+                        }}
+                      >
+                        <box-icon name="qr-scan" color="#FF6700"></box-icon>
+                      </button>
+                    </td>
+                  )}
+                  {hasEdit && (
+                    <td className="bg-white sticky -right-1">
+                      <button onClick={() => handleEditClick(row)} className="flex justify-center items-center">
+                        <box-icon type="regular" name="edit" size="sm" color="#FD6E28"></box-icon>
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))
+            )}
           </tbody>
+
         </table>
       </div>
       {showQRCodeModal && (

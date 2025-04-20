@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../Auth/AuthProvider";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./UnassignedWork.css";
 
 const UnassignedWorkAdmin = () => {
+  const { user } = useAuth();
   const [workList, setWorkList] = useState([]);
   const [workerList, setWorkerList] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
@@ -84,7 +86,8 @@ const UnassignedWorkAdmin = () => {
           },
           body: JSON.stringify({
             ids: selectedReportIds,
-            assigner: selectedWorker, // ส่ง assigner เป็นชื่อของ worker
+            send_to: selectedWorker, 
+            user: user
           }),
         })
           .then((res) => res.json())
@@ -212,7 +215,7 @@ const UnassignedWorkAdmin = () => {
           </div>
         </div>
 
-        <div className="unassigned-work-list-container grid max-h-[552px] overflow-scroll border-b-2 border-t-2 border-highlight gap-1 pt-1 pb-1">
+        <div className="unassigned-work-list-container flex flex-col max-h-[552px] overflow-y-scroll border-b-2 border-t-2 border-highlight space-y-1 pt-1 pb-1">
           {filteredWorkList.map((work) => (
             <div
               className="unassigned-work-list-item grid grid-cols-10 overflow-scroll w-full h-[48px] justify-between items-center p-2 bg-white border-2 border-highlight rounded-[8px] drop-shadow cursor-pointer hover:brightness-90 transition-all duration-200"

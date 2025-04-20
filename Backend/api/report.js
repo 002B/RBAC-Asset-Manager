@@ -136,8 +136,7 @@ async function getReportByUserFixing(user) {
 async function createReport(company, branch, id, data ) {
     try {
         const lastItem = await reportModel.find({}, { sort: { createAt: -1 } }).lean();
-        const lastNumber = lastItem.length;
-        console.log(lastNumber);
+        const lastNumber = lastItem.length+1;
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(parseInt(lastNumber, 10) + 1).toString().padStart(7, '0')}`,
             "item_id": id,
@@ -183,7 +182,7 @@ async function updateReport(ids, status, send_to) {
         }
 
         const itemStatus = getItemStatusByReportStatus(status);
-        return { success: true, itemIds, itemStatus };
+        return { success: true, itemIds, itemStatus ,status : docs[0].status};
     } catch (error) {
         console.error('Error updating report:', error);
         return { success: false, message: 'Error updating report' };
@@ -204,6 +203,17 @@ function getItemStatusByReportStatus(reportStatus) {
             return 'OK';
     }
 }
+
+async function deleteReport(id, status) {
+    try {
+        const result = await reportModel.deleteMany({ "item_id": { $in: id }, status: status });
+        return result.deletedCount;
+    } catch (error) {
+        console.error("Error deleting report:", error);
+        throw new Error("Failed to delete report");
+    }
+}
+
 
 module.exports = {
     createReport,

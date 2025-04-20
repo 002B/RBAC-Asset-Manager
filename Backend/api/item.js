@@ -72,40 +72,16 @@ async function checkItemExist(id) {
     }
 }
 
-async function createItem(company, branch, data) {
-    try {
-        const lastItem = await itemModel.countDocuments({ "item_id": { $regex: `TH-${new Date().getFullYear()}`, $options: "i" } });
-        const lastNumber = lastItem+1;
-        const newId = `TH-${new Date().getFullYear()}-${(lastNumber + 1).toString().padStart(7, '0')}`;
-
-        await itemModel.create({
-            item_id: newId,
-            client_id: company,
-            client_branch_id: branch,
-            item_brand: data.item_brand,
-            item_capacity: data.item_capacity,
-            item_color: data.item_color,
-            item_type: data.item_type,
-            item_class: data.item_class,
-            item_status: "ok"
-        });
-        return newId;
-    } catch (error) {
-        console.error("Error adding new item:", error);
-        return false;
-    }
-}
 
 async function createManyItem(company, branch, data, count) {
     try {
-        const lastItem = await itemModel.countDocuments({ "item_id": { $regex: `TH-${new Date().getFullYear()}`, $options: "i" } });
-        const lastNumber = lastItem;
+        let lastItem = await itemModel.countDocuments({ "item_id": { $regex: `TH-${new Date().getFullYear()}`, $options: "i" } });
         const items = [];
 
         for (let i = 0; i < count; i++) {
-            lastNumber++;
+            lastItem++;
             items.push({
-                item_id: `TH-${new Date().getFullYear()}-${lastNumber.toString().padStart(7, '0')}`,
+                item_id: `TH-${new Date().getFullYear()}-${lastItem.toString().padStart(7, '0')}`,
                 client_id: company,
                 client_branch_id: branch,
                 item_brand: data.item_brand,
@@ -113,11 +89,11 @@ async function createManyItem(company, branch, data, count) {
                 item_color: data.item_color,
                 item_type: data.item_type,
                 item_class: data.item_class,
-                item_status: "Available"
+                item_status: "available"
             });
         }
         await itemModel.insertMany(items);
-        return true;
+        return items;
     } catch (error) {
         console.error("Error adding new items:", error);
         return false;
@@ -138,7 +114,7 @@ async function updateItem(id, data) {
             item_status: data.item_status || doc.item_status
         });
         await doc.save();
-        return true;
+        return doc.item_id;
     } catch (error) {
         console.error('Error updating item:', error);
         return false;
@@ -148,25 +124,32 @@ async function updateItem(id, data) {
 async function deleteItem(id) {
     try {
         const result = await itemModel.deleteOne({ item_id: id });
-        return result.deletedCount > 0;
+        return result.deletedCount > 0 ? id : false;
     } catch (error) {
         console.error('Error deleting item:', error);
         return false;
     }
 }
-
 async function updateStatus(itemIds, itemStatus) {
     try {
         const result = await itemModel.updateMany(
-            { item_id: { $in: itemIds } },
-            { $set: { item_status: itemStatus } }
+            { 
+                item_id: { $in: itemIds },
+                item_status: { $ne: itemStatus }
+            },
+            { 
+                $set: { item_status: itemStatus } 
+            }
         );
-        return result.modifiedCount > 0 ? itemStatus : false;
+
+
+        return result.modifiedCount > 0 ? [itemIds[0], itemStatus] : false;
     } catch (error) {
         console.error('Error updating item status:', error);
         return false;
     }
 }
+
 
 module.exports = { 
     getAllItems, 
@@ -176,8 +159,7 @@ module.exports = {
     getItemCompanyBranch, 
     getItemBranchCount, 
     getItemInfo,
-    checkItemExist, 
-    createItem, 
+    checkItemExist,
     createManyItem, 
     updateItem, 
     deleteItem, 

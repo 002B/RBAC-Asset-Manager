@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const itemFunc = require('./item');
-const activityFunc = require('./activityLog');
+const logItemFunc = require('./itemLog');
 
-// Get all items
 router.get('/getAllItem', async (req, res) => {
     try {
         const items = await itemFunc.getAllItems();
@@ -13,7 +12,6 @@ router.get('/getAllItem', async (req, res) => {
     }
 });
 
-// Get count of all items
 router.get('/getAllItem/count', async (req, res) => {
     try {
         const count = await itemFunc.getAllItemCount();
@@ -23,7 +21,6 @@ router.get('/getAllItem/count', async (req, res) => {
     }
 });
 
-// Get items by company
 router.get('/getItemList/:company', async (req, res) => {
     const { company } = req.params;
     try {
@@ -35,7 +32,6 @@ router.get('/getItemList/:company', async (req, res) => {
     }
 });
 
-// Get count of items by company
 router.get('/getItemList/count/:company', async (req, res) => {
     const { company } = req.params;
     try {
@@ -47,7 +43,6 @@ router.get('/getItemList/count/:company', async (req, res) => {
     }
 });
 
-// Get items by company and branch
 router.get('/getItemList/:company/:branch', async (req, res) => {
     const { company, branch } = req.params;
     try {
@@ -59,7 +54,6 @@ router.get('/getItemList/:company/:branch', async (req, res) => {
     }
 });
 
-// Get count of items by company and branch
 router.get('/getItemList/count/:company/:branch', async (req, res) => {
     const { company, branch } = req.params;
     try {
@@ -71,7 +65,6 @@ router.get('/getItemList/count/:company/:branch', async (req, res) => {
     }
 });
 
-// Get item info by ID
 router.get('/getItemInfo/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -83,64 +76,61 @@ router.get('/getItemInfo/:id', async (req, res) => {
     }
 });
 
-// Create an item
-router.post('/createItem/:company/:branch', async (req, res) => {
-    const { company, branch } = req.params;
-    const data = req.body.data;
-    try {
-        const itemDetails = await itemFunc.createItem(company, branch, data);
-        res.json(itemDetails);
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating item' });
-    }
-});
-
-// Create many items
 router.post('/createItem/:company/:branch/:count', async (req, res) => {
     const { company, branch, count } = req.params;
     const data = req.body.data;
+    const user = req.body.user;
     try {
         const itemDetails = await itemFunc.createManyItem(company, branch, data, count);
+        for (const itemDetail of itemDetails) {
+            await logItemFunc.createLog([itemDetail.item_id,'Created Item', user.user, user.role]);
+        }
         res.json(itemDetails);
     } catch (error) {
         res.status(500).json({ message: 'Error creating item' });
     }
 });
 
-// Update an item
 router.put('/updateItem/:id', async (req, res) => {
     const { id } = req.params;
-    const data = req.body;
+    const data = req.body.data;
+    const user = req.body.user;
     try {
         const items = await itemFunc.updateItem(id, data);
         if (!items) return res.status(404).json({ message: 'Item not found' });
+        await logItemFunc.createLog([items,'Updated Item', user.user, user.role]);
         res.json(items);
     } catch (error) {
         res.status(500).json({ message: 'Error updating item' });
     }
 });
 
-// Update item status
 router.put('/updateStatus', async (req, res) => {
     const { item_ids, status } = req.body;
     try {
         const updateResult = await itemFunc.updateStatus(item_ids, status);
         if (!updateResult) return res.status(404).json({ message: 'No items found or no updates were made' });
+        await logItemFunc.createLog([updateResult[0],   updateResult[1], user.user, user.role]);
         res.json({ message: `Items updated successfully to ${status}` });
     } catch (error) {
         res.status(500).json({ message: 'Error updating item status' });
     }
 });
 
-// Delete an item
 router.delete('/deleteItem/:id', async (req, res) => {
     const { id } = req.params;
+    const user = req.body.user;
     try {
         const items = await itemFunc.deleteItem(id);
+        if (!items) return res.status(404).json({ message: 'Item not found' });
+        await logItemFunc.createLog([items,'Deleted Item', user.user, user.role]);
         res.json(items);
     } catch (error) {
+        console.log(error);
+        
         res.status(500).json({ message: 'Error deleting item' });
     }
 });
 
 module.exports = router;
+
