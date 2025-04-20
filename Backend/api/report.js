@@ -136,8 +136,7 @@ async function getReportByUserFixing(user) {
 async function createReport(company, branch, id, data ) {
     try {
         const lastItem = await reportModel.find({}, { sort: { createAt: -1 } }).lean();
-        const lastNumber = lastItem.length;
-        console.log(lastNumber);
+        const lastNumber = lastItem.length+1;
         await reportModel.create({
             "report_id": `RP-${new Date().getFullYear()}-${(parseInt(lastNumber, 10) + 1).toString().padStart(7, '0')}`,
             "item_id": id,
