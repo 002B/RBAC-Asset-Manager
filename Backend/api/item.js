@@ -89,7 +89,7 @@ async function createManyItem(company, branch, data, count) {
                 item_color: data.item_color,
                 item_type: data.item_type,
                 item_class: data.item_class,
-                item_status: "Available"
+                item_status: "available"
             });
         }
         await itemModel.insertMany(items);

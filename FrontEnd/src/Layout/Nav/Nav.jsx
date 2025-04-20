@@ -51,7 +51,7 @@ const navList = [
   {
     name: "Item Log",
     path: "item-log",
-    icon: "time",
+    icon: "archive",
     iconType: "solid",
   },
   {

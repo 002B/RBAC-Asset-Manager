@@ -2,11 +2,21 @@ const CompanyModel = require('./DB/client.js');
 
 async function getAllCompany() {
     try {
-        const data = await CompanyModel.find({}, {client_id: 1, _id: 0}).lean();
+        const data = await CompanyModel.find({}, { client_id: 1, _id: 0 }).lean();
         const uniqueCompanies = [...new Set(data.map(item => item.client_id))];
         return uniqueCompanies.map(client_id => ({ client_id }));
     } catch (error) {
-        throw error; 
+        throw error;
+    }
+}
+
+
+async function getBranchList(company) {
+    try {
+        const data = await CompanyModel.find({ client_id: company }, { client_branch_id: 1, _id: 0 }).lean();
+        return data;
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -20,23 +30,14 @@ async function getCompanyBranch() {
         });
         return result;
     } catch (error) {
-        throw error; 
+        throw error;
     }
 }
-
-async function getBranchList(company) {
-    try {
-        const data = await CompanyModel.find({ client_id: company }, { client_branch_id: 1 ,_id : 0}).lean();
-        return data;
-    } catch (error) {
-        console.log(error);
-    }
-}
-async function getNextCheck(company,branch) {
+async function getNextCheck(company, branch) {
     try {
         const result = await CompanyModel.findOne(
             { client_id: company, 'client_branch_id': branch },
-            {'next_check': 1, _id: 0 }
+            { 'next_check': 1, _id: 0 }
         ).lean();
         return result.next_check;
     } catch (error) {
@@ -46,15 +47,66 @@ async function getNextCheck(company,branch) {
 }
 
 async function getLastCheck(company) {
-    try{
+    try {
         const result = await CompanyModel.findOne(
             { client_id: company },
-            {'last_check': 1, _id: 0 }
+            { 'last_check': 1, _id: 0 }
         ).lean();
         return result.last_check;
-    }catch(error){
+    } catch (error) {
         console.error(`Error fetching last check for ${company}:`, error);
         return null;
     }
 }
-module.exports = {getAllCompany,getBranchList,getCompanyBranch,getNextCheck,getLastCheck};
+
+async function createCompany(company, branch, location) {
+    try {
+        await CompanyModel.create({
+            client_id: company,
+            client_branch_id: branch,
+            location: {
+                ...location
+            },
+            next_check: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0].replace('-', '/'),
+            last_check: []
+
+        });
+        return true;
+    } catch (error) {
+        console.error(`Error creating company ${data.client_id}:`, error);
+        return null;
+    }
+}
+
+async function updateCompany(company, branch, location) {
+    try {
+        const result = await CompanyModel.updateOne({
+            client_id: company,
+            client_branch_id: branch
+        }, {
+            $set: {
+                location: location
+            }
+        });
+        return result.modifiedCount > 0;
+    } catch (error) {
+        console.error(`Error updating company ${company} branch ${branch}:`, error);
+        return false;
+    }
+}
+
+async function deleteCompany(company, branch) {
+    try {
+        const result = await CompanyModel.deleteOne({
+            client_id: company,
+            client_branch_id: branch
+        });
+        return result.deletedCount > 0;
+    } catch (error) {
+        console.error(`Error deleting company ${company} branch ${branch}:`, error);
+        return false;
+    }
+}
+
+
+module.exports = { getAllCompany, getBranchList, getCompanyBranch, getNextCheck, getLastCheck, createCompany, deleteCompany };

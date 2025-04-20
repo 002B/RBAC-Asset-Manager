@@ -24,6 +24,16 @@ router.get('/getAllBranch/:company', async (req, res) => {
     }
 });
 
+router.get('/getCompanyBranch/', async (req, res) => {
+    const { company } = req.params;
+    try {
+        const branches = await companyFunc.getCompanyBranch(company);
+        res.json(branches);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching company branches' });
+    }
+});
+
 router.get('/getNextCheck/:company/:branch', async (req, res) => {
     const { company, branch } = req.params;
     try {
@@ -44,14 +54,43 @@ router.get('/getLastCheck/:company/:branch', async (req, res) => {
     }
 });
 
-router.get('/getCompanyBranch/', async (req, res) => {
-    const { company } = req.params;
+router.post('/createCompany/:company/:branch', async (req, res) => {
+    const { company, branch } = req.params;
+    const { location } = req.body;
     try {
-        const branches = await companyFunc.getCompanyBranch(company);
-        res.json(branches);
+        const newCompany = await companyFunc.createCompany(company, branch, location);
+        res.status(201).json(newCompany);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching company branches' });
+        res.status(500).json({ message: 'Error creating company' });
+    }
+})
+
+router.put('/updateCompany/:company/:branch', async (req, res) => {
+    const { company, branch } = req.params;
+    const { location } = req.body;
+    try {
+        const updateCompany = await companyFunc.updateCompany(company, branch, location);
+        if (updateCompany.nModified === 1) {
+            res.json({ message: `Company ${company} ${branch} updated successfully` });
+        } else {
+            res.status(304).json({ message: `Company ${company} ${branch} not modified` });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating company' });
     }
 });
 
+router.delete('/deleteCompany/:company/:branch', async (req, res) => {
+    const { company, branch } = req.params;
+    try {
+        const deleteCompany = await companyFunc.deleteCompany(company, branch);
+        if (deleteCompany) {
+            res.json({ message: `Company ${company} ${branch} deleted successfully` });
+        } else {
+            res.status(500).json({ message: `Error deleting company ${company} ${branch}` });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting company' });
+    }
+})
 module.exports = router;
