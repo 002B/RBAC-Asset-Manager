@@ -116,42 +116,58 @@ async function getReportByStatus(status) {
 }
 
 async function getReportByUserDone(user) {
-    try{
-        return await reportModel.find({ "assigner":user , "status": "done" }, { _id: 0 }).lean();
-    }catch(error){
-        console.error('Error fetching data:', error); 
+    try {
+        return await reportModel.find({ "assigner": user, "status": "done" }, { _id: 0 }).lean();
+    } catch (error) {
+        console.error('Error fetching data:', error);
         return [];
     }
 }
 
 async function getReportByUserFixing(user) {
-    try{
+    try {
         return await reportModel.find({ "assigner": user, "status": "fixing" }, { _id: 0 }).lean();
-    }catch(error){
-        console.error('Error fetching data:', error); 
+    } catch (error) {
+        console.error('Error fetching data:', error);
         return [];
     }
 }
 
-async function createReport(company, branch, id, data ) {
+async function createReport(company, branch, id, data) {
     try {
-        const lastItem = await reportModel.find({}, { sort: { createAt: -1 } }).lean();
-        const lastNumber = lastItem.length+1;
+        const currentYear = new Date().getFullYear();
+        const regex = new RegExp(`^RP-${currentYear}-\\d{7}$`, 'i');
+        
+        const lastItem = await reportModel.findOne({ report_id: { $regex: regex } })
+            .sort({ report_id: -1 })
+            .lean();
+        
+        let lastNumber = 1;
+        
+        if (lastItem && lastItem.report_id) {
+            const parts = lastItem.report_id.split("-");
+            if (parts.length === 3) {
+                lastNumber = parseInt(parts[2], 10) + 1;
+            }
+        }
+
+        const newReportId = `RP-${new Date().getFullYear()}-${lastNumber.toString().padStart(7, '0')}`;
+
         await reportModel.create({
-            "report_id": `RP-${new Date().getFullYear()}-${(parseInt(lastNumber, 10) + 1).toString().padStart(7, '0')}`,
-            "item_id": id,
-            "client_id": company,
-            "client_branch_id": branch,
-            "createAt": new Date().toISOString(),
-            "status": "pending",
-            "send_by": data.send_by,
-            "problem": data.problem
+            report_id: newReportId,
+            item_id: id,
+            client_id: company,
+            client_branch_id: branch,
+            createAt: new Date().toISOString(),
+            status: "pending",
+            send_by: data.send_by,
+            problem: data.problem
         });
-       
+
         return true;
     } catch (error) {
         console.log("Error adding new report:", error);
-        
+
         return false;
     }
 }
@@ -182,7 +198,7 @@ async function updateReport(ids, status, send_to) {
         }
 
         const itemStatus = getItemStatusByReportStatus(status);
-        return { success: true, itemIds, itemStatus ,status : docs[0].status};
+        return { success: true, itemIds, itemStatus, status: docs[0].status };
     } catch (error) {
         console.error('Error updating report:', error);
         return { success: false, message: 'Error updating report' };
