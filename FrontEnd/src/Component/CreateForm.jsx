@@ -363,17 +363,9 @@ function CreateForm({ onClose, initialData }) {
                           class="flex-shrink-0 mt-0.5"
                         ></box-icon>
                         <div className="space-y-2">
-                          <p className="text-sm text-[#16425b] font-medium">
-                            Include in your description:
-                          </p>
-                          <ul className="text-sm text-[#16425b] leading-relaxed list-disc pl-5 space-y-1">
-                            <li>When the problem occurred</li>
-                            <li>Error messages you received</li>
-                            <li>Steps to reproduce the issue</li>
-                          </ul>
-                          <p className="text-sm text-[#16425b] pt-2">
-                            We will respond within 24 hours.
-                          </p>
+                        <p className="text-sm text-[#16425b] leading-relaxed">
+                          <span className="font-medium">Important:</span> "If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs."
+                        </p>
                         </div>
                       </div>
                     </div>
