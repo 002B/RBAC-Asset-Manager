@@ -2,32 +2,35 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import SweetAlert from "sweetalert2";
 import "boxicons";
-import './CreateForm.css';
+import "./CreateForm.css";
 import { useAuth } from "../Auth/AuthProvider";
 
 async function sendReport(data) {
   console.log("Sending report:", data);
   try {
-    const res = await fetch("http://localhost:3000/report/createReport/"+data.serialNumber, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem('token')}` // เพิ่ม authorization
-      },
-      body: JSON.stringify({
-      "data": {
-        "send_by" : data.user.user,
-        "problem": data.problem
-      },
-      "user" : data.user
-    })
-    });
-    
+    const res = await fetch(
+      "http://localhost:3000/report/createReport/" + data.serialNumber,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // เพิ่ม authorization
+        },
+        body: JSON.stringify({
+          data: {
+            send_by: data.user.user,
+            problem: data.problem,
+          },
+          user: data.user,
+        }),
+      }
+    );
+
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
     }
-    
+
     return await res.json();
   } catch (err) {
     console.error("Error sending report:", err);
@@ -35,34 +38,48 @@ async function sendReport(data) {
   }
 }
 
-
 function CreateForm({ onClose }) {
   const { user } = useAuth();
   const [forms, setForms] = useState([
-    { id: 1, serialNumber: '', company: '', branch: '', username: '', problem: '', isCollapsed: false }
+    {
+      id: 1,
+      serialNumber: "",
+      company: "",
+      branch: "",
+      username: "",
+      problem: "",
+      isCollapsed: false,
+    },
   ]);
   const [isSending, setIsSending] = useState(false);
 
   const handleChange = (id, e) => {
     const { name, value } = e.target;
-    setForms(forms.map(f => f.id === id ? { ...f, [name]: value } : f));
+    setForms(forms.map((f) => (f.id === id ? { ...f, [name]: value } : f)));
   };
 
   const addNewForm = () => {
-    const newId = forms.length ? Math.max(...forms.map(f => f.id)) + 1 : 1;
-    setForms([...forms, { 
-      id: newId, 
-      serialNumber: '', 
-      company: '', 
-      branch: '',
-      username: '', 
-      problem: '', 
-      isCollapsed: false 
-    }]);
+    const newId = forms.length ? Math.max(...forms.map((f) => f.id)) + 1 : 1;
+    setForms([
+      ...forms,
+      {
+        id: newId,
+        serialNumber: "",
+        company: "",
+        branch: "",
+        username: "",
+        problem: "",
+        isCollapsed: false,
+      },
+    ]);
   };
 
   const toggleCollapse = (id) => {
-    setForms(forms.map(f => f.id === id ? { ...f, isCollapsed: !f.isCollapsed } : f));
+    setForms(
+      forms.map((f) =>
+        f.id === id ? { ...f, isCollapsed: !f.isCollapsed } : f
+      )
+    );
   };
 
   const removeForm = (id) => {
@@ -86,16 +103,16 @@ function CreateForm({ onClose }) {
       confirmButtonText: "Remove",
     }).then((result) => {
       if (result.isConfirmed) {
-        setForms(forms.filter(f => f.id !== id));
+        setForms(forms.filter((f) => f.id !== id));
       }
     });
   };
 
   const confirmSend = async () => {
-    const emptyFields = forms.some(form => 
-      !form.serialNumber || !form.problem
+    const emptyFields = forms.some(
+      (form) => !form.serialNumber || !form.problem
     );
-    
+
     if (emptyFields) {
       SweetAlert.fire({
         title: "Incomplete Forms",
@@ -108,46 +125,52 @@ function CreateForm({ onClose }) {
 
     const result = await SweetAlert.fire({
       title: "Are you sure?",
-      text: `You want to send ${forms.length} report${forms.length > 1 ? 's' : ''}?`,
+      text: `You want to send ${forms.length} report${
+        forms.length > 1 ? "s" : ""
+      }?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#4F46E5",
       cancelButtonColor: "#6B7280",
-      confirmButtonText: `Send ${forms.length} Report${forms.length > 1 ? 's' : ''}`,
+      confirmButtonText: `Send ${forms.length} Report${
+        forms.length > 1 ? "s" : ""
+      }`,
     });
 
     if (result.isConfirmed) {
       setIsSending(true);
       try {
         const results = await Promise.all(
-          forms.map(form => sendReport({
-            serialNumber: form.serialNumber,
-            problem: form.problem,
-            user: user
-          }))
+          forms.map((form) =>
+            sendReport({
+              serialNumber: form.serialNumber,
+              problem: form.problem,
+              user: user,
+            })
+          )
         );
-
+        
         SweetAlert.fire({
           title: "Success!",
-          text: `Your ${forms.length} report${forms.length > 1 ? 's were' : ' was'} sent successfully`,
+          text: `Your ${forms.length} report${
+            forms.length > 1 ? "s were" : " was"
+          } sent successfully`,
           icon: "success",
           confirmButtonColor: "#4F46E5",
         });
 
         // Reset forms
-        setForms([{ 
-          id: 1, 
-          serialNumber: '', 
-          company: '', 
-          branch: '',
-          username: '', 
-          problem: '', 
-          isCollapsed: false 
-        }]);
+        setForms([
+          {
+            serialNumber: "",
+            isCollapsed: false,
+          },
+        ]);
       } catch (error) {
         let errorMessage = "Failed to send reports. Please try again.";
         if (error.message.includes("Network Error")) {
-          errorMessage = "Network error. Please check your internet connection.";
+          errorMessage =
+            "Network error. Please check your internet connection.";
         } else if (error.message.includes("401")) {
           errorMessage = "Session expired. Please login again.";
         }
@@ -165,8 +188,8 @@ function CreateForm({ onClose }) {
   };
 
   const confirmClose = () => {
-    const hasUnsavedData = forms.some(form => 
-      form.serialNumber || form.problem
+    const hasUnsavedData = forms.some(
+      (form) => form.serialNumber || form.problem
     );
 
     if (hasUnsavedData) {
@@ -195,11 +218,11 @@ function CreateForm({ onClose }) {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-md flex items-center justify-center p-4 z-50"
       onClick={handleOverlayClick}
     >
-      <div 
+      <div
         className="relative w-full max-w-4xl max-h-[90vh] rounded-2xl bg-white shadow-xl overflow-hidden border-gray-100 flex flex-col form-container"
         onClick={(e) => e.stopPropagation()}
       >
@@ -208,16 +231,21 @@ function CreateForm({ onClose }) {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
-                <box-icon name="file" type="solid" color="white" size="md"></box-icon>
+                <box-icon
+                  name="file"
+                  type="solid"
+                  color="white"
+                  size="md"
+                ></box-icon>
               </div>
               <div>
                 <h1 className="text-2xl font-bold">Create Report</h1>
                 <p className="text-sm text-white text-opacity-90">
-                  {forms.length} report{forms.length !== 1 ? 's' : ''} ready
+                  {forms.length} report{forms.length !== 1 ? "s" : ""} ready
                 </p>
               </div>
             </div>
-            <button 
+            <button
               onClick={confirmClose}
               className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-full transition-all"
               aria-label="Close"
@@ -231,15 +259,15 @@ function CreateForm({ onClose }) {
         <div className="flex-1 overflow-y-auto p-6 relative z-10 bg-[#D9DCD6]">
           <div className="space-y-5">
             {forms.map((form, index) => (
-              <div 
-                key={form.id} 
+              <div
+                key={form.id}
                 className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md ${
-                  form.isCollapsed ? 'pb-0' : ''
+                  form.isCollapsed ? "pb-0" : ""
                 }`}
               >
-                <div 
+                <div
                   className={`flex justify-between items-center p-4 cursor-pointer bg-gradient-to-r from-gray-50 to-white ${
-                    form.isCollapsed ? 'border-b-0' : 'border-b border-gray-200'
+                    form.isCollapsed ? "border-b-0" : "border-b border-gray-200"
                   }`}
                   onClick={() => toggleCollapse(form.id)}
                 >
@@ -252,7 +280,9 @@ function CreateForm({ onClose }) {
                       className="p-2 text-gray-500 hover:text-[#2f6690] rounded-lg hover:bg-gray-100 transition-all duration-200"
                       aria-label={form.isCollapsed ? "Expand" : "Collapse"}
                     >
-                      <box-icon name={form.isCollapsed ? 'chevron-down' : 'chevron-up'}></box-icon>
+                      <box-icon
+                        name={form.isCollapsed ? "chevron-down" : "chevron-up"}
+                      ></box-icon>
                     </button>
                     <h2 className="text-lg font-semibold text-gray-800">
                       Report {index + 1}
@@ -270,7 +300,7 @@ function CreateForm({ onClose }) {
                   </button>
                 </div>
 
-                <div className={`${form.isCollapsed ? 'hidden' : 'p-5'}`}>
+                <div className={`${form.isCollapsed ? "hidden" : "p-5"}`}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="space-y-4">
                       <label className="block">
@@ -288,8 +318,6 @@ function CreateForm({ onClose }) {
                           required
                         />
                       </label>
-
-             
                     </div>
 
                     <div className="space-y-4">
@@ -309,14 +337,16 @@ function CreateForm({ onClose }) {
                       </label>
 
                       <div className="mt-4 p-4 bg-[#81c3d7] bg-opacity-30 rounded-lg flex items-start gap-3 border border-[#3a7ca5] border-opacity-30 shadow-inner">
-                        <box-icon 
-                          name="info-circle" 
-                          type="solid" 
+                        <box-icon
+                          name="info-circle"
+                          type="solid"
                           color="#16425b"
                           class="flex-shrink-0"
                         ></box-icon>
                         <p className="text-sm text-[#16425b] leading-relaxed">
-                          <span className="font-medium">Include:</span> When it occurred, error messages, and steps to reproduce. We will respond within 24 hrs.
+                          <span className="font-medium">Include:</span> When it
+                          occurred, error messages, and steps to reproduce. We
+                          will respond within 24 hrs.
                         </p>
                       </div>
                     </div>
@@ -347,13 +377,19 @@ function CreateForm({ onClose }) {
             >
               {isSending ? (
                 <>
-                  <box-icon name="loader-circle" animation="spin" color="white"></box-icon>
+                  <box-icon
+                    name="loader-circle"
+                    animation="spin"
+                    color="white"
+                  ></box-icon>
                   <span>Sending...</span>
                 </>
               ) : (
                 <>
                   <box-icon name="send" color="white"></box-icon>
-                  <span>Send {forms.length} Report{forms.length !== 1 ? 's' : ''}</span>
+                  <span>
+                    Send {forms.length} Report{forms.length !== 1 ? "s" : ""}
+                  </span>
                 </>
               )}
             </button>
@@ -365,7 +401,11 @@ function CreateForm({ onClose }) {
       {isSending && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg flex items-center gap-3">
-            <box-icon name="loader-circle" animation="spin" color="#4F46E5"></box-icon>
+            <box-icon
+              name="loader-circle"
+              animation="spin"
+              color="#4F46E5"
+            ></box-icon>
             <span>Sending reports...</span>
           </div>
         </div>
