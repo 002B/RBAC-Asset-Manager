@@ -3,24 +3,43 @@ import PropTypes from "prop-types";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import './CreateForm.css';
+import { useAuth } from "../Auth/AuthProvider";
 
 async function sendReport(data) {
+  console.log("Sending report:", data);
   try {
-    const res = await fetch("http://localhost:3000/log/createLogReport/SCB/SCB_2/test", {
+    const res = await fetch("http://localhost:3000/report/createReport/"+data.serialNumber, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('token')}` // เพิ่ม authorization
+      },
+      body: JSON.stringify({
+      "data": {
+        "send_by" : data.user.user,
+        "problem": data.problem
+      },
+      "user" : data.user
+    })
     });
-    return res.ok;
+    
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+    }
+    
+    return await res.json();
   } catch (err) {
-    console.error(err);
-    return false;
+    console.error("Error sending report:", err);
+    throw err;
   }
 }
 
+
 function CreateForm({ onClose }) {
+  const { user } = useAuth();
   const [forms, setForms] = useState([
-    { id: 1, serialNumber: '', company: '', location: '', problem: '', isCollapsed: false }
+    { id: 1, serialNumber: '', company: '', branch: '', username: '', problem: '', isCollapsed: false }
   ]);
   const [isSending, setIsSending] = useState(false);
 
@@ -35,7 +54,8 @@ function CreateForm({ onClose }) {
       id: newId, 
       serialNumber: '', 
       company: '', 
-      location: '', 
+      branch: '',
+      username: '', 
       problem: '', 
       isCollapsed: false 
     }]);
@@ -73,7 +93,7 @@ function CreateForm({ onClose }) {
 
   const confirmSend = async () => {
     const emptyFields = forms.some(form => 
-      !form.serialNumber || !form.company || !form.location || !form.problem
+      !form.serialNumber || !form.problem
     );
     
     if (emptyFields) {
@@ -99,23 +119,45 @@ function CreateForm({ onClose }) {
     if (result.isConfirmed) {
       setIsSending(true);
       try {
-        const success = await Promise.all(forms.map(form => sendReport(form)));
-        if (success.every(Boolean)) {
-          SweetAlert.fire({
-            title: "Success!",
-            text: `Your ${forms.length} report${forms.length > 1 ? 's were' : ' was'} sent successfully`,
-            icon: "success",
-            confirmButtonColor: "#4F46E5",
-          });
-          setForms([{ id: 1, serialNumber: '', company: '', location: '', problem: '', isCollapsed: false }]);
-        } else {
-          SweetAlert.fire({
-            title: "Error",
-            text: "Some reports failed to send. Please try again.",
-            icon: "error",
-            confirmButtonColor: "#4F46E5",
-          });
+        const results = await Promise.all(
+          forms.map(form => sendReport({
+            serialNumber: form.serialNumber,
+            problem: form.problem,
+            user: user
+          }))
+        );
+
+        SweetAlert.fire({
+          title: "Success!",
+          text: `Your ${forms.length} report${forms.length > 1 ? 's were' : ' was'} sent successfully`,
+          icon: "success",
+          confirmButtonColor: "#4F46E5",
+        });
+
+        // Reset forms
+        setForms([{ 
+          id: 1, 
+          serialNumber: '', 
+          company: '', 
+          branch: '',
+          username: '', 
+          problem: '', 
+          isCollapsed: false 
+        }]);
+      } catch (error) {
+        let errorMessage = "Failed to send reports. Please try again.";
+        if (error.message.includes("Network Error")) {
+          errorMessage = "Network error. Please check your internet connection.";
+        } else if (error.message.includes("401")) {
+          errorMessage = "Session expired. Please login again.";
         }
+
+        SweetAlert.fire({
+          title: "Error",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonColor: "#4F46E5",
+        });
       } finally {
         setIsSending(false);
       }
@@ -124,7 +166,7 @@ function CreateForm({ onClose }) {
 
   const confirmClose = () => {
     const hasUnsavedData = forms.some(form => 
-      form.serialNumber || form.company || form.location || form.problem
+      form.serialNumber || form.problem
     );
 
     if (hasUnsavedData) {
@@ -161,8 +203,7 @@ function CreateForm({ onClose }) {
         className="relative w-full max-w-4xl max-h-[90vh] rounded-2xl bg-white shadow-xl overflow-hidden border-gray-100 flex flex-col form-container"
         onClick={(e) => e.stopPropagation()}
       >
-        
-        {/* Header - เปลี่ยนเป็นสี -primary-color (#2f6690) */}
+        {/* Header */}
         <div className="sticky top-0 z-10 p-6 bg-[#2f6690] text-white">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -232,23 +273,23 @@ function CreateForm({ onClose }) {
                 <div className={`${form.isCollapsed ? 'hidden' : 'p-5'}`}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="space-y-4">
-                      {["serialNumber", "company", "location"].map((field) => (
-                        <label key={field} className="block">
-                          <span className="text-sm font-medium text-gray-700 capitalize mb-2 block flex items-center">
-                            {field === "serialNumber" ? "Serial Number" : field.replace(/([A-Z])/g, ' $1').trim()}
-                            <span className="text-red-500 ml-1">*</span>
-                          </span>
-                          <input
-                            type="text"
-                            name={field}
-                            value={form[field]}
-                            onChange={(e) => handleChange(form.id, e)}
-                            className="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-[#81c3d7] focus:border-[#3a7ca5] p-3 bg-white text-sm shadow-sm border transition-all duration-200"
-                            placeholder={`Enter ${field}`}
-                            required
-                          />
-                        </label>
-                      ))}
+                      <label className="block">
+                        <span className="text-sm font-medium text-gray-700 mb-2 block flex items-center">
+                          Serial Number
+                          <span className="text-red-500 ml-1">*</span>
+                        </span>
+                        <input
+                          type="text"
+                          name="serialNumber"
+                          value={form.serialNumber}
+                          onChange={(e) => handleChange(form.id, e)}
+                          className="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-[#81c3d7] focus:border-[#3a7ca5] p-3 bg-white text-sm shadow-sm border transition-all duration-200"
+                          placeholder="Enter Serial Number"
+                          required
+                        />
+                      </label>
+
+             
                     </div>
 
                     <div className="space-y-4">
@@ -275,7 +316,7 @@ function CreateForm({ onClose }) {
                           class="flex-shrink-0"
                         ></box-icon>
                         <p className="text-sm text-[#16425b] leading-relaxed">
-                          <span className="font-medium">Include:</span> When it occurred, error messages, and steps to reproduce. We'll respond within 24 hrs.
+                          <span className="font-medium">Include:</span> When it occurred, error messages, and steps to reproduce. We will respond within 24 hrs.
                         </p>
                       </div>
                     </div>
@@ -319,6 +360,16 @@ function CreateForm({ onClose }) {
           </div>
         </div>
       </div>
+
+      {/* Loading Overlay */}
+      {isSending && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg flex items-center gap-3">
+            <box-icon name="loader-circle" animation="spin" color="#4F46E5"></box-icon>
+            <span>Sending reports...</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

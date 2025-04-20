@@ -11,11 +11,11 @@ const fetchData = async (user) => {
       fetch(`http://localhost:3000/report/getReportByBranch/${user.company}/${user.selectedBranch}`)
         .then(res => res.json())
         .then(data => data.map(item => [item.report_id, item.item_id, item.createAt, item.status])),
-      
+
       fetch(`http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`)
         .then(res => res.json())
         .then(data => data.map(item => [item.item_id, item.item_brand, item.item_status])),
-      
+
       fetch(`http://localhost:3000/company/getNextCheck/${user.company}/${user.selectedBranch}`)
         .then(res => res.json())
         .then(data => {
@@ -23,7 +23,7 @@ const fetchData = async (user) => {
           const receivedDate = new Date(year, month - 1, day);
           return Math.ceil((receivedDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
         }),
-      
+
       fetch(`http://localhost:3000/company/getLastCheck/${user.company}/${user.selectedBranch}`)
         .then(res => res.json())
         .then(data => data.map(date => [date]))
@@ -32,11 +32,11 @@ const fetchData = async (user) => {
     return { inbox, inventory, nextCheck, lastCheck };
   } catch (error) {
     console.error("Error fetching data:", error);
-    return { 
-      inbox: [], 
-      inventory: [], 
-      nextCheck: null, 
-      lastCheck: [] 
+    return {
+      inbox: [],
+      inventory: [],
+      nextCheck: null,
+      lastCheck: []
     };
   }
 };
@@ -58,12 +58,37 @@ const DashboardMember = () => {
       setCheckUp(nextCheck);
       setLastCheck(lastCheck);
     };
-    
+
     loadData();
   }, [user.company, user.selectedBranch]);
 
   const handleCloseForm = () => {
     setShowCreateForm(false);
+  };
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      const response = await fetch("http://localhost:3000/report/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error("Failed to submit form");
+
+      setShowCreateForm(false);
+
+      const { inbox, inventory, nextCheck, lastCheck } = await fetchData(user);
+      setTestActivity(inbox);
+      setInventory(inventory);
+      setCheckUp(nextCheck);
+      setLastCheck(lastCheck);
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -76,7 +101,7 @@ const DashboardMember = () => {
           branch={user.selectedBranch}
         />
       </div>
-      
+
       <div className="dashboard-container flex w-full rounded drop-shadow mt-4">
         {/* กล่องซ้าย */}
         <div className="big-item">
@@ -95,7 +120,7 @@ const DashboardMember = () => {
               />
             </div>
           </div>
-          
+
           {/* กล่องย่อยขวา */}
           <div className="small-item-wrapper">
             {/* Check Up Info */}
@@ -110,7 +135,7 @@ const DashboardMember = () => {
                   <h4 className="ml-2">until next Check Up</h4>
                 </span>
               </div>
-              
+
               <DataTable
                 title={["Last Check"]}
                 colIcon="check-square"
@@ -121,7 +146,7 @@ const DashboardMember = () => {
                 hasSearch={false}
               />
             </div>
-            
+
             {/* Send Request Button */}
             <div className="small-item flex flex-col justify-center items-center gap-4">
               <span className="report-icon">
@@ -142,7 +167,7 @@ const DashboardMember = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Inventory Table */}
         <div className="long-item">
           <DataTable
@@ -165,11 +190,11 @@ const DashboardMember = () => {
             className="absolute inset-0 bg-black/10"
             onClick={handleCloseForm}
           />
-          <div 
+          <div
             className="relative z-10 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl bg-white border border-gray-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <CreateForm onClose={handleCloseForm} />
+            <CreateForm onClose={handleCloseForm} onSubmit={handleFormSubmit} />
           </div>
         </div>
       )}
