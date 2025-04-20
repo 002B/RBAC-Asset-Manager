@@ -99,7 +99,7 @@ const DashboardWorker = () => {
         try {
           await axios.put("http://localhost:3000/report/updateReport/done", {
             ids: [reportId],
-            user : user
+            user: user,
           });
           setWorkList((prevList) =>
             prevList.filter((item) => item.report_id !== reportId)
@@ -264,8 +264,18 @@ const DashboardWorker = () => {
             </div>
           ))
         ) : (
-          <div className="col-span-4 text-center text-3xl font-semibold text-light bg-gradient-to-r from-primary to-secondary p-6 rounded-lg shadow-md">
-            โปรดรับงานที่ต้องการทำ หรือ รอรับงานจาก Admin
+          <div className="flex flex-col items-center justify-center col-span-4 p-6 rounded-lg bg-white drop-shadow-md">
+            <box-icon
+              name="inbox"
+              type="solid"
+              color="#2f6690"
+              size="lg"
+            ></box-icon>
+            <h2 className="text-dark text-xl font-semibold mt-2 text-center">
+              No tasks available at the moment.
+              <br />
+              Please wait for an assignment from the Admin.
+            </h2>
           </div>
         )}
       </div>
