@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-const connectionString = `mongodb+srv://kittiposmek:LndCpxVUjFvxIYjK@fireextinguisher-db.wepn9uj.mongodb.net/FEMS-New?retryWrites=true&w=majority`;
+const connectionString = process.env.MONGODB_URI;
 
 const connectDB = async () => {
   try {

@@ -8,7 +8,23 @@ import EditItemForm from "./form/editItemForm";
 import QRCodeModal from "./form/QRCodeModal";
 
 const DataTable = (props) => {
-  const { tIcon, tName, colIcon, title = [], data = [], itemPerPage, hasButton = true, hasPagination = true, hasSearch = true, formData = [], formPlaceholder = {}, hasExport = false, hasAddItem = false, hasEdit = false, hasQr = false } = props;
+  const {
+    tIcon,
+    tName,
+    colIcon,
+    title = [],
+    data = [],
+    itemPerPage,
+    hasButton = true,
+    hasPagination = true,
+    hasSearch = true,
+    formData = [],
+    formPlaceholder = {},
+    hasExport = false,
+    hasAddItem = false,
+    hasEdit = false,
+    hasQr = false,
+  } = props;
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
@@ -31,9 +47,13 @@ const DataTable = (props) => {
     return [];
   }, [data]);
 
-  const isObjectData = typeof normalizedData[0] === "object" && !Array.isArray(normalizedData[0]);
+  const isObjectData =
+    typeof normalizedData[0] === "object" && !Array.isArray(normalizedData[0]);
 
-  const totalPages = useMemo(() => Math.ceil(normalizedData.length / itemsPerPage), [normalizedData.length, itemsPerPage]);
+  const totalPages = useMemo(
+    () => Math.ceil(normalizedData.length / itemsPerPage),
+    [normalizedData.length, itemsPerPage]
+  );
 
   const sortedData = useMemo(() => {
     const filteredData = normalizedData.filter((row) => {
@@ -49,8 +69,12 @@ const DataTable = (props) => {
     return filteredData.sort((a, b) => {
       if (sortConfig.key === null) return 0;
 
-      const itemA = isObjectData ? a[sortConfig.key] : a[title.indexOf(sortConfig.key)];
-      const itemB = isObjectData ? b[sortConfig.key] : b[title.indexOf(sortConfig.key)];
+      const itemA = isObjectData
+        ? a[sortConfig.key]
+        : a[title.indexOf(sortConfig.key)];
+      const itemB = isObjectData
+        ? b[sortConfig.key]
+        : b[title.indexOf(sortConfig.key)];
 
       if (typeof itemA === "number" && typeof itemB === "number") {
         return sortConfig.direction === "asc" ? itemA - itemB : itemB - itemA;
@@ -62,13 +86,17 @@ const DataTable = (props) => {
     });
   }, [normalizedData, sortConfig, searchQuery, title, isObjectData]);
 
-
   const currentData = useMemo(() => {
-    return sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    return sortedData.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
   }, [sortedData, currentPage, itemsPerPage]);
 
   const handleEditClick = (rowData) => {
-    const value = isObjectData ? rowData : Object.fromEntries(title.map((key, i) => [key, rowData[i]]));
+    const value = isObjectData
+      ? rowData
+      : Object.fromEntries(title.map((key, i) => [key, rowData[i]]));
     setEditingItem({
       ...value,
       company: value.company,
@@ -76,6 +104,39 @@ const DataTable = (props) => {
       log: { Install: value.install_date },
     });
     setShowEditForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setShowCreateForm(false);
+  };
+
+  const handleButtonClick = () => {
+    setShowCreateForm(true);
+  };
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      const response = await fetch("http://localhost:3000/report/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error("Failed to submit form");
+
+      setShowCreateForm(false);
+
+      const { inbox, inventory, nextCheck, lastCheck } = await fetchData(user);
+      setTestActivity(inbox);
+      setInventory(inventory);
+      setCheckUp(nextCheck);
+      setLastCheck(lastCheck);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   const colorIcon = (row) => {
@@ -91,7 +152,8 @@ const DataTable = (props) => {
     const end = Math.min(currentPage + 1, totalPages);
     if (end - start < 2) {
       if (start === 1) return [1, 2, 3].slice(0, totalPages);
-      if (end === totalPages) return [totalPages - 2, totalPages - 1, totalPages];
+      if (end === totalPages)
+        return [totalPages - 2, totalPages - 1, totalPages];
     }
     return [start, start + 1, start + 2];
   };
@@ -100,32 +162,62 @@ const DataTable = (props) => {
     <div className="data-table-wrapper">
       <div className="table-title flex items-center justify-between flex-wrap">
         <div className="flex items-center">
-          {tIcon && <box-icon name={tIcon} size="sm" color="#16425b"></box-icon>}
-          {tName && <h2 className="p-2 text-dark">{tName} [{data.length}]</h2>}
+          {tIcon && (
+            <box-icon name={tIcon} size="sm" color="#16425b"></box-icon>
+          )}
+          {tName && (
+            <h2 className="p-2 text-dark">
+              {tName} [{data.length}]
+            </h2>
+          )}
         </div>
         <div className="flex gap-2 justify-center items-center">
           {hasExport && (
-            <button className="border-2 border-primary bg-white rounded flex p-1 hover:bg-secondary" onClick={() => ExportExcel(data)}>
+            <button
+              className="border-2 border-primary bg-white rounded flex p-1 hover:bg-secondary"
+              onClick={() => ExportExcel(data)}
+            >
               <box-icon name="export" color="#FD6E28"></box-icon>
               <span className="px-1 text-primary">Export</span>
             </button>
           )}
           {hasSearch && (
             <div className="search-bar">
-              <box-icon name="filter" type="regular" size="sm" color="#FF6700"></box-icon>
-              <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-              <box-icon name="search" type="regular" size="sm" color="#FF6700"></box-icon>
+              <box-icon
+                name="filter"
+                type="regular"
+                size="sm"
+                color="#FF6700"
+              ></box-icon>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <box-icon
+                name="search"
+                type="regular"
+                size="sm"
+                color="#FF6700"
+              ></box-icon>
             </div>
           )}
           {hasAddItem && (
-            <button className="border-2 border-primary bg-white rounded flex p-1 hover:bg-secondary" onClick={() => setShowAddItemForm(true)}>
+            <button
+              className="border-2 border-primary bg-white rounded flex p-1 hover:bg-secondary"
+              onClick={() => setShowAddItemForm(true)}
+            >
               <box-icon name="plus" color="#FF6700"></box-icon>
               <span className="px-1 text-primary">Add</span>
             </button>
           )}
         </div>
       </div>
-      <div className="data-table-container overflow-scroll" style={{ minHeight: minTableHeight }}>
+      <div
+        className="data-table-container overflow-scroll"
+        style={{ minHeight: minTableHeight }}
+      >
         <table className="data-table">
           <thead>
             <tr>
@@ -137,27 +229,45 @@ const DataTable = (props) => {
                     const isSameColumn = sortConfig.key === header;
                     setSortConfig({
                       key: header,
-                      direction: isSameColumn && sortConfig.direction === "asc" ? "desc" : "asc",  // Toggle between asc and desc
+                      direction:
+                        isSameColumn && sortConfig.direction === "asc"
+                          ? "desc"
+                          : "asc", // Toggle between asc and desc
                     });
                   }}
                 >
                   <span className="flex justify-center items-center text-dark">
                     {header}
                     {sortConfig.key === header && (
-                      <box-icon name={sortConfig.direction === "asc" ? "caret-up" : "caret-down"} size="16px" color="#FF6700"></box-icon>
+                      <box-icon
+                        name={
+                          sortConfig.direction === "asc"
+                            ? "caret-up"
+                            : "caret-down"
+                        }
+                        size="16px"
+                        color="#FF6700"
+                      ></box-icon>
                     )}
                   </span>
                 </th>
-
               ))}
-              {(hasButton || hasEdit) && <th className="bg-transparent sticky -right-1"></th>}
+              {hasEdit && <th className="bg-transparent sticky -right-1"></th>}
             </tr>
           </thead>
 
           <tbody>
             {currentData.length === 0 ? (
               <tr>
-                <td colSpan={title.length + (colIcon ? 1 : 0) + (hasEdit ? 1 : 0) + (hasQr ? 1 : 0)} className="text-center text-gray-500 py-4">
+                <td
+                  colSpan={
+                    title.length +
+                    (colIcon ? 1 : 0) +
+                    (hasEdit ? 1 : 0) +
+                    (hasQr ? 1 : 0)
+                  }
+                  className="text-center text-gray-500 py-4"
+                >
                   No data available
                 </td>
               </tr>
@@ -166,37 +276,73 @@ const DataTable = (props) => {
                 <tr key={rowIndex}>
                   {colIcon && (
                     <td className="flex justify-center items-center">
-                      <box-icon name={colIcon} size="sm" color={colorIcon(row)} type="regular"></box-icon>
+                      <box-icon
+                        name={colIcon}
+                        size="sm"
+                        color={colorIcon(row)}
+                        type="regular"
+                      ></box-icon>
                     </td>
                   )}
                   {title.map((key, colIndex) => (
-                    <td key={colIndex}>{isObjectData ? row[key] || "-" : row[colIndex] || "-"}</td>
+                    <td key={colIndex}>
+                      {isObjectData ? row[key] || "-" : row[colIndex] || "-"}
+                    </td>
                   ))}
-                  {hasQr && (
-                    <td className="bg-white sticky -right-1">
-                      <button
-                        className="flex justify-center items-center"
-                        onClick={() => {
-                          setSelectedItemId(row[0]);
-                          setShowQRCodeModal(true);
-                        }}
-                      >
-                        <box-icon name="qr-scan" color="#FF6700"></box-icon>
-                      </button>
-                    </td>
-                  )}
-                  {hasEdit && (
-                    <td className="bg-white sticky -right-1">
-                      <button onClick={() => handleEditClick(row)} className="flex justify-center items-center">
-                        <box-icon type="regular" name="edit" size="sm" color="#FD6E28"></box-icon>
-                      </button>
-                    </td>
-                  )}
+                  <td className="bg-white sticky -right-1">
+                    <div className="flex justify-center items-center">
+                      {hasButton && (
+                        <span className="bg-white -right-2">
+                          <button
+                            onClick={() => {
+                              setSelectedItemId(row[0]);
+                              handleButtonClick();
+                            }}
+                            className="flex justify-center items-center"
+                          >
+                            <box-icon
+                              type="regular"
+                              name="edit"
+                              size="sm"
+                              color="#FD6E28"
+                            ></box-icon>
+                          </button>
+                        </span>
+                      )}
+                      {hasQr && (
+                        <span className="bg-white -right-1">
+                          <button
+                            className="flex justify-center items-center"
+                            onClick={() => {
+                              setSelectedItemId(row[0]);
+                              setShowQRCodeModal(true);
+                            }}
+                          >
+                            <box-icon name="qr-scan" color="#FF6700"></box-icon>
+                          </button>
+                        </span>
+                      )}
+                      {hasEdit && (
+                        <span className="bg-white -right-2">
+                          <button
+                            onClick={() => handleEditClick(row)}
+                            className="flex justify-center items-center"
+                          >
+                            <box-icon
+                              type="regular"
+                              name="edit"
+                              size="sm"
+                              color="#FD6E28"
+                            ></box-icon>
+                          </button>
+                        </span>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
-
         </table>
       </div>
       {showQRCodeModal && (
@@ -207,36 +353,66 @@ const DataTable = (props) => {
       )}
       {hasPagination && (
         <div className="pagination">
-          <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+          <button
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+          >
             <box-icon type="solid" name="chevrons-left"></box-icon>
           </button>
-          <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
             <box-icon type="solid" name="chevron-left"></box-icon>
           </button>
           {getPaginationRange().map((page) => (
-            <button key={page} onClick={() => setCurrentPage(page)} className={currentPage === page ? "active" : ""}>
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={currentPage === page ? "active" : ""}
+            >
               {page}
             </button>
           ))}
-          <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
             <box-icon type="solid" name="chevron-right"></box-icon>
           </button>
-          <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+          <button
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages}
+          >
             <box-icon type="solid" name="chevrons-right"></box-icon>
           </button>
         </div>
       )}
       {showCreateForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur">
-          <div className="absolute inset-0" onClick={() => setShowCreateForm(false)}></div>
-          <CreateForm data={formData} placeholderData={formPlaceholder} />
+          <div
+            className="absolute inset-0"
+            onClick={() => setShowCreateForm(false)}
+          ></div>
+          <CreateForm
+            onClose={handleCloseForm}
+            onSubmit={handleFormSubmit}
+            initialData={{serialNumber: selectedItemId }}
+          />
         </div>
       )}
       {showAddItemForm && (
-        <AddItemForm onClose={() => setShowAddItemForm(false)} onSubmit={() => setShowAddItemForm(false)} />
+        <AddItemForm
+          onClose={() => setShowAddItemForm(false)}
+          onSubmit={() => setShowAddItemForm(false)}
+        />
       )}
       {showEditForm && (
-        <EditItemForm onClose={() => setShowEditForm(false)} onSubmit={() => setShowEditForm(false)} initialData={editingItem} />
+        <EditItemForm
+          onClose={() => setShowEditForm(false)}
+          onSubmit={() => setShowEditForm(false)}
+          initialData={editingItem}
+        />
       )}
     </div>
   );

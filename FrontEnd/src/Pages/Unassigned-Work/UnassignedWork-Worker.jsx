@@ -18,7 +18,11 @@ const UnassignedWork = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/report/getReportByStatus/accepted")
+      .get("http://localhost:3000/report/getReportByStatus/accepted", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
       .then((res) => setWorkList(res.data))
       .catch((err) => console.error("Error fetching reports", err));
   }, []);
@@ -90,18 +94,21 @@ const UnassignedWork = () => {
       try {
         await axios.put("http://localhost:3000/report/updateReport/fixing", {
           ids: [id],
-          send_to: user.user,
-          user: user
-        });
+          send_to: user.username,
+          user: user,
+        },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
         SweetAlert.fire({
           title: "Congratulations!",
           text: "Work accepted!",
           icon: "success",
           confirmButtonColor: "#FD6E28",
         });
-        setWorkList((prev) =>
-          prev.filter((item) => item.report_id !== id)
-        );
+        setWorkList((prev) => prev.filter((item) => item.report_id !== id));
       } catch (err) {
         SweetAlert.fire({
           title: "Error",
@@ -142,14 +149,24 @@ const UnassignedWork = () => {
       {/* Header */}
       <div className="unassigned-work-list-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
         <div className="unassigned-work-list-header flex gap-2 justify-center items-center">
-          <box-icon name="list-plus" type="regular" size="md" color="white"></box-icon>
+          <box-icon
+            name="list-plus"
+            type="regular"
+            size="md"
+            color="white"
+          ></box-icon>
           <h2 className="text-white">Unassigned Work</h2>
         </div>
         <div className="unassigned-work-list-tool flex gap-2">
           <div className="unassigned-work-search flex flex-col justify-center items-center gap-2">
             <div className="unassigned-work-search-box flex gap-2">
               <button onClick={toggleFilterBox}>
-                <box-icon name="filter" type="regular" size="sm" color="#FD6E28"></box-icon>
+                <box-icon
+                  name="filter"
+                  type="regular"
+                  size="sm"
+                  color="#FD6E28"
+                ></box-icon>
               </button>
               <input
                 type="text"
@@ -158,13 +175,20 @@ const UnassignedWork = () => {
                 onChange={handleSearchChange}
               />
               <button>
-                <box-icon name="search" type="regular" size="sm" color="#FD6E28"></box-icon>
+                <box-icon
+                  name="search"
+                  type="regular"
+                  size="sm"
+                  color="#FD6E28"
+                ></box-icon>
               </button>
             </div>
             <div className="filter-box hidden" ref={filterBoxRef}>
               {Object.keys(filterList).map((key) => (
                 <div className="filter-item flex flex-col" key={key}>
-                  <h4 className="text-white w-full text-center bg-primary rounded-[4px]">{key}</h4>
+                  <h4 className="text-white w-full text-center bg-primary rounded-[4px]">
+                    {key}
+                  </h4>
                   {filterList[key].map((item) => (
                     <div className="filter-list" key={item}>
                       <input
@@ -186,47 +210,92 @@ const UnassignedWork = () => {
 
       {/* Cards */}
       <div className="unassigned-work-card-container grid grid-cols-4 gap-2">
-        {currentData.length > 0 ?
+        {currentData.length > 0 ? (
           currentData.map((item, index) => (
-          <div className="unassigned-work-card h-fit flex flex-col items-center bg-white drop-shadow-md" key={index}>
-            <div className="unassigned-work-card-detail flex flex-col w-full h-full">
-              <div className="unassigned-work-card-header flex justify-center items-center h-1/2">
-                <img className="w-full h-2/3 object-cover rounded-lg" src={placeholderImg} alt="report-img" />
-              </div>
-              <div className="unassigned-work-card-body flex flex-col justify-center items-center">
-                <h3 className="text-secondary font-bold">{item.client_id}</h3>
-                <h4 className="italic">{item.client_branch_id}</h4>
-                <div className="flex items-center justify-center">
-                  <box-icon name="time" type="regular" color="#FD6E28" size="sm"></box-icon>
-                  <span>{item.createAt}</span>
+            <div
+              className="unassigned-work-card h-fit flex flex-col items-center bg-white drop-shadow-md"
+              key={index}
+            >
+              <div className="unassigned-work-card-detail flex flex-col w-full h-full">
+                <div className="unassigned-work-card-header flex justify-center items-center h-1/2">
+                  <img
+                    className="w-full h-2/3 object-cover rounded-lg"
+                    src={placeholderImg}
+                    alt="report-img"
+                  />
                 </div>
-                <div className="flex items-center justify-center">
-                  <box-icon name="spray-can" type="regular" color="#FD6E28" size="sm"></box-icon>
-                  <span className="font-bold">{item.item_id}</span>
+                <div className="unassigned-work-card-body flex flex-col justify-center items-center">
+                  <h3 className="text-secondary font-bold">{item.client_id}</h3>
+                  <h4 className="italic">{item.client_branch_id}</h4>
+                  <div className="flex items-center justify-center">
+                    <box-icon
+                      name="time"
+                      type="regular"
+                      color="#FD6E28"
+                      size="sm"
+                    ></box-icon>
+                    <span>{item.createAt}</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <box-icon
+                      name="spray-can"
+                      type="regular"
+                      color="#FD6E28"
+                      size="sm"
+                    ></box-icon>
+                    <span className="font-bold">{item.item_id}</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <box-icon
+                      name="file"
+                      type="regular"
+                      color="#FD6E28"
+                      size="sm"
+                    ></box-icon>
+                    <span className="text-sm">{item.report_id}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-center">
-                  <box-icon name="file" type="regular" color="#FD6E28" size="sm"></box-icon>
-                  <span className="text-sm">{item.report_id}</span>
-                </div>
-              </div>
-              <div className="unassigned-work-card-footer flex flex-col w-full gap-1 py-1">
-                <div className="flex w-full gap-1">
-                  <button className="edit-button flex justify-center items-center w-full text-white p-1 rounded gap-2 bg-secondary" onClick={() => handleViewDetails(item)}>
-                    <box-icon name="show" type="regular" color="white"></box-icon>
-                    <span>View Details</span>
-                  </button>
-                  <button className="submit-button flex justify-center items-center w-full text-white p-1 rounded gap-2 bg-green-600 hover:brightness-110" onClick={() => handleAccept(item.report_id)}>
-                    <box-icon name="plus" type="regular" color="white"></box-icon>
-                    <span>Accept</span>
-                  </button>
+                <div className="unassigned-work-card-footer flex flex-col w-full gap-1 py-1">
+                  <div className="flex w-full gap-1">
+                    <button
+                      className="edit-button flex justify-center items-center w-full text-white p-1 rounded gap-2 bg-secondary"
+                      onClick={() => handleViewDetails(item)}
+                    >
+                      <box-icon
+                        name="show"
+                        type="regular"
+                        color="white"
+                      ></box-icon>
+                      <span>View Details</span>
+                    </button>
+                    <button
+                      className="submit-button flex justify-center items-center w-full text-white p-1 rounded gap-2 bg-green-600 hover:brightness-110"
+                      onClick={() => handleAccept(item.report_id)}
+                    >
+                      <box-icon
+                        name="plus"
+                        type="regular"
+                        color="white"
+                      ></box-icon>
+                      <span>Accept</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )) : (
-          <div className="col-span-4 text-center text-3xl font-semibold text-light bg-gradient-to-r from-primary to-secondary p-6 rounded-lg shadow-md">
-            ขณะนี้ยังไม่มี Report
-            <div className="text-center text-sm">โปรดใช้เวลานี้เพื่อพักผ่อน</div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center col-span-4 p-6 rounded-lg bg-white drop-shadow-md">
+            <box-icon
+              name="edit-alt"
+              type="solid"
+              color="#2f6690"
+              size="lg"
+            ></box-icon>
+            <h2 className="text-lg font-semibold">No Reports at the Moment</h2>
+            <p className="text-sm text-secondary">
+              Take this time to relax and recharge.
+            </p>
           </div>
         )}
       </div>
@@ -237,18 +306,31 @@ const UnassignedWork = () => {
           <button onClick={() => changePage(1)} disabled={currentPage === 1}>
             <box-icon type="solid" name="chevrons-left"></box-icon>
           </button>
-          <button onClick={() => changePage(currentPage - 1)} disabled={currentPage === 1}>
+          <button
+            onClick={() => changePage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
             <box-icon type="solid" name="chevron-left"></box-icon>
           </button>
           {getPaginationRange().map((page) => (
-            <button key={page} onClick={() => changePage(page)} className={currentPage === page ? "font-bold underline" : ""}>
+            <button
+              key={page}
+              onClick={() => changePage(page)}
+              className={currentPage === page ? "font-bold underline" : ""}
+            >
               {page}
             </button>
           ))}
-          <button onClick={() => changePage(currentPage + 1)} disabled={currentPage === totalPages}>
+          <button
+            onClick={() => changePage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
             <box-icon type="solid" name="chevron-right"></box-icon>
           </button>
-          <button onClick={() => changePage(totalPages)} disabled={currentPage === totalPages}>
+          <button
+            onClick={() => changePage(totalPages)}
+            disabled={currentPage === totalPages}
+          >
             <box-icon type="solid" name="chevrons-right"></box-icon>
           </button>
         </div>

@@ -28,9 +28,9 @@ function LoginPage() {
         userRef.current.value,
         passRef.current.value
       );
+      
       if (status === 200) {
-        SweetAlert.close();
-        return navigate("/dashboard");
+        navigate("/dashboard");
       } else if (status === 401) {
         passRef.current.value = "";
         SweetAlert.fire({
@@ -38,7 +38,14 @@ function LoginPage() {
           title: "Login Failed",
           text: "Username or Password is incorrect",
           confirmButtonColor: "#FD6E28",
-        })
+        });
+      } else if (status === 403) {
+        SweetAlert.fire({
+          icon: "error",
+          title: "Account Inactive",
+          text: "Your account is currently inactive",
+          confirmButtonColor: "#FD6E28",
+        });
       }
     } catch (error) {
       SweetAlert.close();

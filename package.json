@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "mongoose": "^8.13.2",
-    "react-qr-code": "^2.0.15"
-  }
-}

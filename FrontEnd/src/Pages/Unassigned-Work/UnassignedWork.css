@@ -1,7 +1,7 @@
-.unassigned-work-admin{
+.unassigned-work-Admin{
   flex-wrap: wrap;
 }
-.worker-list-search {
+.Worker-list-search {
   border: 2px solid var(--secondary-color);
   border-radius: 4px;
   padding: 4px;
@@ -10,7 +10,7 @@
   gap: 4px;
   background-color: white;
 }
-.worker-list-search input {
+.Worker-list-search input {
   border: none;
   outline: none;
   background-color: transparent;

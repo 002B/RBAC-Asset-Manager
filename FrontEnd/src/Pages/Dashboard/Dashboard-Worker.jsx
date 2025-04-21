@@ -26,28 +26,30 @@ const DashboardWorker = () => {
     setCurrentPage(page);
   };
 
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/report/getReportByUserFixing/${user.username}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const transformed = res.data.map((report) => ({
+        report_id: report.report_id,
+        serial: report.item_id,
+        company: report.client_id,
+        branch: report.client_branch_id,
+        date: new Date(report.createAt).toLocaleDateString(),
+      }));
+      setWorkList(transformed);
+    } catch (error) {
+      console.error("Error fetching report data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:3000/report/getReportByUserFixing/worker"
-        );
-
-        const transformed = res.data.map((report) => ({
-          report_id: report.report_id,
-          serial: report.item_id,
-          company: report.client_id,
-          branch: report.client_branch_id,
-          date: new Date(report.createAt).toLocaleDateString(),
-        }));
-        setWorkList(transformed);
-      } catch (error) {
-        console.error("Error fetching report data:", error);
-      }
-    };
-
     fetchData();
-  }, [workList]);
+  }, []);
 
   const getPaginationRange = () => {
     const start = Math.max(currentPage - 1, 1);
@@ -97,10 +99,18 @@ const DashboardWorker = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.put("http://localhost:3000/report/updateReport/done", {
-            ids: [reportId],
-            user : user
-          });
+          await axios.put(
+            "http://localhost:3000/report/updateReport/done",
+            {
+              ids: [reportId],
+              user: user,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
           setWorkList((prevList) =>
             prevList.filter((item) => item.report_id !== reportId)
           );
@@ -114,7 +124,12 @@ const DashboardWorker = () => {
           // ลบรายการที่ submit แล้วออกจาก list
           try {
             const res = await axios.get(
-              "http://localhost:3000/report/getReportByUserFixing/worker"
+              `http://localhost:3000/report/getReportByUserFixing/${user.user}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
             );
             const transformed = res.data.map((report) => ({
               report_id: report.report_id,
@@ -264,8 +279,18 @@ const DashboardWorker = () => {
             </div>
           ))
         ) : (
-          <div className="col-span-4 text-center text-3xl font-semibold text-light bg-gradient-to-r from-primary to-secondary p-6 rounded-lg shadow-md">
-            โปรดรับงานที่ต้องการทำ หรือ รอรับงานจาก Admin
+          <div className="flex flex-col items-center justify-center col-span-4 p-6 rounded-lg bg-white drop-shadow-md">
+            <box-icon
+              name="archive"
+              type="regular"
+              color="#2f6690"
+              size="lg"
+            ></box-icon>
+            <h2 className="text-dark text-xl font-semibold mt-2 text-center">
+              No tasks available at the moment.
+              <br />
+              Please wait for an assignment from the Admin.
+            </h2>
           </div>
         )}
       </div>

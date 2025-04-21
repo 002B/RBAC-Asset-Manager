@@ -81,7 +81,7 @@ const DashboardSuperAdmin = () => {
       <div className="w-full rounded-lg drop-shadow">
         <Status
           role={user.role}
-          company={user.company}
+          company={user.client}
         />
       </div>
       <div className="chart-container w-full bg-white p-1 rounded-lg drop-shadow">
