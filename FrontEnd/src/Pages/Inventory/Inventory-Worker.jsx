@@ -41,7 +41,7 @@ const InventoryWorker = () => {
     };
 
     fetchData();
-  }, [user.company, inventory]);
+  }, [user.company]);
 
   if (loading) {
     return <div>Loading...</div>;

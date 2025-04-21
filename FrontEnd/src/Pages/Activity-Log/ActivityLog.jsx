@@ -23,8 +23,6 @@ const ActivityLog = () => {
                     item.username,
                     item.role
                 ]);
-                console.log(formattedData);
-                
                 setActivityLog(formattedData);
             } catch (error) {
                 console.error("Error fetching inventory data:", error);
@@ -34,7 +32,7 @@ const ActivityLog = () => {
         };
 
         fetchData();
-    }, [user.company, user.selectedBranch, activityLog]);
+    }, [user.company, user.selectedBranch]);
 
     if (loading) return <div>Loading...</div>;
     return (

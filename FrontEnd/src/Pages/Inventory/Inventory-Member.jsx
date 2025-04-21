@@ -36,7 +36,7 @@ const InventoryMember = () => {
     };
 
     fetchData();
-  }, [user.company, user.selectedBranch, inventory]);
+  }, [user.company, user.selectedBranch]);
 
   if (loading) return <div>Loading...</div>;
 

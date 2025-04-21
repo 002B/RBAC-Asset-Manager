@@ -47,7 +47,7 @@ const DashboardWorker = () => {
     };
 
     fetchData();
-  }, [workList]);
+  }, []);
 
   const getPaginationRange = () => {
     const start = Math.max(currentPage - 1, 1);

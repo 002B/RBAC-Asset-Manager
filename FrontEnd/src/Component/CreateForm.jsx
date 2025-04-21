@@ -145,15 +145,17 @@ function CreateForm({ onClose, initialData }) {
     if (result.isConfirmed) {
       setIsSending(true);
       try {
-        const results = await Promise.all(
-          forms.map(async (form) =>
+        const results = [];
+        for (const form of forms) {
+          // await new Promise((resolve) => setTimeout(resolve, 500));
+          results.push(
             await sendReport({
               serialNumber: form.serialNumber,
               problem: form.problem,
               user: user,
             }, isGuest)
-          )
-        );
+          );
+        }
 
         SweetAlert.fire({
           title: "Success!",
