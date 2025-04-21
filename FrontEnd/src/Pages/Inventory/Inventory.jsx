@@ -12,15 +12,15 @@ const Inventory = () => {
     const { user } = useAuth();
 
     switch (user.role) {
-        case "super_admin":
+        case "Super Admin":
             return <InventoryAdmin />;
-        case "admin":
+        case "Admin":
             return <InventoryAdmin />;
-        case "worker":
+        case "Worker":
             return <InventoryWorker />;
-        case "super_member":
+        case "Super Member":
             return <InventorySuperMember />;
-        case "member":
+        case "Member":
             return <InventoryMember />;
         default:
             return null

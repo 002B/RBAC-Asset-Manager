@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from "react";
 
 import AuthProvider from "./Auth/AuthProvider.jsx";
-import ProtectedRoute from "./Auth/ProtectedRoute.jsx";
+import { ProtectedRoute } from "./Auth/ProtectedRoute.jsx";
 
 import ProductPage from "./Pages/Product/ProductPage";
 import LoginPage from "./Pages/Login/Login.jsx";
@@ -38,11 +38,11 @@ const router = createBrowserRouter(
       element: (
         <ProtectedRoute
           allowedRoles={[
-            "super_admin",
-            "admin",
-            "worker",
-            "super_member",
-            "member",
+            "Super Admin",
+            "Admin",
+            "Worker",
+            "Super Member",
+            "Member",
           ]}
         >
           <Layout />
@@ -54,11 +54,11 @@ const router = createBrowserRouter(
           element: (
             <ProtectedRoute
               allowedRoles={[
-                "super_admin",
-                "admin",
-                "worker",
-                "super_member",
-                "member",
+                "Super Admin",
+                "Admin",
+                "Worker",
+                "Super Member",
+                "Member",
               ]}
             >
               <Dashboard />
@@ -70,11 +70,11 @@ const router = createBrowserRouter(
           element: (
             <ProtectedRoute
               allowedRoles={[
-                "super_admin",
-                "admin",
-                "worker",
-                "super_member",
-                "member",
+                "Super Admin",
+                "Admin",
+                "Worker",
+                "Super Member",
+                "Member",
               ]}
             >
               <Inventory />
@@ -82,10 +82,10 @@ const router = createBrowserRouter(
           ),
         },
         {
-          path: "/member-management",
+          path: "/Member-management",
           element: (
             <ProtectedRoute
-              allowedRoles={["super_admin", "admin", "super_member"]}
+              allowedRoles={["Super Admin", "Admin", "Super Member"]}
             >
               <MemberManagement />
             </ProtectedRoute>
@@ -94,7 +94,7 @@ const router = createBrowserRouter(
         {
           path: "/unassigned-work",
           element: (
-            <ProtectedRoute allowedRoles={["super_admin", "admin", "worker"]}>
+            <ProtectedRoute allowedRoles={["Super Admin", "Admin", "Worker"]}>
               <UnassignedWork />
             </ProtectedRoute>
           ),
@@ -102,7 +102,7 @@ const router = createBrowserRouter(
         {
           path: "/report-box",
           element: (
-            <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
+            <ProtectedRoute allowedRoles={["Super Admin", "Admin"]}>
               <ReportBox />
             </ProtectedRoute>
           ),
@@ -110,7 +110,7 @@ const router = createBrowserRouter(
         {
           path: "/submitted-work",
           element: (
-            <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
+            <ProtectedRoute allowedRoles={["Super Admin", "Admin"]}>
               <SubmittedWork />
             </ProtectedRoute>
           ),
@@ -118,7 +118,7 @@ const router = createBrowserRouter(
         {
           path: "/activity-log",
           element: (
-            <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
+            <ProtectedRoute allowedRoles={["Super Admin", "Admin"]}>
               <ActivityLog />
             </ProtectedRoute>
           ),
@@ -126,7 +126,7 @@ const router = createBrowserRouter(
         {
           path: "/item-log",
           element: (
-            <ProtectedRoute allowedRoles={["super_admin", "admin"]}>
+            <ProtectedRoute allowedRoles={["Super Admin", "Admin"]}>
               <ItemLog />
             </ProtectedRoute>
           ),
@@ -136,11 +136,11 @@ const router = createBrowserRouter(
           element: (
             <ProtectedRoute
               allowedRoles={[
-                "super_admin",
-                "admin",
-                "worker",
-                "super_member",
-                "member",
+                "Super Admin",
+                "Admin",
+                "Worker",
+                "Super Member",
+                "Member",
               ]}
             >
               <Setting />
@@ -159,19 +159,22 @@ const id = queryParameters.get("id");
 function App() {
   if (id) {
     return (
-      <div>
-        <ProductPage id={id}/>
+      <div className="app bg-bg">
+        <ProductPage id={id} />
       </div>
-    )
-  } else {
-    return (
-      <AuthProvider>
-        <div className="app bg-bg">
-          <RouterProvider router={router} />
-        </div>
-      </AuthProvider>
-    )
+    );
   }
+
+  return (
+    <AuthProvider>
+      <div className="app bg-bg">
+        <RouterProvider 
+          router={router} 
+          fallbackElement={<div className="flex justify-center items-center h-screen">Loading...</div>}
+        />
+      </div>
+    </AuthProvider>
+  );
 }
 
 export default App;

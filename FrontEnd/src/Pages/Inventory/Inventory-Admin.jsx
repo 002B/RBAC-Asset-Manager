@@ -12,6 +12,9 @@ const InventoryAdmin = () => {
     const fetchData = async () => {
       try {
         const requestOptions = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           method: "GET",
           redirect: "follow",
         };
@@ -40,7 +43,7 @@ const InventoryAdmin = () => {
     };
 
     fetchData();
-  }, [user.company, user.selectedBranch, inventory]);
+  }, [user.company, user.selectedBranch]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -51,7 +54,7 @@ const InventoryAdmin = () => {
       <div className="bg-white rounded-[8px] drop-shadow">
       <Status
           role={user.role}
-          company={user.company}
+          company={user.client}
         />
       </div>
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
@@ -71,6 +74,7 @@ const InventoryAdmin = () => {
             "item_status",
           ]}
           data={inventory}
+          hasButton={false}
           hasExport={true}
           formData={[
             "Company",
@@ -82,7 +86,7 @@ const InventoryAdmin = () => {
             "Submit",
           ]}
           formPlaceholder={{
-            Company: user.company,
+            Company: user.client,
             Branch: user.selectedBranch,
             Name: user.display_name,
           }}

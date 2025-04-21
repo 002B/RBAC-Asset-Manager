@@ -20,7 +20,7 @@ const navList = [
   },
   {
     name: "Member Management",
-    path: "member-management",
+    path: "Member-management",
     icon: "group",
     iconType: "solid",
   },
@@ -64,15 +64,15 @@ const navList = [
 
 function getNavListByRole(userRole) {
   switch (userRole) {
-    case "member":
+    case "Member":
       return navList.filter(item => ["Dashboard", "Inventory", "Setting"].includes(item.name));
-    case "super_member":
+    case "Super Member":
       return navList.filter(item => ["Dashboard", "Inventory", "Member Management", "Setting"].includes(item.name));
-    case "worker":
+    case "Worker":
       return navList.filter(item => ["Dashboard", "Inventory" , "Unassigned Work", "Setting"].includes(item.name));
-    case "admin":
+    case "Admin":
       return navList.filter(item => ["Dashboard", "Inventory", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log","Item Log", "Setting"].includes(item.name));
-    case "super_admin":
+    case "Super Admin":
       return navList.filter(item => ["Dashboard", "Data Analysis", "Inventory", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log", "Setting"].includes(item.name));
     default:
       return [];
@@ -123,7 +123,7 @@ const Nav = () => {
           </div>
           <div className="profile-name">
             <p className="font-bold text-lg text-light">{user.display_name}</p>
-            <p>{user.display_role}</p>
+            <p className="text-gray-400">{user.role}</p>
           </div>
         </div>
         <div className="logout mr-2">

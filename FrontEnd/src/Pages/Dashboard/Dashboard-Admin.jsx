@@ -7,6 +7,9 @@ import { useAuth } from "../../Auth/AuthProvider.jsx";
 const fetchReport = async () => {
   try {
     const requestOptions = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       method: "GET",
       redirect: "follow",
     };
@@ -30,11 +33,14 @@ const fetchReport = async () => {
 const fetchAccepted = async () => {
   try {
     const requestOptions = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       method: "GET",
       redirect: "follow",
     };
     const response = await fetch(
-      `http://localhost:3000/report/getReportByStatus/accepted`,
+      `http://localhost:3000/report/getReportByStatus/done`,
       requestOptions
     );
     const data = await response.json();
@@ -66,7 +72,7 @@ const DashboardAdmin = () => {
       <div className="w-full rounded drop-shadow">
       <Status
           role={user.role}
-          company={user.company}
+          company={user.client}
         />
       </div>
       <div className=" dashboard-container flex w-full rounded drop-shadow">

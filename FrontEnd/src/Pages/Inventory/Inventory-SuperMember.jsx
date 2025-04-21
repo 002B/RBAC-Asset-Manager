@@ -11,11 +11,17 @@ const InventorySuperMember = () => {
     const fetchData = async () => {
       try {
         const requestOptions = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           method: "GET",
           redirect: "follow",
         };
+        const url = user.selectedBranch === "All Branches" || !user.selectedBranch
+          ? `http://localhost:3000/item/getItemList/${user.client}`
+          : `http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`;
         const response = await fetch(
-          `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch === "All Branches" ? "" : user.selectedBranch}`,
+          url,
           requestOptions
         );
         const data = await response.json();
@@ -39,7 +45,7 @@ const InventorySuperMember = () => {
     };
 
     fetchData();
-  }, [user.company, user.selectedBranch, inventory]);
+  }, [user.company, user.selectedBranch]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -50,7 +56,7 @@ const InventorySuperMember = () => {
       <div className="bg-white rounded-[8px] drop-shadow">
       <Status
           role={user.role}
-          company={user.company}
+          company={user.client}
           branch={user.selectedBranch}
         />
       </div>
@@ -82,7 +88,7 @@ const InventorySuperMember = () => {
             "Submit",
           ]}
           formPlaceholder={{
-            Company: user.company,
+            Company: user.client,
             Branch: user.selectedBranch,
             Name: user.display_name,
           }}

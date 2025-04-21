@@ -5,7 +5,7 @@ import SweetAlert from "sweetalert2";
 import "boxicons";
 import "../Report-Box/ReportBox.css";
 
-const SubmittedWork = ({ username = "worker" }) => {
+const SubmittedWork = () => {
   const {user} = useAuth();
   const [reports, setReports] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
@@ -21,7 +21,11 @@ const SubmittedWork = ({ username = "worker" }) => {
   const fetchReports = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/report/getReportByUserDone/${username}`
+        `http://localhost:3000/report/getAllReportByStatus/done`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       setReports(res.data);
     } catch (err) {
@@ -39,7 +43,8 @@ const SubmittedWork = ({ username = "worker" }) => {
           <p><strong>Company:</strong> ${report.client_id}</p>
           <p><strong>Branch:</strong> ${report.client_branch_id}</p>
           <p><strong>Status:</strong> ${report.status}</p>
-          <p><strong>Assigner:</strong> ${report.send_by}</p>
+          <p><strong>Send by:</strong> ${report.send_by}</p>
+          <p><strong>Worker:</strong> ${report.send_to}</p>
           <p><strong>Problem:</strong> ${report.problem}</p>
           <p><strong>Created At:</strong> ${new Date(
             report.createAt
@@ -71,7 +76,7 @@ const SubmittedWork = ({ username = "worker" }) => {
   const checkedCount = Object.values(checkedItems).filter(Boolean).length;
 
   return (
-    <div className="report-box-admin grid gap-2">
+    <div className="report-box-Admin grid gap-2">
       <div className="report-box-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
         <div className="report-box-list-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10 text-nowrap">
           <div className="report-box-list-header flex gap-1 justify-center items-center">
@@ -143,7 +148,9 @@ const SubmittedWork = ({ username = "worker" }) => {
             <div className="text-center font-bold">Company</div>
             <div className="text-center font-bold">Branch</div>
             <div className="text-center font-bold">Status</div>
-            <div className="text-center font-bold">send_by</div>
+            <div className="text-center font-bold">Send by</div>
+            <div className="text-center font-bold">Handler</div>
+
           </div>
 
           <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-y-2 border-primary gap-1 py-1">
@@ -165,14 +172,9 @@ const SubmittedWork = ({ username = "worker" }) => {
                 <span className="text-center">{report.client_branch_id}</span>
                 <span className="text-center">{report.status}</span>
                 <span className="text-center">{report.send_by}</span>
+                <span className="text-center">{report.send_to}</span>
               </div>
             ))}
-          </div>
-        </div>
-
-        <div className="report-box-footer flex justify-between w-full h-[48px] bg-white p-1 border-2 border-primary rounded-[8px]">
-          <div className="bg-highlight text-white px-2 rounded flex items-center">
-            {checkedCount} selected
           </div>
         </div>
       </div>

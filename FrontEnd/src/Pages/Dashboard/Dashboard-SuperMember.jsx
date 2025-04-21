@@ -3,19 +3,21 @@ import "boxicons";
 import Status from "../../Component/Status/Status";
 import DataTable from "../../Component/DataTable/DataTable";
 import "../../Component/DataTable/DataTable.css";
-import CreateForm from "../../Component/CreateForm";
 import { useAuth } from "../../Auth/AuthProvider";
 
 const fetchInbox = async (user) => {
   try {
     const requestOptions = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       method: "GET",
       redirect: "follow",
     };
     const url =
       user.selectedBranch === "All Branches" || !user.selectedBranch
-        ? `http://localhost:3000/report/getReportByCom/${user.company}`
-        : `http://localhost:3000/report/getReportByBranch/${user.company}/${user.selectedBranch}`;
+        ? `http://localhost:3000/report/getReportByCom/${user.client}`
+        : `http://localhost:3000/report/getReportByBranch/${user.client}/${user.selectedBranch}`;
     const response = await fetch(url, requestOptions);
     const data = await response.json();
     return data.map((item) => [
@@ -33,6 +35,9 @@ const fetchInbox = async (user) => {
 const fetchLoginActivity = async () => {
   try {
     const requestOptions = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       method: "GET",
       redirect: "follow",
     };
@@ -59,8 +64,11 @@ const fetchLoginActivity = async () => {
 async function fetchBranchWithItemCount(user) {
   try {
     const branchResponse = await fetch(
-      `http://localhost:3000/company/getAllBranch/${user.company}`,
+      `http://localhost:3000/company/getAllBranch/${user.client}`,
       {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         method: "GET",
         redirect: "follow",
       }
@@ -71,8 +79,11 @@ async function fetchBranchWithItemCount(user) {
       branches.map(async (branch) => {
         try {
           const itemRes = await fetch(
-            `http://localhost:3000/item/getItemList/count/${user.company}/${branch.client_branch_id}`,
+            `http://localhost:3000/item/getItemList/count/${user.client}/${branch.client_branch_id}`,
             {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
               method: "GET",
               redirect: "follow",
             }
@@ -104,12 +115,12 @@ const DashboardSuperMember = () => {
   const [branchList, setBranchList] = useState([]);
   useEffect(() => {
     (async () => {
-      // user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0];
+      // user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.client_access[0];
       setTestActivity(await fetchInbox(user));
       setLoginActivity(await fetchLoginActivity());
       setBranchList(await fetchBranchWithItemCount(user));
     })();
-  }, [user.company, user.selectedBranch]);
+  }, [user.client, user.selectedBranch]);
 
   const handleCloseForm = () => {
     setShowCreateForm(false);
@@ -124,7 +135,7 @@ const DashboardSuperMember = () => {
       <div className="w-full rounded drop-shadow">
         <Status
           role={user.role}
-          company={user.company}
+          company={user.client}
           branch={user.selectedBranch ? user.selectedBranch : "All Branches"}
         />
       </div>
@@ -220,7 +231,7 @@ const DashboardSuperMember = () => {
               ]}
               placeholderData={{
                 Name: user.display_name,
-                Company: user.company,
+                Company: user.client,
               }}
             />
           </div>

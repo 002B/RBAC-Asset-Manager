@@ -1,123 +1,120 @@
 import React, { useEffect, useState } from "react";
 import "./Status.css";
 import "boxicons";
-import {
-  getAllItemCompanyCount,
-  getAllLogReportPendingCount,
-  getAllLogReportCount,
-  getAllUserCount,
-  getItemCompanyCount,
-  getLogReportPendingCount,
-  getUserCount,
-  getBranchCount,
-  getCompanyCount
-} from "../Count.js";
-import { getBadItemBranch, getNextCheck } from "../file.js";
 
 const Status = ({ role, company, branch }) => {
-  const [memberItemCount, setMemberItemCount] = useState(0);
-  const [memberReportPendingCount, setMemberReportPendingCount] = useState(0);
-  const [memberBadItemCount, setMemberBadItemCount] = useState(0);
-  const [memberNextCheck, setMemberNextCheck] = useState("N/A");
-
+  const [MemberItemCount, setMemberItemCount] = useState(0);
+  const [MemberReportPendingCount, setMemberReportPendingCount] = useState(0);
+  const [MemberBadItemCount, setMemberBadItemCount] = useState(0);
+  const [MemberNextCheck, setMemberNextCheck] = useState("N/A");
 
   const [superMemberItemCount, setSuperMemberItemCount] = useState(0);
   const [superMemberReportPendingCount, setSuperMemberReportPendingCount] = useState(0);
   const [superMemberBadItemCount, setSuperMemberBadItemCount] = useState(0);
+  const [superMemberTotalUser, setSuperMemberTotalUser] = useState(0);
+  const [superMemberTotalBranch, setSuperMemberTotalBranch] = useState(0);
 
-  const [adminItemCount, setAdminItemCount] = useState(0);
-  const [adminReportPendingCount, setAdminReportPendingCount] = useState(0);
-  const [adminBadItemCount, setAdminBadItemCount] = useState(0);
-  const [adminTotalUser, adminSetTotalUser] = useState(0);
+  const [AdminItemCount, setAdminItemCount] = useState(0);
+  const [AdminReportPendingCount, setAdminReportPendingCount] = useState(0);
+  const [AdminBadItemCount, setAdminBadItemCount] = useState(0);
+  const [AdminTotalUser, AdminSetTotalUser] = useState(0);
+
+  const authHeaders = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      if (role === "member") {
+      try {
+        if (role === "Member" && branch !== "All Branches") {
+          const itemInBranchCount = await fetch(`http://localhost:3000/item/getItemList/count/${company}/${branch}`, authHeaders);
+          setMemberItemCount(parseInt(await itemInBranchCount.text()));
 
+          const reportPendingCount = await fetch(`http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/pending`, authHeaders);
+          setMemberReportPendingCount(parseInt(await reportPendingCount.text()));
 
-        const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getItemList/count/${company}/${branch}`);
-        const itemInBranchCount = await itemInBranchCountResponse.text();
-        setMemberItemCount(parseInt(itemInBranchCount));
+          const badItemCount = await fetch(`http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/accepted`, authHeaders);
+          setMemberBadItemCount(parseInt(await badItemCount.text()));
 
-        const reportPendingInBranchCountResponse = await fetch(`http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/pending`);
-        const reportPendingInBranchCount = await reportPendingInBranchCountResponse.text();
-        setMemberReportPendingCount(parseInt(reportPendingInBranchCount));
+          const nextCheck = await fetch(`http://localhost:3000/company/getNextCheck/${company}/${branch}`, authHeaders);
+          setMemberNextCheck((await nextCheck.text()).replace(/"/g, ""));
+        }
 
-        const badItemInBranchCountResponse = await fetch(`http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/accepted`);
-        const badItemInBranchCount = await badItemInBranchCountResponse.text();
-        setMemberBadItemCount(parseInt(badItemInBranchCount));
+        else if (role === "Super Member") {
 
-        const nextCheckResponse = await fetch(`http://localhost:3000/company/getNextCheck/${company}/${branch}`);
-        const nextCheckValue = await nextCheckResponse.text();
-        setMemberNextCheck(nextCheckValue.replace('"', "").replace('"', ""));
+          const itemInBranchCount = await fetch(`http://localhost:3000/item/getItemList/count/${company}`, authHeaders);
+          setSuperMemberItemCount(parseInt(await itemInBranchCount.text()));
 
+          const reportPendingURL = branch !== "All Branches"
+            ? `http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/pending`
+            : `http://localhost:3000/report/getReportStatusByCom/count/${company}/pending`;
+          const reportPending = await fetch(reportPendingURL, authHeaders);
+          setSuperMemberReportPendingCount(parseInt(await reportPending.text()));
 
-      }else if(role === "super_member"){
+          const badItemURL = branch !== "All Branches"
+            ? `http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/accepted`
+            : `http://localhost:3000/report/getReportStatusByCom/count/${company}/accepted`;
+          const badItem = await fetch(badItemURL, authHeaders);
+          setSuperMemberBadItemCount(parseInt(await badItem.text()));
 
+          const totalUser = await fetch(`http://localhost:3000/users/getUsersCount/${company}`, authHeaders);
+          setSuperMemberTotalUser(parseInt(await totalUser.text()));
 
-        const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getItemList/count/${company}${branch !== "All Branches" ? `/${branch}` : ""}`);
-        const itemInBranchCount = await itemInBranchCountResponse.text();
-        setSuperMemberItemCount(parseInt(itemInBranchCount));
+          const branches = await fetch(`http://localhost:3000/company/getAllBranch/${company}`, authHeaders);
+          setSuperMemberTotalBranch((await branches.json()).length);
+        }
 
-        const reportPendingInBranchCountResponse = await fetch(`${ branch !== "All Branches" ? `http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/pending` : `http://localhost:3000/report/getReportStatusByCom/count/${company}/pending`}`);
-        const reportPendingInBranchCount = await reportPendingInBranchCountResponse.text();
-        setSuperMemberReportPendingCount(parseInt(reportPendingInBranchCount));
+        else if (role === "Admin") {
+          const itemCount = await fetch(`http://localhost:3000/item/getAllItem/count`, authHeaders);
+          setAdminItemCount(parseInt(await itemCount.text()));
 
-        const badItemInBranchCountResponse = await fetch(`${ branch !== "All Branches" ? `http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/accepted` : `http://localhost:3000/report/getReportStatusByCom/count/${company}/accepted`}`);
-        const badItemInBranchCount = await badItemInBranchCountResponse.text();
-        setSuperMemberBadItemCount(parseInt(badItemInBranchCount));
+          const reportCount = await fetch(`http://localhost:3000/report/getAllReportByStatus/count/pending`, authHeaders);
+          setAdminReportPendingCount(parseInt(await reportCount.text()));
 
+          const badItemCount = await fetch(`http://localhost:3000/report/getAllReportByStatus/count/accepted`, authHeaders);
+          setAdminBadItemCount(parseInt(await badItemCount.text()));
 
-      }else if(role === "admin"){
-
-
-        const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getAllItem/count`);
-        const itemInBranchCount = await itemInBranchCountResponse.text();
-        setAdminItemCount(parseInt(itemInBranchCount));
-
-        const reportPendingInBranchCountResponse = await fetch(`http://localhost:3000/report/getAllReportByStatus/count/pending`);
-        const reportPendingInBranchCount = await reportPendingInBranchCountResponse.text();
-        setAdminReportPendingCount(parseInt(reportPendingInBranchCount));
-
-        const badItemInBranchCountResponse = await fetch(`http://localhost:3000/report/getAllReportByStatus/count/accepted`);
-        const badItemInBranchCount = await badItemInBranchCountResponse.text();
-        setAdminBadItemCount(parseInt(badItemInBranchCount));
-
-        const totalUserResponse = await fetch(`http://localhost:3000/users/getAllUsers`);
-        const totalUser = await totalUserResponse.json();
-        adminSetTotalUser(totalUser.length);
+          const totalUsers = await fetch(`http://localhost:3000/users/getAllUsers`, authHeaders);
+          AdminSetTotalUser((await totalUsers.json()).length);
+        }
+      } catch (error) {
+        console.error("Fetch error in Status component:", error);
       }
     };
+
     fetchData();
   }, [role, company, branch]);
 
-  if (role === "member") {
+  if (role === "Member") {
     return (
       <div className="status-container flex w-full justify-between">
         <div className="flex justify-between items-center status-box bg-primary ">
           <div className="count-title p-1 m-1">
             <h3>Installed</h3>
-            <h1>{memberItemCount}</h1>
+            <h1>{MemberItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Report Sent</h3>
-            <h1>{memberReportPendingCount}</h1>
+            <h1>{MemberReportPendingCount}</h1>
           </div>
           <box-icon name="send" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
-            <h1>{memberBadItemCount}</h1>
+            <h1>{MemberBadItemCount}</h1>
           </div>
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Next Check</h3>
-            <h1>{memberNextCheck}</h1>
+            <h1>{MemberNextCheck}</h1>
           </div>
           <box-icon name="calendar" color="white" size="lg"></box-icon>
         </div>
@@ -125,7 +122,7 @@ const Status = ({ role, company, branch }) => {
     );
   }
 
-  if (role === "super_member") {
+  if (role === "Super Member") {
     return (
       <div className="status-container flex w-full justify-between">
         <div className="flex justify-between items-center status-box bg-primary">
@@ -138,14 +135,14 @@ const Status = ({ role, company, branch }) => {
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Member</h3>
-            <h1>{getUserCount(company)}</h1>
+            <h1>{superMemberTotalUser}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Branch</h3>
-            <h1>{getBranchCount(company)}</h1>
+            <h1>{superMemberTotalBranch}</h1>
           </div>
           <box-icon name="git-branch" color="white" size="lg"></box-icon>
         </div>
@@ -169,34 +166,34 @@ const Status = ({ role, company, branch }) => {
     );
   }
 
-  if (role === "admin") {
+  if (role === "Admin") {
     return (
       <div className="status-container flex w-full justify-between">
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total Installed</h3>
-            <h1>{adminItemCount}</h1>
+            <h1>{AdminItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Report</h3>
-            <h1>{adminReportPendingCount}</h1>
+            <h1>{AdminReportPendingCount}</h1>
           </div>
           <box-icon name="news" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
-            <h1>{adminBadItemCount}</h1>
+            <h1>{AdminBadItemCount}</h1>
           </div>  
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total User</h3>
-            <h1>{adminTotalUser}</h1>
+            <h1>{AdminTotalUser}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
@@ -204,7 +201,7 @@ const Status = ({ role, company, branch }) => {
     );
   }
 
-  if (role === "super_admin") {
+  if (role === "Super Admin") {
     return (
       <div className="status-container flex w-full justify-between">
         <div className="flex justify-between items-center status-box bg-primary">

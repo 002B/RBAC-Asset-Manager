@@ -14,21 +14,29 @@ const UnassignedWorkAdmin = () => {
   const [searchWorkTerm, setSearchWorkTerm] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/report/getReportByStatus/accepted")
+    fetch("http://localhost:3000/report/getReportByStatus/accepted", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
       .then((res) => res.json())
       .then(setWorkList)
-      .catch((err) => console.error("Error fetching unassigned work:", err));
+      .catch((err) => console.error("Error fetching work data:", err));
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/users/getWorkerUser")
+    fetch("http://localhost:3000/users/getWorkerUser", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
       .then((res) => res.json())
       .then(setWorkerList)
       .catch((err) => console.error("Error fetching worker data:", err));
   }, []);
 
-  const toggleSelectedWorker = (worker) => {
-    setSelectedWorker(selectedWorker === worker ? "" : worker);
+  const toggleSelectedWorker = (Worker) => {
+    setSelectedWorker(selectedWorker === Worker ? "" : Worker);
   };
 
   const handleItemCheck = (serial) => {
@@ -54,7 +62,7 @@ const UnassignedWorkAdmin = () => {
     } else {
       SweetAlert.fire({
         title: "Warning!",
-        text: "Please select a worker and unassigned work to assign.",
+        text: "Please select a Worker and unassigned work to assign.",
         icon: "warning",
         confirmButtonColor: "#FD6E28",
       });
@@ -62,10 +70,10 @@ const UnassignedWorkAdmin = () => {
   };
 
   //ยังไม่สมบูรณ์ แต่ดูดี
-  function confirmAssign(worker,) {
+  function confirmAssign(Worker,) {
     SweetAlert.fire({
       title: "Are you sure?",
-      text: `You need to assign work(s) to ${worker} ?`,
+      text: `You need to assign work(s) to ${Worker} ?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#FD6E28",
@@ -83,6 +91,7 @@ const UnassignedWorkAdmin = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             ids: selectedReportIds,
@@ -95,7 +104,7 @@ const UnassignedWorkAdmin = () => {
             if (data.message === "Report and items updated successfully") {
               SweetAlert.fire({
                 title: "Success!",
-                text: `work(s) assigned to ${worker}`,
+                text: `work(s) assigned to ${Worker}`,
                 icon: "success",
                 confirmButtonColor: "#FD6E28",
               });
@@ -105,7 +114,7 @@ const UnassignedWorkAdmin = () => {
                   (work) => !selectedReportIds.includes(work.report_id)
                 )
               );
-              // Reset checked items and selected worker
+              // Reset checked items and selected Worker
               setCheckedItems({});
               setSelectedWorker("");
             } else {
@@ -129,7 +138,7 @@ const UnassignedWorkAdmin = () => {
     });
   }
 
-  const filteredWorkerList = workerList.filter((worker) =>
+  const filteredworkerList = workerList.filter((worker) =>
     worker.username.toLowerCase().includes(searchWorkerTerm.toLowerCase())
   );
 
@@ -138,11 +147,11 @@ const UnassignedWorkAdmin = () => {
   );
 
   return (
-    <div className="unassigned-work-admin flex gap-2">
-      {/* WORKER LIST */}
-      <div className="worker-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
-        <div className="worker-list-bar bg-secondary p-2 rounded-[8px] drop-shadow flex items-center border-2 border-white justify-between sticky top-0 z-10">
-          <div className="worker-list-header flex gap-1 justify-center items-center">
+    <div className="unassigned-work-Admin flex gap-2">
+      {/* Worker LIST */}
+      <div className="Worker-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
+        <div className="Worker-list-bar bg-secondary p-2 rounded-[8px] drop-shadow flex items-center border-2 border-white justify-between sticky top-0 z-10">
+          <div className="Worker-list-header flex gap-1 justify-center items-center">
             <box-icon
               name="user"
               type="regular"
@@ -154,7 +163,7 @@ const UnassignedWorkAdmin = () => {
           <div className="filter-bar">
             <input
               type="text"
-              placeholder="Search worker..."
+              placeholder="Search Worker..."
               className="rounded px-2 py-1 text-sm text-secondary outline-none"
               value={searchWorkerTerm}
               onChange={(e) => setSearchWorkerTerm(e.target.value)}
@@ -162,16 +171,16 @@ const UnassignedWorkAdmin = () => {
           </div>
         </div>
 
-        <div className="worker-list-container grid gap-1 max-h-[600px] overflow-y-scroll border-t-2 border-b-2 border-secondary pt-1 pb-1">
-          {filteredWorkerList.map((worker) => (
+        <div className="Worker-list-container grid gap-1 max-h-[600px] overflow-y-scroll border-t-2 border-b-2 border-secondary pt-1 pb-1">
+          {filteredworkerList.map((Worker) => (
             <div
-              className={`worker-list-item grid grid-cols-4 w-full h-[48px] justify-between items-center p-2 border-2 border-secondary rounded-[8px] cursor-pointer drop-shadow transition-all duration-200 ${
-                selectedWorker === worker.username
+              className={`Worker-list-item grid grid-cols-4 w-full h-[48px] justify-between items-center p-2 border-2 border-secondary rounded-[8px] cursor-pointer drop-shadow transition-all duration-200 ${
+                selectedWorker === Worker.username
                   ? "text-white bg-secondary"
                   : "text-black bg-white"
               }`}
-              key={worker._id}
-              onClick={() => toggleSelectedWorker(worker.username)}
+              key={Worker._id}
+              onClick={() => toggleSelectedWorker(Worker.username)}
             >
               <span className="col-span-2 flex gap-2 items-center">
                 <box-icon
@@ -179,13 +188,13 @@ const UnassignedWorkAdmin = () => {
                   type="regular"
                   size="sm"
                   color={
-                    selectedWorker === worker.username ? "white" : "#473366"
+                    selectedWorker === Worker.username ? "white" : "#473366"
                   }
                 ></box-icon>
-                <span>{worker.username}</span>
+                <span>{Worker.display_name}</span>
               </span>
-              <span className="w-full flex gap-2 items-center justify-center">
-                <span>{worker.role}</span>
+              <span>
+              <span className="col-span-2">{Worker.username}</span>
               </span>
             </div>
           ))}

@@ -6,7 +6,7 @@ import UnassignedWorkWorker from "./UnassignedWork-Worker";
 const UnassignedWork = () => {
   const { user } = useAuth();
 
-  if (user.role === "super_admin" || user.role === "admin") {
+  if (user.role === "Super Admin" || user.role === "Admin") {
     return <UnassignedWorkAdmin />;
   } else {
     return <UnassignedWorkWorker />;
