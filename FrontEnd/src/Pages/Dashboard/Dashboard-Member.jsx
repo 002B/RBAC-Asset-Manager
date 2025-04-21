@@ -8,15 +8,27 @@ import { useAuth } from "../../Auth/AuthProvider";
 const fetchData = async (user) => {
   try {
     const [inbox, inventory, nextCheck, lastCheck] = await Promise.all([
-      fetch(`http://localhost:3000/report/getReportByBranch/${user.client}/${user.selectedBranch}`)
+      fetch(`http://localhost:3000/report/getReportByBranch/${user.client}/${user.selectedBranch}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
         .then(res => res.json())
         .then(data => data.map(item => [item.report_id, item.item_id, item.createAt, item.status])),
 
-      fetch(`http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`)
+      fetch(`http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`,{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
         .then(res => res.json())
         .then(data => data.map(item => [item.item_id, item.item_brand, item.item_status])),
 
-      fetch(`http://localhost:3000/company/getNextCheck/${user.client}/${user.selectedBranch}`)
+      fetch(`http://localhost:3000/company/getNextCheck/${user.client}/${user.selectedBranch}`,{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
         .then(res => res.json())
         .then(data => {
           const [day, month, year] = data.split("/");
@@ -24,7 +36,11 @@ const fetchData = async (user) => {
           return Math.ceil((receivedDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
         }),
 
-      fetch(`http://localhost:3000/company/getLastCheck/${user.client}/${user.selectedBranch}`)
+      fetch(`http://localhost:3000/company/getLastCheck/${user.client}/${user.selectedBranch}`,{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
         .then(res => res.json())
         .then(data => data.map(date => [date]))
     ]);
@@ -72,6 +88,7 @@ const DashboardMember = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(formData),
       });

@@ -12,6 +12,9 @@ const InventoryAdmin = () => {
     const fetchData = async () => {
       try {
         const requestOptions = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           method: "GET",
           redirect: "follow",
         };

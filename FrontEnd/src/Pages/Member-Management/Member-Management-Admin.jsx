@@ -28,7 +28,11 @@ function Confirm() {
 async function getBranchList(company) {
   try {
     const response = await fetch(
-      `http://localhost:3000/company/getAllBranch/${company}`
+      `http://localhost:3000/company/getAllBranch/${company}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      }
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -42,7 +46,11 @@ async function getBranchList(company) {
 
 async function getAllUsers() {
   try {
-    const data = fetch("http://localhost:3000/users/getAllUsers");
+    const data = fetch("http://localhost:3000/users/getAllUsers", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     return data;
   } catch (error) {
     console.log(error);
@@ -84,7 +92,11 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers }) => {
       setLoadingCompanies(true);
       try {
         const response = await fetch(
-          "http://localhost:3000/company/getAllCompany"
+          "http://localhost:3000/company/getAllCompany", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            }
+          }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch companies");
@@ -182,6 +194,7 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(formData),
       });

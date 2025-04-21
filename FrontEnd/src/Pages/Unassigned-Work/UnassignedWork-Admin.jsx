@@ -14,14 +14,22 @@ const UnassignedWorkAdmin = () => {
   const [searchWorkTerm, setSearchWorkTerm] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/report/getReportByStatus/accepted")
+    fetch("http://localhost:3000/report/getReportByStatus/accepted", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
       .then((res) => res.json())
       .then(setWorkList)
-      .catch((err) => console.error("Error fetching unassigned work:", err));
+      .catch((err) => console.error("Error fetching work data:", err));
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/users/getWorkerUser")
+    fetch("http://localhost:3000/users/getWorkerUser", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
       .then((res) => res.json())
       .then(setWorkerList)
       .catch((err) => console.error("Error fetching worker data:", err));
@@ -83,6 +91,7 @@ const UnassignedWorkAdmin = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             ids: selectedReportIds,

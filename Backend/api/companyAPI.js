@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const companyFunc = require('./company');
+const {auth, authSuperMember, authWorkerAndAdmin, authAdmin} = require('./auth');
 
-router.get('/getAllCompany', async (req, res) => {
+router.get('/getAllCompany', authWorkerAndAdmin, async (req, res) => {
     try {
         const count = await companyFunc.getAllCompany();
         res.json( count );
@@ -11,7 +12,7 @@ router.get('/getAllCompany', async (req, res) => {
     }
 });
 
-router.get('/getAllBranch/:company', async (req, res) => {
+router.get('/getAllBranch/:company', auth, async (req, res) => {
     const { company } = req.params;
     try {
         const branch = await companyFunc.getBranchList(company);
@@ -24,7 +25,7 @@ router.get('/getAllBranch/:company', async (req, res) => {
     }
 });
 
-router.get('/getCompanyBranch/:company', async (req, res) => {
+router.get('/getCompanyBranch/:company', authSuperMember, async (req, res) => {
     const { company } = req.params;
     try {
         const branches = await companyFunc.getCompanyBranch(company);
@@ -34,7 +35,7 @@ router.get('/getCompanyBranch/:company', async (req, res) => {
     }
 });
 
-router.get('/getNextCheck/:company/:branch', async (req, res) => {
+router.get('/getNextCheck/:company/:branch', auth, async (req, res) => {
     const { company, branch } = req.params;
     try {
         const nextCheck = await companyFunc.getNextCheck(company, branch);
@@ -44,7 +45,7 @@ router.get('/getNextCheck/:company/:branch', async (req, res) => {
     }
 });
 
-router.get('/getLastCheck/:company/:branch', async (req, res) => {
+router.get('/getLastCheck/:company/:branch', auth, async (req, res) => {
     const { company, branch } = req.params;
     try {
         const lastCheck = await companyFunc.getLastCheck(company, branch);
@@ -54,7 +55,7 @@ router.get('/getLastCheck/:company/:branch', async (req, res) => {
     }
 });
 
-router.post('/createCompany/:company/:branch', async (req, res) => {
+router.post('/createCompany/:company/:branch', authWorkerAndAdmin, async (req, res) => {
     const { company, branch } = req.params;
     const { location } = req.body;
     try {
@@ -65,7 +66,7 @@ router.post('/createCompany/:company/:branch', async (req, res) => {
     }
 })
 
-router.put('/updateCompany/:company/:branch', async (req, res) => {
+router.put('/updateCompany/:company/:branch', authWorkerAndAdmin, async (req, res) => {
     const { company, branch } = req.params;
     const { location } = req.body;
     try {
@@ -80,7 +81,7 @@ router.put('/updateCompany/:company/:branch', async (req, res) => {
     }
 });
 
-router.delete('/deleteCompany/:company/:branch', async (req, res) => {
+router.delete('/deleteCompany/:company/:branch', authAdmin, async (req, res) => {
     const { company, branch } = req.params;
     try {
         const deleteCompany = await companyFunc.deleteCompany(company, branch);

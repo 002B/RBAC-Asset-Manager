@@ -42,6 +42,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({"data":formData,"user":user}),
         }
@@ -74,6 +75,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({"user":user}),
         }

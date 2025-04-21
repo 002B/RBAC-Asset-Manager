@@ -15,7 +15,11 @@ const InventoryMember = () => {
           ? user.selectedBranch
           : (user.selectedBranch = user.client_access[0]);
         const response = await fetch(
-          `http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`
+          `http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            }
+          }
         );
         const data = await response.json();
         const formattedData = data.map((item) => [

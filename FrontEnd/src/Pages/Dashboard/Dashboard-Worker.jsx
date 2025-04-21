@@ -29,7 +29,11 @@ const DashboardWorker = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/report/getReportByUserFixing/${user.username}`
+        `http://localhost:3000/report/getReportByUserFixing/${user.username}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       const transformed = res.data.map((report) => ({
         report_id: report.report_id,
@@ -95,10 +99,18 @@ const DashboardWorker = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.put("http://localhost:3000/report/updateReport/done", {
-            ids: [reportId],
-            user: user,
-          });
+          await axios.put(
+            "http://localhost:3000/report/updateReport/done",
+            {
+              ids: [reportId],
+              user: user,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
           setWorkList((prevList) =>
             prevList.filter((item) => item.report_id !== reportId)
           );
@@ -112,7 +124,12 @@ const DashboardWorker = () => {
           // ลบรายการที่ submit แล้วออกจาก list
           try {
             const res = await axios.get(
-              `http://localhost:3000/report/getReportByUserFixing/${user.user}`
+              `http://localhost:3000/report/getReportByUserFixing/${user.user}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
             );
             const transformed = res.data.map((report) => ({
               report_id: report.report_id,

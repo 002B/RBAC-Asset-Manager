@@ -26,7 +26,11 @@ const Header = () => {
       const fetchBranches = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:3000/company/getAllBranch/${user.client}`
+            `http://localhost:3000/company/getAllBranch/${user.client}`,{
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              }
+            }
           );
           // Extract branch IDs from response and add "All Branches" option
           const branches = response.data.map(item => item.client_branch_id);

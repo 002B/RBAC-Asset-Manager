@@ -12,7 +12,7 @@ const Dashboard = () => {
 
     switch (user.role) {
         case "Super Admin":
-            return <DashboardSuperAdmin />;
+            return <DashboardAdmin />;
         case "Admin":
             return <DashboardAdmin />;
         case "Worker":

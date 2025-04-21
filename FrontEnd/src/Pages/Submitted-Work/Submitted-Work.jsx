@@ -21,7 +21,11 @@ const SubmittedWork = () => {
   const fetchReports = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/report/getAllReportByStatus/done`
+        `http://localhost:3000/report/getAllReportByStatus/done`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       setReports(res.data);
     } catch (err) {

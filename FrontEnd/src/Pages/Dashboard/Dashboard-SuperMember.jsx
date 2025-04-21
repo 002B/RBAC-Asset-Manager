@@ -8,6 +8,9 @@ import { useAuth } from "../../Auth/AuthProvider";
 const fetchInbox = async (user) => {
   try {
     const requestOptions = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       method: "GET",
       redirect: "follow",
     };
@@ -32,6 +35,9 @@ const fetchInbox = async (user) => {
 const fetchLoginActivity = async () => {
   try {
     const requestOptions = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       method: "GET",
       redirect: "follow",
     };
@@ -60,6 +66,9 @@ async function fetchBranchWithItemCount(user) {
     const branchResponse = await fetch(
       `http://localhost:3000/company/getAllBranch/${user.client}`,
       {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         method: "GET",
         redirect: "follow",
       }
@@ -72,6 +81,9 @@ async function fetchBranchWithItemCount(user) {
           const itemRes = await fetch(
             `http://localhost:3000/item/getItemList/count/${user.client}/${branch.client_branch_id}`,
             {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
               method: "GET",
               redirect: "follow",
             }

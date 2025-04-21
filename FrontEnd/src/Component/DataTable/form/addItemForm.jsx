@@ -22,7 +22,11 @@ const AddItemForm = ({ onClose, onSubmit }) => {
   useEffect(() => {
     const fetchCompanyBranches = async () => {
       try {
-        const response = await fetch("http://localhost:3000/company/getCompanyBranch");
+        const response = await fetch("http://localhost:3000/company/getCompanyBranch",{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }
+        });
         const data = await response.json();
 
         if (response.ok) {
@@ -93,6 +97,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({"data":requestBody,"user":user}),
         }

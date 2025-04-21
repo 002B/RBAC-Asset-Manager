@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const activityFunc = require('./activityLog');
+const {auth, authSuperMember, authWorkerAndAdmin, authAdmin} = require('./auth');
 
-router.get('/all', async (req, res) => {
+router.get('/all', authAdmin, async (req, res) => {
     try {
         const logs = await activityFunc.getActivityLog();
         if (!logs || logs.length === 0) {
@@ -21,7 +22,7 @@ router.get('/all', async (req, res) => {
     }
 });
 
-router.get('/login-logout', async (req, res) => {
+router.get('/login-logout', authSuperMember, async (req, res) => {
     try {
         const logs = await activityFunc.getActivityLoginLogout();
         if (!logs || logs.length === 0) {

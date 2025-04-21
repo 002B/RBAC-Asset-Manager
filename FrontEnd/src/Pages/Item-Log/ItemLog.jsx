@@ -10,9 +10,12 @@ const ItemLog = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.client_access[0]
                 const response = await fetch(
-                    `http://localhost:3000/itemlog/getAllLog`
+                    `http://localhost:3000/itemlog/getAllLog`, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                          },
+                    }
                 );
                 const data = await response.json();
                 const formattedData = data.map((item) => [
@@ -34,7 +37,7 @@ const ItemLog = () => {
         };
 
         fetchData();
-    }, [user.client, user.selectedBranch]);
+    }, []);
 
     if (loading) return <div>Loading...</div>;
     return (

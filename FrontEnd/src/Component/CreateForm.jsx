@@ -9,6 +9,7 @@ async function sendReport(data, isGuest = false) {
   try {
     const headers = {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     };
 
     // เพิ่ม Authorization header เฉพาะกรณีไม่ใช่ Guest

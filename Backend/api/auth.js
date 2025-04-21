@@ -42,4 +42,66 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth;
+const authSuperMember = async (req, res, next) => {
+  try {
+    // First verify base authentication
+    await auth(req, res, () => {});
+    
+    if (!req.user) return; // auth already handled the response
+    
+    const allowedRoles = ['Super Member', 'Worker', 'Admin', 'Super Admin'];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Insufficient permissions' });
+    }
+    
+    next();
+  } catch (error) {
+    console.error('Super Member auth error:', error);
+    res.status(500).json({ message: 'Error authenticating' });
+  }
+};
+
+// Auth for Worker, Admin, and Super Admin
+const authWorkerAndAdmin = async (req, res, next) => {
+  try {
+    await auth(req, res, () => {});
+    
+    if (!req.user) return;
+    
+    const allowedRoles = ['Worker', 'Admin', 'Super Admin'];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Insufficient permissions' });
+    }
+    
+    next();
+  } catch (error) {
+    console.error('Worker/Admin auth error:', error);
+    res.status(500).json({ message: 'Error authenticating' });
+  }
+};
+
+// Auth for Admin and Super Admin
+const authAdmin = async (req, res, next) => {
+  try {
+    await auth(req, res, () => {});
+    
+    if (!req.user) return;
+    
+    const allowedRoles = ['Admin', 'Super Admin'];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Insufficient permissions' });
+    }
+    
+    next();
+  } catch (error) {
+    console.error('Admin auth error:', error);
+    res.status(500).json({ message: 'Error authenticating' });
+  }
+};
+
+module.exports = {
+  auth,
+  authSuperMember,
+  authWorkerAndAdmin,
+  authAdmin
+};

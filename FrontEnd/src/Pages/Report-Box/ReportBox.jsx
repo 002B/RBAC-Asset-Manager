@@ -20,7 +20,11 @@ const ReportBox = () => {
   // ✅ ดึงข้อมูลรายงานแบบอัปเดตอัตโนมัติทุก 5 วินาที
   useEffect(() => {
     const fetchReports = () => {
-      fetch("http://localhost:3000/report/getReportByStatus/pending")
+      fetch("http://localhost:3000/report/getReportByStatus/pending", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
         .then((response) => response.json())
         .then((data) => setReportList(data))
         .catch((error) => console.error("Error fetching reports:", error));
@@ -48,6 +52,7 @@ const ReportBox = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ ids: selectedIds , user: user }),
       });
@@ -56,7 +61,11 @@ const ReportBox = () => {
 
       if (response.ok) {
         SweetAlert.fire("Success", data.message, "success");
-        const newReports = await fetch("http://localhost:3000/report/getReportByStatus/pending").then((res) => res.json());
+        const newReports = await fetch("http://localhost:3000/report/getReportByStatus/pending", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }).then((res) => res.json());
         setReportList(newReports);
         setCheckedItems({});
       } else {

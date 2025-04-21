@@ -18,7 +18,11 @@ const UnassignedWork = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/report/getReportByStatus/accepted")
+      .get("http://localhost:3000/report/getReportByStatus/accepted", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
       .then((res) => setWorkList(res.data))
       .catch((err) => console.error("Error fetching reports", err));
   }, []);
@@ -92,7 +96,12 @@ const UnassignedWork = () => {
           ids: [id],
           send_to: user.username,
           user: user,
-        });
+        },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
         SweetAlert.fire({
           title: "Congratulations!",
           text: "Work accepted!",

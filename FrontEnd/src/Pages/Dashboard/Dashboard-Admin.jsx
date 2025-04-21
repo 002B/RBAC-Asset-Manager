@@ -7,6 +7,9 @@ import { useAuth } from "../../Auth/AuthProvider.jsx";
 const fetchReport = async () => {
   try {
     const requestOptions = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       method: "GET",
       redirect: "follow",
     };
@@ -30,6 +33,9 @@ const fetchReport = async () => {
 const fetchAccepted = async () => {
   try {
     const requestOptions = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       method: "GET",
       redirect: "follow",
     };

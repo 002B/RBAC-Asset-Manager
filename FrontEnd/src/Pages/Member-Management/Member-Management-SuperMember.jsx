@@ -7,7 +7,12 @@ import { useAuth } from "../../Auth/AuthProvider";
 async function getAllUsers(company) {
   try {
     const response = await fetch(
-      `http://localhost:3000/users/getClientUser/${company}`
+      `http://localhost:3000/users/getClientUser/${company}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      }
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -22,7 +27,11 @@ async function getAllUsers(company) {
 async function getBranchList(company) {
   try {
     const response = await fetch(
-      `http://localhost:3000/company/getAllBranch/${company}`
+      `http://localhost:3000/company/getAllBranch/${company}`,{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      }
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -105,10 +114,11 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers, company }) => {
         submitData.client_access = branches;
       }
 
-      const response = await fetch("http://localhost:3000/users/createUser", {
+      const response = await fetch("http://localhost:3000/users/createClientUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(submitData),
       });
@@ -454,10 +464,11 @@ const MemberManagementSuperMember = () => {
         }
 
         const response = await fetch(
-          `http://localhost:3000/users/updateUser/${user.username}`,
+          `http://localhost:3000/users/updateClientUser/${user.username}`,
           {
             method: "PUT",
             headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify(submitData),
@@ -505,8 +516,11 @@ const MemberManagementSuperMember = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:3000/users/deleteUser/${user.username}`,
+            `http://localhost:3000/users/deleteClientUser/${user.username}`,
             {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
               method: "DELETE",
             }
           );
@@ -607,7 +621,7 @@ const MemberManagementSuperMember = () => {
                   ))}
                 </select>
               </label>
-              {branches.length > 0 && (
+              {formData.role === "Member" && (
                 <label className="flex flex-col w-full rounded">
                   <span className="text-sm">
                     Branch Assigned : <b>{formData.client_access.length}</b>
