@@ -51,7 +51,7 @@ const InventoryAdmin = () => {
       <div className="bg-white rounded-[8px] drop-shadow">
       <Status
           role={user.role}
-          company={user.company}
+          company={user.client}
         />
       </div>
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
@@ -82,7 +82,7 @@ const InventoryAdmin = () => {
             "Submit",
           ]}
           formPlaceholder={{
-            Company: user.company,
+            Company: user.client,
             Branch: user.selectedBranch,
             Name: user.display_name,
           }}

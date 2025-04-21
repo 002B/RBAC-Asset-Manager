@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("./auth");
 const {
   getAllUsers,
   getAllUsersCount,
@@ -13,6 +14,32 @@ const {
   updateUser,
   deleteUser,
 } = require("./users");
+
+router.get('/me', auth, async (req, res) => {
+  try {
+    // The auth middleware adds the user to the request object
+    const user = req.user;
+    
+    // Return user data without sensitive information
+    const userResponse = {
+      _id: user._id,
+      username: user.username,
+      display_name: user.display_name,
+      role: user.role,
+      client: user.client,
+      client_access: user.client_access,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      lastLogin: user.lastLogin,
+      isActive: user.isActive
+    };
+
+    res.status(200).json({ user: userResponse });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ message: 'Error fetching user data' });
+  }
+});
 
 router.get("/getAllUsers", async (req, res) => {
   try {

@@ -332,7 +332,7 @@ const MemberManagementSuperMember = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const users = await getAllUsers(user.company);
+        const users = await getAllUsers(user.client);
 
         setTestUsers(users);
       } catch (error) {
@@ -341,10 +341,10 @@ const MemberManagementSuperMember = () => {
     };
 
     fetchUsers();
-  }, [user.company]);
+  }, [user.client]);
 
   function refreshUsers() {
-    getAllUsers(user.company).then((response) => {
+    getAllUsers(user.client).then((response) => {
       setTestUsers(response);
     });
   }
@@ -710,14 +710,14 @@ const MemberManagementSuperMember = () => {
           <CreateUserCard
             setShowCreateUser={setShowCreateUser}
             setTestUsers={setTestUsers}
-            company={user.company}
+            company={user.client}
           />
         </div>
       )}
 
       <div className="flex flex-col gap-2">
-        <div className="member-management-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
-          <div className="member-management-header flex gap-2 justify-center items-center">
+        <div className="Member-management-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
+          <div className="Member-management-header flex gap-2 justify-center items-center">
             <box-icon
               name="group"
               type="solid"
@@ -726,8 +726,8 @@ const MemberManagementSuperMember = () => {
             ></box-icon>
             <h2 className="text-white">Member Management</h2>
           </div>
-          <div className="member-management-tool flex gap-2">
-            <div className="member-add flex justify-center items-center rounded">
+          <div className="Member-management-tool flex gap-2">
+            <div className="Member-add flex justify-center items-center rounded">
               <button
                 className="flex justify-center items-center p-2 w-fit h-fit bg-primary"
                 name="add-user"
@@ -741,7 +741,7 @@ const MemberManagementSuperMember = () => {
                 ></box-icon>
               </button>
             </div>
-            <div className="member-search flex flex-col justify-center items-center gap-2">
+            <div className="Member-search flex flex-col justify-center items-center gap-2">
               <div className="search-box flex gap-2">
                 <button
                   className="flex justify-center items-center w-fit h-fit"
@@ -757,7 +757,7 @@ const MemberManagementSuperMember = () => {
                 <input
                   type="text"
                   placeholder="Search by name or username"
-                  name="member-search"
+                  name="Member-search"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />

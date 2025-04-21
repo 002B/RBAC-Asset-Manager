@@ -10,7 +10,7 @@ const ItemLog = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]
+                user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.client_access[0]
                 const response = await fetch(
                     `http://localhost:3000/itemlog/getAllLog`
                 );
@@ -24,7 +24,6 @@ const ItemLog = () => {
                     item.username,
                     item.role
                 ]);
-                console.log(formattedData);
                 
                 setActivityLog(formattedData);
             } catch (error) {
@@ -35,13 +34,13 @@ const ItemLog = () => {
         };
 
         fetchData();
-    }, [user.company, user.selectedBranch, activityLog]);
+    }, [user.client, user.selectedBranch]);
 
     if (loading) return <div>Loading...</div>;
     return (
         <div className="flex flex-col gap-2 w-full h-fit rounded drop-shadow">
             <div className='w-full rounded drop-shadow'>
-                <Status role={user.role} company={user.company} />
+                <Status role={user.role} company={user.client} />
             </div>
             <div className="w-full rounded drop-shadow">
                 <div className='bg-white p-1 rounded drop-shadow'>

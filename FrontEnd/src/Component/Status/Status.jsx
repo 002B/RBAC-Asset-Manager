@@ -1,37 +1,27 @@
 import React, { useEffect, useState } from "react";
 import "./Status.css";
 import "boxicons";
-import {
-  getAllItemCompanyCount,
-  getAllLogReportPendingCount,
-  getAllLogReportCount,
-  getAllUserCount,
-  getItemCompanyCount,
-  getLogReportPendingCount,
-  getUserCount,
-  getBranchCount,
-  getCompanyCount
-} from "../Count.js";
-import { getBadItemBranch, getNextCheck } from "../file.js";
 
 const Status = ({ role, company, branch }) => {
-  const [memberItemCount, setMemberItemCount] = useState(0);
-  const [memberReportPendingCount, setMemberReportPendingCount] = useState(0);
-  const [memberBadItemCount, setMemberBadItemCount] = useState(0);
-  const [memberNextCheck, setMemberNextCheck] = useState("N/A");
+  const [MemberItemCount, setMemberItemCount] = useState(0);
+  const [MemberReportPendingCount, setMemberReportPendingCount] = useState(0);
+  const [MemberBadItemCount, setMemberBadItemCount] = useState(0);
+  const [MemberNextCheck, setMemberNextCheck] = useState("N/A");
 
 
   const [superMemberItemCount, setSuperMemberItemCount] = useState(0);
   const [superMemberReportPendingCount, setSuperMemberReportPendingCount] = useState(0);
   const [superMemberBadItemCount, setSuperMemberBadItemCount] = useState(0);
+  const [superMemberTotalUser, setSuperMemberTotalUser] = useState(0);
+  const [superMemberTotalBranch, setSuperMemberTotalBranch] = useState(0);
 
-  const [adminItemCount, setAdminItemCount] = useState(0);
-  const [adminReportPendingCount, setAdminReportPendingCount] = useState(0);
-  const [adminBadItemCount, setAdminBadItemCount] = useState(0);
-  const [adminTotalUser, adminSetTotalUser] = useState(0);
+  const [AdminItemCount, setAdminItemCount] = useState(0);
+  const [AdminReportPendingCount, setAdminReportPendingCount] = useState(0);
+  const [AdminBadItemCount, setAdminBadItemCount] = useState(0);
+  const [AdminTotalUser, AdminSetTotalUser] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
-      if (role === "member") {
+      if (role === "Member") {
 
 
         const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getItemList/count/${company}/${branch}`);
@@ -51,10 +41,11 @@ const Status = ({ role, company, branch }) => {
         setMemberNextCheck(nextCheckValue.replace('"', "").replace('"', ""));
 
 
-      }else if(role === "super_member"){
+      }else if(role === "Super Member"){
 
 
-        const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getItemList/count/${company}${branch !== "All Branches" ? `/${branch}` : ""}`);
+        const branchURL = branch !== "All Branches" ? `/${branch}` : "";
+        const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getItemList/count/${company}`);
         const itemInBranchCount = await itemInBranchCountResponse.text();
         setSuperMemberItemCount(parseInt(itemInBranchCount));
 
@@ -66,8 +57,16 @@ const Status = ({ role, company, branch }) => {
         const badItemInBranchCount = await badItemInBranchCountResponse.text();
         setSuperMemberBadItemCount(parseInt(badItemInBranchCount));
 
+        const totalUserResponse = await fetch(`http://localhost:3000/users/getUsersCount/${company}`);
+        const totalUser = await totalUserResponse.text();
+        setSuperMemberTotalUser(parseInt(totalUser));
 
-      }else if(role === "admin"){
+        const branchResponse = await fetch(`http://localhost:3000/company/getAllBranch/${company}`);
+        const branches = await branchResponse.json();
+        setSuperMemberTotalBranch(branches.length);
+
+
+      }else if(role === "Admin"){
 
 
         const itemInBranchCountResponse = await fetch(`http://localhost:3000/item/getAllItem/count`);
@@ -84,40 +83,40 @@ const Status = ({ role, company, branch }) => {
 
         const totalUserResponse = await fetch(`http://localhost:3000/users/getAllUsers`);
         const totalUser = await totalUserResponse.json();
-        adminSetTotalUser(totalUser.length);
+        AdminSetTotalUser(totalUser.length);
       }
     };
     fetchData();
   }, [role, company, branch]);
 
-  if (role === "member") {
+  if (role === "Member") {
     return (
       <div className="status-container flex w-full justify-between">
         <div className="flex justify-between items-center status-box bg-primary ">
           <div className="count-title p-1 m-1">
             <h3>Installed</h3>
-            <h1>{memberItemCount}</h1>
+            <h1>{MemberItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Report Sent</h3>
-            <h1>{memberReportPendingCount}</h1>
+            <h1>{MemberReportPendingCount}</h1>
           </div>
           <box-icon name="send" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
-            <h1>{memberBadItemCount}</h1>
+            <h1>{MemberBadItemCount}</h1>
           </div>
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Next Check</h3>
-            <h1>{memberNextCheck}</h1>
+            <h1>{MemberNextCheck}</h1>
           </div>
           <box-icon name="calendar" color="white" size="lg"></box-icon>
         </div>
@@ -125,7 +124,7 @@ const Status = ({ role, company, branch }) => {
     );
   }
 
-  if (role === "super_member") {
+  if (role === "Super Member") {
     return (
       <div className="status-container flex w-full justify-between">
         <div className="flex justify-between items-center status-box bg-primary">
@@ -138,14 +137,14 @@ const Status = ({ role, company, branch }) => {
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Member</h3>
-            <h1>{getUserCount(company)}</h1>
+            <h1>{superMemberTotalUser}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Branch</h3>
-            <h1>{getBranchCount(company)}</h1>
+            <h1>{superMemberTotalBranch}</h1>
           </div>
           <box-icon name="git-branch" color="white" size="lg"></box-icon>
         </div>
@@ -169,34 +168,34 @@ const Status = ({ role, company, branch }) => {
     );
   }
 
-  if (role === "admin") {
+  if (role === "Admin") {
     return (
       <div className="status-container flex w-full justify-between">
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total Installed</h3>
-            <h1>{adminItemCount}</h1>
+            <h1>{AdminItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Report</h3>
-            <h1>{adminReportPendingCount}</h1>
+            <h1>{AdminReportPendingCount}</h1>
           </div>
           <box-icon name="news" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
-            <h1>{adminBadItemCount}</h1>
+            <h1>{AdminBadItemCount}</h1>
           </div>  
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total User</h3>
-            <h1>{adminTotalUser}</h1>
+            <h1>{AdminTotalUser}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
@@ -204,7 +203,7 @@ const Status = ({ role, company, branch }) => {
     );
   }
 
-  if (role === "super_admin") {
+  if (role === "Super Admin") {
     return (
       <div className="status-container flex w-full justify-between">
         <div className="flex justify-between items-center status-box bg-primary">

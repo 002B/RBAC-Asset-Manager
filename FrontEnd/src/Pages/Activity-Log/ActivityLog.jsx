@@ -10,7 +10,6 @@ const ActivityLog = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]
                 const response = await fetch(
                     `http://localhost:3000/activitylog/all`
                 );
@@ -32,13 +31,13 @@ const ActivityLog = () => {
         };
 
         fetchData();
-    }, [user.company, user.selectedBranch]);
+    }, []);
 
     if (loading) return <div>Loading...</div>;
     return (
         <div className="flex flex-col gap-2 w-full h-fit rounded drop-shadow">
             <div className='w-full rounded drop-shadow'>
-                <Status role={user.role} company={user.company} />
+                <Status role={user.role} company={user.client} />
             </div>
             <div className="w-full rounded drop-shadow">
                 <div className='bg-white p-1 rounded drop-shadow'>

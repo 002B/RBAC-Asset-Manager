@@ -7,11 +7,11 @@ const MemberManagement = () => {
     const {user} = useAuth();
 
     switch (user.role) {
-        case "super_admin":
+        case "Super Admin":
             return <MemberManagementAdmin />;
-        case "admin":
+        case "Admin":
             return <MemberManagementAdmin />;
-        case "super_member":
+        case "Super Member":
             return <MemberManagementSuperMember />;
         default:
             return null

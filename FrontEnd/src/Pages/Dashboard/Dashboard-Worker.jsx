@@ -26,26 +26,24 @@ const DashboardWorker = () => {
     setCurrentPage(page);
   };
 
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/report/getReportByUserFixing/${user.username}`
+      );
+      const transformed = res.data.map((report) => ({
+        report_id: report.report_id,
+        serial: report.item_id,
+        company: report.client_id,
+        branch: report.client_branch_id,
+        date: new Date(report.createAt).toLocaleDateString(),
+      }));
+      setWorkList(transformed);
+    } catch (error) {
+      console.error("Error fetching report data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:3000/report/getReportByUserFixing/worker"
-        );
-
-        const transformed = res.data.map((report) => ({
-          report_id: report.report_id,
-          serial: report.item_id,
-          company: report.client_id,
-          branch: report.client_branch_id,
-          date: new Date(report.createAt).toLocaleDateString(),
-        }));
-        setWorkList(transformed);
-      } catch (error) {
-        console.error("Error fetching report data:", error);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -114,7 +112,7 @@ const DashboardWorker = () => {
           // ลบรายการที่ submit แล้วออกจาก list
           try {
             const res = await axios.get(
-              "http://localhost:3000/report/getReportByUserFixing/worker"
+              `http://localhost:3000/report/getReportByUserFixing/${user.user}`
             );
             const transformed = res.data.map((report) => ({
               report_id: report.report_id,
@@ -266,8 +264,8 @@ const DashboardWorker = () => {
         ) : (
           <div className="flex flex-col items-center justify-center col-span-4 p-6 rounded-lg bg-white drop-shadow-md">
             <box-icon
-              name="inbox"
-              type="solid"
+              name="archive"
+              type="regular"
               color="#2f6690"
               size="lg"
             ></box-icon>

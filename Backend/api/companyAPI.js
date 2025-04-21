@@ -24,7 +24,7 @@ router.get('/getAllBranch/:company', async (req, res) => {
     }
 });
 
-router.get('/getCompanyBranch/', async (req, res) => {
+router.get('/getCompanyBranch/:company', async (req, res) => {
     const { company } = req.params;
     try {
         const branches = await companyFunc.getCompanyBranch(company);

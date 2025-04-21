@@ -1,45 +1,45 @@
 {
   "ThaiBev": {
-    "member": {
+    "Member": {
       "display_name": "Ida Bowen",
-      "password": "member",
-      "role": "member",
+      "password": "Member",
+      "role": "Member",
       "branch": ["ThaiBev_1", "ThaiBev_2"]
     },
-    "smember": {
+    "sMember": {
       "display_name": "Vera Cook",
-      "password": "smember",
-      "role": "super_member",
+      "password": "sMember",
+      "role": "Super Member",
       "branch": ["ThaiBev_1", "ThaiBev_2"]
     },
     "thaibev001": {
       "display_name": "Max Hicks",
       "password": "password",
-      "role": "member",
+      "role": "Member",
       "branch": ["ThaiBev_1"]
     },
     "thaibev002": {
       "display_name": "Isabella Marsh",
       "password": "password",
-      "role": "member",
+      "role": "Member",
       "branch": ["ThaiBev_2"]
     },
     "thaibev003": {
       "display_name": "Miguel Rios",
       "password": "password",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["ThaiBev_1", "ThaiBev_2"]
     },
     "thaibev004": {
       "display_name": "Brian Lindsey",
       "password": "password",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["ThaiBev_1", "ThaiBev_2"]
     },
     "thaibev005": {
       "display_name": "Gary Roy",
       "password": "password",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["ThaiBev_1", "ThaiBev_2"]
     }
   },
@@ -47,177 +47,177 @@
     "scb001": {
       "display_name": "Theodore Bryant",
       "password": "scb001",
-      "role": "member",
+      "role": "Member",
       "branch": ["SCB_1"]
     },
     "scb002": {
       "display_name": "Olivia Burns",
       "password": "scb002",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["SCB_1", "SCB_2"]
     },
     "scb003": {
       "display_name": "Theodore Bryant",
       "password": "scb003",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["SCB_1", "SCB_2"]
     },
     "scb004": {
       "display_name": "Olivia Burns",
       "password": "scb004",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["SCB_1", "SCB_2"]
     },
     "scb005": {
       "display_name": "Larry Bryant",
       "password": "scb005",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["SCB_1", "SCB_2"]
     },
     "scb006": {
       "display_name": "Sean Farmer",
       "password": "scb006",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["SCB_1", "SCB_2"]
     },
     "scb007": {
       "display_name": "Miguel Rios",
       "password": "scb007",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["SCB_1", "SCB_2"]
     },
     "scb008": {
       "display_name": "Zachary Valdez",
       "password": "scb008",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["SCB_1", "SCB_2"]
     },
     "scb009": {
       "display_name": "Barbara Roberson",
       "password": "scb009",
-      "role": "super_member",
+      "role": "Super Member",
       "branch": ["SCB_1", "SCB_2"]
     }
   },
   "Metthier": {
-    "worker": {
+    "Worker": {
       "display_name": "Mamie George",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker001": {
+    "Worker001": {
       "display_name": "Isabella Marsh",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker002": {
+    "Worker002": {
       "display_name": "Mike White",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker003": {
+    "Worker003": {
       "display_name": "Craig Foster",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker004": {
+    "Worker004": {
       "display_name": "Cody Guzman",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker005": {
+    "Worker005": {
       "display_name": "Bessie Riley",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker006": {
+    "Worker006": {
       "display_name": "Ollie Blair",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker007": {
+    "Worker007": {
       "display_name": "Lily Obrien",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker008": {
+    "Worker008": {
       "display_name": "Lina Hoffman",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker009": {
+    "Worker009": {
       "display_name": "Christian Stone",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "worker010": {
+    "Worker010": {
       "display_name": "Trevor Hoffman",
-      "password": "worker",
-      "role": "worker",
+      "password": "Worker",
+      "role": "Worker",
       "branch": []
     },
-    "admin": {
+    "Admin": {
       "display_name": "Dominic McGuire",
-      "password": "admin",
-      "role": "admin",
+      "password": "Admin",
+      "role": "Admin",
       "branch": []
     },
-    "admin001": {
+    "Admin001": {
       "display_name": "Miguel Rios",
-      "password": "admin",
-      "role": "admin",
+      "password": "Admin",
+      "role": "Admin",
       "branch": []
     },
-    "admin002": {
+    "Admin002": {
       "display_name": "Rosetta Yates",
-      "password": "admin",
-      "role": "admin",
+      "password": "Admin",
+      "role": "Admin",
       "branch": []
     },
-    "admin003": {
+    "Admin003": {
       "display_name": "Dean Phillips",
-      "password": "admin",
-      "role": "admin",
+      "password": "Admin",
+      "role": "Admin",
       "branch": []
     },
-    "admin004": {
+    "Admin004": {
       "display_name": "Justin Kim",
-      "password": "admin",
-      "role": "admin",
+      "password": "Admin",
+      "role": "Admin",
       "branch": []
     },
-    "admin005": {
+    "Admin005": {
       "display_name": "David Lowe",
-      "password": "admin",
-      "role": "admin",
+      "password": "Admin",
+      "role": "Admin",
       "branch": []
     },
-    "sadmin": {
+    "sAdmin": {
       "display_name": "Leonard Sherman",
-      "password": "sadmin",
-      "role": "super_admin",
+      "password": "sAdmin",
+      "role": "Super Admin",
       "branch": []
     },
-    "sadmin001": {
+    "sAdmin001": {
       "display_name": "Charlie Simmons",
-      "password": "sadmin",
-      "role": "super_admin",
+      "password": "sAdmin",
+      "role": "Super Admin",
       "branch": []
     },
-    "sadmin002": {
+    "sAdmin002": {
       "display_name": "Brian Lindsey",
-      "password": "sadmin",
-      "role": "super_admin",
+      "password": "sAdmin",
+      "role": "Super Admin",
       "branch": []
     }
   }

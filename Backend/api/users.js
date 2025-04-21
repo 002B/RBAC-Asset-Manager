@@ -121,6 +121,10 @@ async function login(username, password) {
             return [404, { message: "User not found" }];
         }
 
+        if (user.isActive !== 'True') {
+            return [403, { message: "Account is inactive" }];
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return [401, { message: "Invalid credentials" }];
@@ -130,17 +134,19 @@ async function login(username, password) {
         user.lastLogin = new Date();
         await user.save();
 
+        // Generate JWT token
+        const token = user.generateAuthToken();
+
         // Prepare response without password
         const userResponse = user.toObject();
         delete userResponse.password;
 
-        return [200, userResponse];
+        return [200, { user: userResponse, token }];
     } catch (error) {
         console.error('Error in login:', error);
         return [500, { message: "Error logging in" }];
     }
 }
-
 
 
 async function updateUser(username, updateData) {  // Changed parameter name to updateData

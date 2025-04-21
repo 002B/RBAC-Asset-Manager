@@ -11,15 +11,15 @@ const Dashboard = () => {
     const { user } = useAuth();
 
     switch (user.role) {
-        case "super_admin":
+        case "Super Admin":
             return <DashboardSuperAdmin />;
-        case "admin":
+        case "Admin":
             return <DashboardAdmin />;
-        case "worker":
+        case "Worker":
             return <DashboardWorker />;
-        case "super_member":
+        case "Super Member":
             return <DashboardSuperMember />;
-        case "member":
+        case "Member":
             return <DashboardMember />;
         default:
             return null

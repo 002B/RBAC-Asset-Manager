@@ -50,7 +50,7 @@ const InventoryWorker = () => {
   return (
     <div className="flex flex-col w-full drop-shadow rounded-[8px]">
       {/* <div className="bg-white rounded-[8px] drop-shadow">
-        <Status role={user.role} company={user.company} branch={user.selectedBranch} />
+        <Status role={user.role} company={user.client} branch={user.selectedBranch} />
       </div> */}
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
         <DataTable
@@ -70,23 +70,10 @@ const InventoryWorker = () => {
           ]}
           data={inventory}
           hasExport={true}
-          formData={[
-            "Company",
-            "Branch",
-            "Name",
-            "Serial Number",
-            "Problem",
-            "File",
-            "Submit",
-          ]}
-          formPlaceholder={{
-            Company: user.company,
-            Branch: user.selectedBranch,
-            Name: user.display_name,
-          }}
           hasEdit={true}
           hasAddItem={true}
           hasQr={true}
+          hasButton={false}
         />
       </div>
     </div>

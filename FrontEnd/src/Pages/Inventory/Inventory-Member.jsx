@@ -11,9 +11,11 @@ const InventoryMember = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]
+        user.selectedBranch
+          ? user.selectedBranch
+          : (user.selectedBranch = user.client_access[0]);
         const response = await fetch(
-          `http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`
+          `http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`
         );
         const data = await response.json();
         const formattedData = data.map((item) => [
@@ -45,8 +47,12 @@ const InventoryMember = () => {
       <div className="bg-white rounded-[8px] drop-shadow">
         <Status
           role={user.role}
-          company={user.company}
-          branch={user.selectedBranch ? user.selectedBranch : user.selectedBranch = user.branch[0]}
+          company={user.client}
+          branch={
+            user.selectedBranch
+              ? user.selectedBranch
+              : (user.selectedBranch = user.client_access[0])
+          }
         />
       </div>
 
@@ -66,22 +72,9 @@ const InventoryMember = () => {
             "item_class",
             "item_status",
           ]}
+          hasButton={true}
           data={inventory}
           hasExport={true}
-          formData={[
-            "Company",
-            "Branch",
-            "Name",
-            "Serial Number",
-            "Problem",
-            "File",
-            "Submit",
-          ]}
-          formPlaceholder={{
-            Company: user.company,
-            Branch: user.selectedBranch,
-            Name: user.display_name,
-          }}
           hasQr={true}
         />
       </div>

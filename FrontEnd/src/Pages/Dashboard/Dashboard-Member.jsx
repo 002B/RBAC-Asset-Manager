@@ -8,15 +8,15 @@ import { useAuth } from "../../Auth/AuthProvider";
 const fetchData = async (user) => {
   try {
     const [inbox, inventory, nextCheck, lastCheck] = await Promise.all([
-      fetch(`http://localhost:3000/report/getReportByBranch/${user.company}/${user.selectedBranch}`)
+      fetch(`http://localhost:3000/report/getReportByBranch/${user.client}/${user.selectedBranch}`)
         .then(res => res.json())
         .then(data => data.map(item => [item.report_id, item.item_id, item.createAt, item.status])),
 
-      fetch(`http://localhost:3000/item/getItemList/${user.company}/${user.selectedBranch}`)
+      fetch(`http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`)
         .then(res => res.json())
         .then(data => data.map(item => [item.item_id, item.item_brand, item.item_status])),
 
-      fetch(`http://localhost:3000/company/getNextCheck/${user.company}/${user.selectedBranch}`)
+      fetch(`http://localhost:3000/company/getNextCheck/${user.client}/${user.selectedBranch}`)
         .then(res => res.json())
         .then(data => {
           const [day, month, year] = data.split("/");
@@ -24,7 +24,7 @@ const fetchData = async (user) => {
           return Math.ceil((receivedDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
         }),
 
-      fetch(`http://localhost:3000/company/getLastCheck/${user.company}/${user.selectedBranch}`)
+      fetch(`http://localhost:3000/company/getLastCheck/${user.client}/${user.selectedBranch}`)
         .then(res => res.json())
         .then(data => data.map(date => [date]))
     ]);
@@ -51,7 +51,7 @@ const DashboardMember = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      user.selectedBranch = user.selectedBranch || user.branch[0];
+      user.selectedBranch = user.selectedBranch || user.client_access[0];
       const { inbox, inventory, nextCheck, lastCheck } = await fetchData(user);
       setTestActivity(inbox);
       setInventory(inventory);
@@ -60,7 +60,7 @@ const DashboardMember = () => {
     };
 
     loadData();
-  }, [user.company, user.selectedBranch]);
+  }, [user.client, user.selectedBranch]);
 
   const handleCloseForm = () => {
     setShowCreateForm(false);
@@ -97,7 +97,7 @@ const DashboardMember = () => {
       <div className="w-full rounded drop-shadow">
         <Status
           role={user.role}
-          company={user.company}
+          company={user.client}
           branch={user.selectedBranch}
         />
       </div>

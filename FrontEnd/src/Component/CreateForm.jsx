@@ -6,7 +6,6 @@ import "./CreateForm.css";
 import { useAuth } from "../Auth/AuthProvider";
 
 async function sendReport(data, isGuest = false) {
-  console.log("Sending report:", data);
   try {
     const headers = {
       "Content-Type": "application/json",
@@ -24,7 +23,7 @@ async function sendReport(data, isGuest = false) {
         headers,
         body: JSON.stringify({
           data: {
-            send_by: data.user?.user || 'guest',
+            send_by: data.user.display_name || 'guest',
             problem: data.problem,
           },
           user: data.user || { user: 'guest', role: 'guest' },
@@ -45,9 +44,8 @@ async function sendReport(data, isGuest = false) {
 }
 
 function CreateForm({ onClose, initialData }) {
-  const { user: authUser } = useAuth();
+  const { user } = useAuth();
   // ใช้ user จาก initialData (สำหรับ Guest) หรือจาก authUser (สำหรับผู้ที่ล็อกอิน)
-  const user = initialData?.user || authUser;
   
   const [forms, setForms] = useState([
     {
@@ -126,7 +124,7 @@ function CreateForm({ onClose, initialData }) {
       return;
     }
 
-    const isGuest = !authUser; // ตรวจสอบว่าเป็น Guest หรือไม่
+    const isGuest = !user; // ตรวจสอบว่าเป็น Guest หรือไม่
 
     const result = await SweetAlert.fire({
       title: "Are you sure?",
@@ -173,7 +171,9 @@ function CreateForm({ onClose, initialData }) {
             problem: "",
             isCollapsed: false,
           },
-        ]);
+        ])
+        onClose();
+        ;
       } catch (error) {
         let errorMessage = "Failed to send reports. Please try again.";
         if (error.message.includes("Network Error")) {
@@ -235,7 +235,7 @@ function CreateForm({ onClose, initialData }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* แสดงสถานะ Guest ถ้าไม่ได้ล็อกอิน */}
-        {!authUser && (
+        {!user && (
           <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center gap-2 z-20">
             <box-icon name="user" size="xs"></box-icon>
             <span>Guest Mode</span>
@@ -442,8 +442,7 @@ CreateForm.propTypes = {
     user: PropTypes.shape({
       user: PropTypes.string,
       role: PropTypes.string,
-      name: PropTypes.string,
-      email: PropTypes.string
+      display_name: PropTypes.string,
     })
   }),
 };

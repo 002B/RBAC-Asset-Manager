@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 function Confirm() {
   SweetAlert.fire({
     title: "Are you sure?",
-    text: "You need to add member?",
+    text: "You need to add Member?",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#FD6E28",
@@ -438,7 +438,6 @@ const MemberManagementAdmin = () => {
         setTestUsers(data);
       });
   }, []);
-  console.log(testUsers);
 
   function ConfirmUpdate(userName) {
     SweetAlert.fire({
@@ -803,8 +802,8 @@ const MemberManagementAdmin = () => {
       )}
 
       <div className="flex flex-col gap-2">
-        <div className="member-management-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
-          <div className="member-management-header flex gap-2 justify-center items-center">
+        <div className="Member-management-bar bg-primary p-2 rounded-[8px] drop-shadow flex items-center justify-between sticky top-0 z-10">
+          <div className="Member-management-header flex gap-2 justify-center items-center">
             <box-icon
               name="group"
               type="solid"
@@ -814,8 +813,8 @@ const MemberManagementAdmin = () => {
             <button type="submit"></button>
             <h2 className="text-white">Member Management</h2>
           </div>
-          <div className="member-management-tool flex gap-2">
-            <div className="member-add flex justify-center items-center rounded">
+          <div className="Member-management-tool flex gap-2">
+            <div className="Member-add flex justify-center items-center rounded">
               <button
                 className="flex justify-center items-center p-2 w-fit h-fit bg-highlight"
                 name="add-user"
@@ -829,7 +828,7 @@ const MemberManagementAdmin = () => {
                 ></box-icon>
               </button>
             </div>
-            <div className="member-search flex flex-col justify-center items-center gap-2">
+            <div className="Member-search flex flex-col justify-center items-center gap-2">
               <div className="search-box flex gap-2">
                 <button
                   className="flex justify-center items-center w-fit h-fit"
@@ -845,7 +844,7 @@ const MemberManagementAdmin = () => {
                 <input
                   type="text"
                   placeholder="Search by name or username"
-                  name="member-search"
+                  name="Member-search"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />

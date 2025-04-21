@@ -117,7 +117,7 @@ async function getReportByStatus(status) {
 
 async function getReportByUserDone(user) {
     try {
-        return await reportModel.find({ "assigner": user, "status": "done" }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_to": user, "status": "done" }, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
@@ -126,7 +126,7 @@ async function getReportByUserDone(user) {
 
 async function getReportByUserFixing(user) {
     try {
-        return await reportModel.find({ "assigner": user, "status": "fixing" }, { _id: 0 }).lean();
+        return await reportModel.find({ "send_to": user, "status": "fixing" }, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
@@ -248,6 +248,7 @@ module.exports = {
     getReportByUserDone,
     getReportStatusByBranch,
     getReportStatusByCom,
-    updateReport
+    updateReport,
+    deleteReport
 };
 

@@ -9,33 +9,33 @@ https://002b.github.io/Metthier/
 
 Member
 -------------------------------------------
-User : member
+User : Member
 
-Pass : member
+Pass : Member
 
 Super Member
 -------------------------------------------
-User : smember
+User : sMember
 
-Pass : smember
+Pass : sMember
 
 Worker
 -------------------------------------------
-User : worker
+User : Worker
 
-Pass : worker
+Pass : Worker
 
 Admin
 -------------------------------------------
-User : admin
+User : Admin
 
-Pass : admin
+Pass : Admin
 
 Super Admin
 -------------------------------------------
-User : sadmin
+User : sAdmin
 
-Pass : sadmin
+Pass : sAdmin
 
 Product Page
 -------------------------------------------
