@@ -71,6 +71,7 @@ const InventoryAdmin = () => {
             "item_status",
           ]}
           data={inventory}
+          hasButton={false}
           hasExport={true}
           formData={[
             "Company",
