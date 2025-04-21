@@ -260,7 +260,7 @@ router.put('/updateReport/:status', async (req, res) => {
     try {
         const updateResult = await reportFunc.updateReport(ids, status.toLowerCase(), send_to);
         if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
-        if (status.toLowerCase() !== 'pending') await reportFunc.deleteReport(updateResult.itemIds,updateResult.status);
+        if (status.toLowerCase() === 'accepted') await reportFunc.deleteReport(updateResult.itemIds,"pending");
         const updateStatusResult = await itemFunc.updateStatus(updateResult.itemIds, updateResult.itemStatus);
         if (!updateStatusResult) return res.status(404).json({ message: 'Error updating item status' });
         await activityLogFunc.createLog([status.toLowerCase(), user.user, user.role]);
