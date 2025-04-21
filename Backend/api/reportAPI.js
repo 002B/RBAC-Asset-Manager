@@ -229,9 +229,8 @@ router.post('/createReport/:id', async (req, res) => {
 
     try {
         const item = await itemFunc.checkItemExist(id);
-        if (!item) {
-            return res.status(404).json({ message: 'Item not found' });
-        }
+        if (!item) return res.status(404).json({ message: 'Item not found' });
+        if(item.status === 'fixing') return res.status(400).json({ message: 'Item is already in fixing' });
         const report = await reportFunc.createReport(item.client_id, item.client_branch_id, id, data);
         await itemFunc.updateStatus([id], 'reporting');
         await logItemFunc.createLog([item.item_id,'reporting', user.user, user.role]);

@@ -21,6 +21,7 @@
     "chart.js": "^4.4.6",
     "file-saver": "^2.0.5",
     "install": "^0.13.0",
+    "nodemon": "^3.1.9",
     "npm": "^10.9.0",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
