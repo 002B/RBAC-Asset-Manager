@@ -23,7 +23,7 @@ const {
   deleteUser,
   deleteClientUser, // New function for Super Members
 } = require("./users");
-
+const activityLogFunc = require("./activityLog");
 // Public routes
 router.get("/me", auth, async (req, res) => {
   try {
@@ -62,6 +62,7 @@ router.post("/login", async (req, res) => {
     }
 
     const [status, response] = await login(username, password);
+    if (status === 200) await activityLogFunc.createLog(["Log in", username, response.user.role]);
     res.status(status).json(response);
   } catch (error) {
     res.status(500).json({ message: "Error processing login" });

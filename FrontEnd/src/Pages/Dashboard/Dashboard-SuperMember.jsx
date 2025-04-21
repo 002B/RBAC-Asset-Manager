@@ -46,14 +46,17 @@ const fetchLoginActivity = async () => {
       requestOptions
     );
     const data = await response.json();
+    console.log(data);
+    
     return data.map((item) => [
       item.activity === "Log in" ? (
         <box-icon name="log-in-circle" color="green" size="sm"></box-icon>
       ) : (
         <box-icon name="log-out-circle" color="red" size="sm"></box-icon>
       ),
-      item.display_name,
-      `${item.date} ${item.time}`,
+      item.username,
+      `${item.date.split("T")[0]}`,
+      `${item.date.split("T")[1].split(".")[0]}`
     ]);
   } catch (error) {
     console.error("Error fetching login activity:", error);
@@ -160,7 +163,7 @@ const DashboardSuperMember = () => {
               <DataTable
                 tIcon="user"
                 tName="Login Activity"
-                title={["", "User", "Time"]}
+                title={["", "User", "Date", "Time"]}
                 data={loginActivity}
                 hasButton={false}
                 itemPerPage={4}
