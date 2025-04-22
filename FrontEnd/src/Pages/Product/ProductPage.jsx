@@ -69,7 +69,7 @@ const ProductPage = ({ id }) => {
     }
   };
 
-  if (!selectedData) {
+  if (selectedData || !selectedData === 0) {
     return (
       <div className="flex flex-col bg-light min-h-screen justify-center items-center">
         <div className="product-container bg-white p-4 flex flex-col justify-center items-center rounded-lg h-fit drop-shadow">

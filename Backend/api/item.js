@@ -92,7 +92,6 @@ async function createManyItem(company, branch, data, count) {
         }
 
         const items = [];
-
         for (let i = 0; i < count; i++) {
             lastNumber++;
             items.push({
@@ -104,11 +103,12 @@ async function createManyItem(company, branch, data, count) {
                 item_color: data.item_color,
                 item_type: data.item_type,
                 item_class: data.item_class,
+                item_location: data.item_location,
                 item_status: "available"
             });
         }
 
-        await itemModel.insertMany(items);
+        await itemModel.create(items);
         return items;
 
     } catch (error) {
@@ -128,6 +128,7 @@ async function updateItem(id, data) {
             item_color: data.item_color || doc.item_color,
             item_type: data.item_type || doc.item_type,
             item_class: data.item_class || doc.item_class,
+            item_location: data.item_location || doc.item_location,
             item_status: data.item_status || doc.item_status
         });
         await doc.save();

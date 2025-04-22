@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../Auth/AuthProvider";
+
 const EditItemForm = ({ onClose, onSubmit, initialData }) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
     item_color: initialData?.item_color || "red",
     item_type: initialData?.item_type || "",
     item_class: initialData?.item_class || "",
+    item_location: initialData?.item_location || "", // เพิ่ม item_location
   });
 
   // Initialize form with existing data
@@ -25,6 +27,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
         item_color: initialData.item_color || "red",
         item_type: initialData.item_type || "",
         item_class: initialData.item_class || "",
+        item_location: initialData.item_location || "", // เพิ่ม item_location
       });
     }
   }, [initialData]);
@@ -32,9 +35,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Create a copy of formData without item_id, client_id, and client_branch_id
       const { item_id, client_id, client_branch_id, ...requestBody } = formData;
-      console.log(formData)
 
       const response = await fetch(
         `http://localhost:3000/item/updateItem/${formData.item_id}`,
@@ -44,7 +45,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({"data":formData,"user":user}),
+          body: JSON.stringify({ data: formData, user: user }),
         }
       );
 
@@ -77,7 +78,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({"user":user}),
+          body: JSON.stringify({ user: user }),
         }
       );
 
@@ -119,6 +120,19 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
                 type="text"
                 name="client_branch_id"
                 value={formData.client_branch_id}
+                onChange={handleChange}
+                className="border-2 border-primary rounded w-full p-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Item Location
+              </label>
+              <input
+                type="text"
+                name="item_location"
+                value={formData.item_location}
                 onChange={handleChange}
                 className="border-2 border-primary rounded w-full p-2"
                 required
@@ -200,6 +214,9 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
                 required
               />
             </div>
+
+            {/* New Field for Item Location */}
+
           </div>
           <div className="flex justify-between">
             <button
@@ -232,4 +249,3 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
 };
 
 export default EditItemForm;
-

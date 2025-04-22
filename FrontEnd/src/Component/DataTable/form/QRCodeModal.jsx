@@ -7,7 +7,7 @@ const QRCodeModal = ({ onClose, id }) => {
 
     useEffect(() => {
         // สร้าง URL สำหรับ QR Code
-        setQrCodeUrl(`http://localhost:3000/?id=${id}`);
+        setQrCodeUrl(`http://${window.location.host}/?id=${id}`);
     }, [id]);
 
     // ฟังก์ชันดาวน์โหลด QR Code

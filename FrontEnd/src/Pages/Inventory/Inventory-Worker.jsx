@@ -28,6 +28,7 @@ const InventoryWorker = () => {
           item.item_id,
           item.client_id,
           item.client_branch_id,
+          item.item_location,
           item.item_brand,
           item.item_capacity,
           item.item_color,
@@ -42,8 +43,10 @@ const InventoryWorker = () => {
         setLoading(false);
       }
     };
-
-    fetchData();
+    const intervalId = setInterval(async () => {
+      await fetchData();
+    }, 1000);
+    return () => clearInterval(intervalId);
   }, [user.company]);
 
   if (loading) {
@@ -64,6 +67,7 @@ const InventoryWorker = () => {
             "item_id",
             "client_id",
             "client_branch_id",
+            "item_location",
             "item_brand",
             "item_capacity",
             "item_color",
@@ -84,3 +88,4 @@ const InventoryWorker = () => {
 };
 
 export default InventoryWorker;
+

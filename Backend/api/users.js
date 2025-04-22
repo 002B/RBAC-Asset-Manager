@@ -140,7 +140,8 @@ async function login(username, password) {
     // Prepare response without password
     const userResponse = user.toObject();
     delete userResponse.password;
-
+    console.log(userResponse);
+    
     return [200, { user: userResponse, token }];
   } catch (error) {
     console.error("Error in login:", error);
