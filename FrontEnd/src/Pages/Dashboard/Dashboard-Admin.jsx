@@ -20,7 +20,8 @@ const fetchReport = async () => {
     const data = await response.json();
     const formattedData = data.map((item) => [
       item.item_id,
-      item.createAt,
+      item.createAt.split("T")[0],
+      item.createAt.split("T")[1].split(".")[0],
       item.problem,
     ]);
     return formattedData;
@@ -98,7 +99,7 @@ const DashboardAdmin = () => {
                 colIcon={"news"}
                 tIcon={"news"}
                 tName={"Report"}
-                title={["Serial Number", "Date", "Problem"]}
+                title={["Serial Number", "Date", "Time", "Problem"]}
                 data={testUnReadReport}
                 hasButton={false}
                 itemPerPage={10}
