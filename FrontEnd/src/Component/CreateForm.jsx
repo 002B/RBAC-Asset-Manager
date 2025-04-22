@@ -15,10 +15,13 @@ const commonProblems = [
   "Mounting bracket damaged"
 ];
 
-async function sendReport(data, isGuest = false) {
+async function sendReport(data, user) {
   try {
     const formData = new FormData();
     formData.append("data", JSON.stringify(data));
+    if (user) {
+      formData.append("user", JSON.stringify(user));
+    }
     if (data.image) {
       formData.append("image", data.image);
     }
@@ -196,10 +199,10 @@ function CreateForm({ onClose, initialData }) {
             await sendReport({
               serialNumber: form.serialNumber,
               problem: form.problem,
-              user: user,
+              user: user || "Guest",
               image: form.image,
-              image: form.image, // ส่งรูปภาพในแต่ละฟอร์ม
-            }, isGuest)
+              image: form.image, 
+            }, user)
           );
         }
 

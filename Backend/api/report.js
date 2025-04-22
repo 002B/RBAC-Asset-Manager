@@ -138,7 +138,7 @@ async function createReport(company, branch, id, data, file) {
     try {
         const currentYear = new Date().getFullYear();
         const regex = new RegExp(`^RP-${currentYear}-\\d{7}$`, 'i');
-        
+
         const lastItem = await reportModel.findOne({ report_id: { $regex: regex } })
             .sort({ report_id: -1 })
             .lean();
@@ -160,7 +160,7 @@ async function createReport(company, branch, id, data, file) {
             client_branch_id: branch,
             createAt: new Date().toISOString(),
             status: "pending",
-            send_by: data.send_by,
+            send_by: data.user.username,
             problem: data.problem,
             image: filePath
         });
