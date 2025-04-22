@@ -1,5 +1,21 @@
 const express = require("express");
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'img');
+  },
+  filename: function (req, file, cb) {
+    const reportId = `${Date.now()}`;
+    const ext = path.extname(file.originalname);
+    cb(null, `${reportId}${ext}`);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 const reportFunc = require("./report");
 const itemFunc = require("./item");
 const logItemFunc = require("./itemLog");
@@ -335,38 +351,48 @@ router.get("/getReportById/:id", authWorkerAndAdmin, async (req, res) => {
   }
 });
 
-// Public route (no auth required)
-router.post("/createReport/:id", async (req, res) => {
+
+router.post("/createReport/:id", upload.single('image'), async (req, res) => {
   const { id } = req.params;
-  const { data } = req.body;
-  const user = req.body.user || { user: "guest", role: "guest" };
-
-  if (!validateParams({ id }, res) || !data || !data.problem) {
-    return res.status(400).json({ message: "Incomplete data" });
+  let { data } = req.body;
+  let user = req.body.user || { user: "guest", role: "guest" };
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+    } catch (err) {
+      return res.status(400).json({ message: "Invalid JSON format for data." });
+    }
   }
-
+  if (typeof user === 'string') {
+      try {
+          user = JSON.parse(user);
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid JSON format for user." });
+      }
+  }
+  if (!validateParams({ id }, res)) {
+      return res.status(400).json({ message: "Incomplete data" });
+  }
   try {
-    const item = await itemFunc.checkItemExist(id);
-    if (!item) return res.status(404).json({ message: "Item not found" });
-    if (item.status === "fixing")
-      return res.status(400).json({ message: "Item is already in fixing" });
-    const report = await reportFunc.createReport(
-      item.client_id,
-      item.client_branch_id,
-      id,
-      data
-    );
-    await itemFunc.updateStatus([id], "reporting");
-    await logItemFunc.createLog([
-      item.item_id,
-      "reporting",
-      user.user,
-      user.role,
-    ]);
-    await activityLogFunc.createLog(["reporting", user.user, user.role]);
-    res.json(report);
+      const item = await itemFunc.checkItemExist(id);
+      if (!item) return res.status(404).json({ message: "Item not found" });
+
+      if (item.status === "fixing")
+          return res.status(400).json({ message: "Item is already in fixing" });
+      const report = await reportFunc.createReport(
+          item.client_id,
+          item.client_branch_id,
+          id,
+          data,
+          req.file
+      );
+      await itemFunc.updateStatus([id], "reporting");
+      await logItemFunc.createLog([item.item_id, "reporting", user.username, user.role]);
+      await activityLogFunc.createLog(["reporting", user.username, user.role]);
+
+      res.json(report);
   } catch (error) {
-    handleError(res, "Error creating report", error);
+      handleError(res, "Error creating report", error);
   }
 });
 
@@ -375,7 +401,6 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
   const { status } = req.params;
   const { ids, send_to } = req.body;
   const { user } = req.body;
-
   if (!Array.isArray(ids) || ids.length === 0) {
     return res
       .status(400)
@@ -397,7 +422,7 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
     );
     if (!updateResult.success)
       return res.status(404).json({ message: updateResult.message });
-    if (status.toLowerCase() === "accepted")
+    if (status.toLowerCase() === "accepted" || status.toLowerCase() === "rejected")
       await reportFunc.deleteReport(updateResult.itemIds, "pending");
     const updateStatusResult = await itemFunc.updateStatus(
       updateResult.itemIds,
@@ -407,13 +432,13 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
       return res.status(404).json({ message: "Error updating item status" });
     await activityLogFunc.createLog([
       status.toLowerCase(),
-      user.user,
+      user.username,
       user.role,
     ]);
     await logItemFunc.createLog([
       updateStatusResult[0],
       updateResult.itemStatus,
-      user.user,
+      user.username,
       user.role,
     ]);
     res.json({ message: "Report and items updated successfully" });

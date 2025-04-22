@@ -12,6 +12,41 @@ const UnassignedWorkAdmin = () => {
   const [selectedWorker, setSelectedWorker] = useState("");
   const [searchWorkerTerm, setSearchWorkerTerm] = useState("");
   const [searchWorkTerm, setSearchWorkTerm] = useState("");
+  const [workerWorkCount, setWorkerWorkCount] = useState({});
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+  
+    const fetchWorkCount = async () => {
+      const counts = {};
+      for (const worker of workerList) {
+        try {
+          const res = await fetch(
+            `http://localhost:3000/report/getReportByUserFixing/${worker.username}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const data = await res.json();
+          counts[worker.username] = data.length;
+        } catch (err) {
+          console.error(`Error fetching work count for ${worker.username}:`, err);
+          counts[worker.username] = 0;
+        }
+      }
+      setWorkerWorkCount(counts);
+    };
+  
+    if (workerList.length > 0) {
+      fetchWorkCount(); // ดึงครั้งแรกก่อน
+      const intervalId = setInterval(fetchWorkCount, 1000); // อัปเดตทุก 5 วินาที
+  
+      return () => clearInterval(intervalId); // เคลียร์เมื่อ component ถูกถอด
+    }
+  }, [workerList]);
+  
 
   useEffect(() => {
     fetch("http://localhost:3000/report/getReportByStatus/accepted", {
@@ -70,7 +105,7 @@ const UnassignedWorkAdmin = () => {
   };
 
   //ยังไม่สมบูรณ์ แต่ดูดี
-  function confirmAssign(Worker,) {
+  function confirmAssign(Worker) {
     SweetAlert.fire({
       title: "Are you sure?",
       text: `You need to assign work(s) to ${Worker} ?`,
@@ -95,8 +130,8 @@ const UnassignedWorkAdmin = () => {
           },
           body: JSON.stringify({
             ids: selectedReportIds,
-            send_to: selectedWorker, 
-            user: user
+            send_to: selectedWorker,
+            user: user,
           }),
         })
           .then((res) => res.json())
@@ -194,7 +229,12 @@ const UnassignedWorkAdmin = () => {
                 <span>{Worker.display_name}</span>
               </span>
               <span>
-              <span className="col-span-2">{Worker.username}</span>
+                <span>
+                  {Worker.username}
+                  <span className="text-xs text-gray-500 ml-2">
+                    ({workerWorkCount[Worker.username] || 0} works)
+                  </span>
+                </span>
               </span>
             </div>
           ))}
@@ -247,8 +287,12 @@ const UnassignedWorkAdmin = () => {
               </span>
               <span className="col-span-2">{work.client_id}</span>
               <span className="col-span-2">{work.client_branch_id}</span>
-              <span className="text-center text-overflow-ellipsis  ">{work.createAt.split("T")[0].split("-").reverse().join("-")}</span>
-              <span className="text-center text-overflow-ellipsis ">{work.createAt.split("T")[1].split(".")[0]}</span>
+              <span className="text-center text-overflow-ellipsis  ">
+                {work.createAt.split("T")[0].split("-").reverse().join("-")}
+              </span>
+              <span className="text-center text-overflow-ellipsis ">
+                {work.createAt.split("T")[1].split(".")[0]}
+              </span>
             </div>
           ))}
         </div>

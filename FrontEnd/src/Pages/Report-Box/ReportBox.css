@@ -15,7 +15,13 @@
   outline: none;
   background-color: transparent;
 }
-
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
 .report-box-select-all input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
@@ -24,6 +30,7 @@
   width: 16px;
   height: 16px;
   transition: all 0.2s ease-in-out;
+  
 }
 .report-box-select-all input[type="checkbox"]:checked {
   background-color: var(--secondary-color);
