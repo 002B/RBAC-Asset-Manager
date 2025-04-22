@@ -6,7 +6,7 @@ import "./ReportBox.css";
 
 const ReportBox = () => {
   const { user } = useAuth();
-  const [reportList, setReportList] = useState([]);
+  const [reportList, setReportList] = useState([]); 
   const [companyList, setCompanyList] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
   const [searchReportTerm, setSearchReportTerm] = useState("");
@@ -26,7 +26,13 @@ const ReportBox = () => {
         },
       })
         .then((response) => response.json())
-        .then((data) => setReportList(data))
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setReportList(data); // ตรวจสอบว่าเป็น array แล้วค่อยตั้งค่า
+          } else {
+            console.error("Fetched data is not an array:", data);
+          }
+        })
         .catch((error) => console.error("Error fetching reports:", error));
     };
 
@@ -234,9 +240,8 @@ const ReportBox = () => {
             </div>
           </div>
         </div>
-
-        {/* LIST HEADER */}
-        <div className="report-box-list-body min-fit w-full gap-1 grid">
+                {/* LIST HEADER */}
+                <div className="report-box-list-body min-fit w-full gap-1 grid">
           <div className="report-box-list-header grid grid-cols-10 w-full h-[48px] p-2 bg-white border-2 border-secondary rounded-[8px] text-secondary">
             <div className="col-span-2 flex gap-2 items-center">
               <input type="checkbox" onChange={toggleAllItemCheckBox} />
