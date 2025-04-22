@@ -79,10 +79,10 @@ function CreateForm({ onClose, initialData }) {
   const handleSelectProblem = (id, problem) => {
     setForms(forms.map((form) => {
       if (form.id !== id) return form;
-      
+
       let updatedProblem = form.problem;
       let updatedSelected = [...form.selectedProblems];
-      
+
       // ถ้าปัญหานี้ถูกเลือกอยู่แล้ว
       if (form.selectedProblems.includes(problem)) {
         // ลบออกจากรายการที่เลือก
@@ -92,16 +92,16 @@ function CreateForm({ onClose, initialData }) {
           .split(', ')
           .filter(p => p.trim() !== problem)
           .join(', ');
-      } 
+      }
       // ถ้ายังไม่ถูกเลือก
       else {
         updatedSelected = [...form.selectedProblems, problem];
         // เพิ่มเข้าไปในช่องข้อความ
-        updatedProblem = form.problem 
+        updatedProblem = form.problem
           ? `${form.problem}, ${problem}`
           : problem;
       }
-      
+
       return {
         ...form,
         problem: updatedProblem,
@@ -116,8 +116,9 @@ function CreateForm({ onClose, initialData }) {
       ...forms,
       {
         id: newId,
-        serialNumber: "",
+        serialNumber: "", // ฟอร์มใหม่เริ่มต้นที่ว่าง
         problem: "",
+        selectedProblems: [],
         image: null, // เพิ่มส่วนของรูปภาพ
         isCollapsed: false,
       },
@@ -178,16 +179,14 @@ function CreateForm({ onClose, initialData }) {
 
     const result = await SweetAlert.fire({
       title: "Are you sure?",
-      text: `You want to send ${forms.length} report${
-        forms.length > 1 ? "s" : ""
-      }${isGuest ? ' as Guest' : ''}?`,
+      text: `You want to send ${forms.length} report${forms.length > 1 ? "s" : ""
+        }${isGuest ? ' as Guest' : ''}?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#4F46E5",
       cancelButtonColor: "#6B7280",
-      confirmButtonText: `Send ${forms.length} Report${
-        forms.length > 1 ? "s" : ""
-      }`,
+      confirmButtonText: `Send ${forms.length} Report${forms.length > 1 ? "s" : ""
+        }`,
     });
 
     if (result.isConfirmed) {
@@ -201,7 +200,7 @@ function CreateForm({ onClose, initialData }) {
               problem: form.problem,
               user: user || "Guest",
               image: form.image,
-              image: form.image, 
+              image: form.image,
             }, user)
           );
         }
@@ -209,9 +208,8 @@ function CreateForm({ onClose, initialData }) {
         //...
         SweetAlert.fire({
           title: "Success!",
-          text: `Your ${forms.length} report${
-            forms.length > 1 ? "s were" : " was"
-          } sent successfully${isGuest ? ' as Guest' : ''}`,
+          text: `Your ${forms.length} report${forms.length > 1 ? "s were" : " was"
+            } sent successfully${isGuest ? ' as Guest' : ''}`,
           icon: "success",
           confirmButtonColor: "#4F46E5",
         });
@@ -282,7 +280,7 @@ function CreateForm({ onClose, initialData }) {
   const handleImageUpload = (id, e) => {
     const file = e.target.files[0];
     if (file) {
-      setForms(forms.map((f) => 
+      setForms(forms.map((f) =>
         f.id === id ? { ...f, image: file } : f
       ));
     }
@@ -337,14 +335,12 @@ function CreateForm({ onClose, initialData }) {
             {forms.map((form, index) => (
               <div
                 key={form.id}
-                className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md ${
-                  form.isCollapsed ? "pb-0" : ""
-                }`}
+                className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md ${form.isCollapsed ? "pb-0" : ""
+                  }`}
               >
                 <div
-                  className={`flex justify-between items-center p-4 cursor-pointer bg-gradient-to-r from-gray-50 to-white ${
-                    form.isCollapsed ? "border-b-0" : "border-b border-gray-200"
-                  }`}
+                  className={`flex justify-between items-center p-4 cursor-pointer bg-gradient-to-r from-gray-50 to-white ${form.isCollapsed ? "border-b-0" : "border-b border-gray-200"
+                    }`}
                   onClick={() => toggleCollapse(form.id)}
                 >
                   <div className="flex items-center gap-3">
@@ -402,7 +398,7 @@ function CreateForm({ onClose, initialData }) {
                           Problem Description
                           <span className="text-red-500 ml-1">*</span>
                         </span>
-                        
+
                         <textarea
                           name="problem"
                           value={form.problem}
@@ -411,7 +407,7 @@ function CreateForm({ onClose, initialData }) {
                           placeholder="Describe the problem or select from common problems below..."
                           required
                         />
-                        
+
                         <div className="mt-3">
                           <p className="text-sm text-gray-600 mb-2">Common problems (click to add):</p>
                           <div className="flex flex-wrap gap-2">
@@ -420,11 +416,10 @@ function CreateForm({ onClose, initialData }) {
                                 key={problem}
                                 type="button"
                                 onClick={() => handleSelectProblem(form.id, problem)}
-                                className={`px-3 py-1.5 text-sm rounded-full border transition-all ${
-                                  form.selectedProblems.includes(problem)
+                                className={`px-3 py-1.5 text-sm rounded-full border transition-all ${form.selectedProblems.includes(problem)
                                     ? "bg-[#81c3d7] text-white border-[#81c3d7]"
                                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                                }`}
+                                  }`}
                               >
                                 {problem}
                               </button>
@@ -469,9 +464,9 @@ function CreateForm({ onClose, initialData }) {
                           class="flex-shrink-0 mt-0.5"
                         ></box-icon>
                         <div className="space-y-2">
-                        <p className="text-sm text-[#16425b] leading-relaxed">
-                          <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
-                        </p>
+                          <p className="text-sm text-[#16425b] leading-relaxed">
+                            <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
+                          </p>
                         </div>
                       </div>
                     </div>
