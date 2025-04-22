@@ -5,7 +5,16 @@ import "boxicons";
 import "./CreateForm.css";
 import { useAuth } from "../Auth/AuthProvider";
 
-// ส่วนนี้คงเดิมทั้งหมด
+const commonProblems = [
+  "Fire extinguisher expired",
+  "Pressure gauge damaged",
+  "Hose torn or damaged",
+  "Nozzle clogged",
+  "Tank swollen or rusted",
+  "Sticker or label fallen off",
+  "Mounting bracket damaged"
+];
+
 async function sendReport(data, isGuest = false) {
   try {
     const formData = new FormData();
@@ -16,6 +25,7 @@ async function sendReport(data, isGuest = false) {
 
     const headers = {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
     };
 
     const res = await fetch(
@@ -42,18 +52,6 @@ async function sendReport(data, isGuest = false) {
 function CreateForm({ onClose, initialData }) {
   const { user } = useAuth();
   
-  // เพิ่มส่วนของปัญหาที่พบบ่อย
-  const commonProblems = [
-    "Fire extinguisher expired",
-    "Pressure gauge damaged",
-    "Hose torn or damaged",
-    "Nozzle clogged",
-    "Tank swollen or rusted",
-    "Sticker or label fallen off",
-    "Mounting bracket damaged",
-  ];
-
-  // ส่วน state เดิมคงเดิมทั้งหมด
   const [forms, setForms] = useState([
     {
       id: 1,
@@ -73,17 +71,40 @@ function CreateForm({ onClose, initialData }) {
     setForms(forms.map((f) => (f.id === id ? { ...f, [name]: value } : f)));
   };
 
-  // เพิ่มฟังก์ชันสำหรับเลือกปัญหาจากปุ่ม (ใหม่)
   const handleSelectProblem = (id, problem) => {
-    setForms(forms.map((f) => 
-      f.id === id ? { 
-        ...f, 
-        problem: problem === "อื่น ๆ (กรุณาระบุ)" ? "" : problem 
-      } : f
-    ));
+    setForms(forms.map((form) => {
+      if (form.id !== id) return form;
+      
+      let updatedProblem = form.problem;
+      let updatedSelected = [...form.selectedProblems];
+      
+      // ถ้าปัญหานี้ถูกเลือกอยู่แล้ว
+      if (form.selectedProblems.includes(problem)) {
+        // ลบออกจากรายการที่เลือก
+        updatedSelected = form.selectedProblems.filter(p => p !== problem);
+        // ลบออกจากช่องข้อความ
+        updatedProblem = form.problem
+          .split(', ')
+          .filter(p => p.trim() !== problem)
+          .join(', ');
+      } 
+      // ถ้ายังไม่ถูกเลือก
+      else {
+        updatedSelected = [...form.selectedProblems, problem];
+        // เพิ่มเข้าไปในช่องข้อความ
+        updatedProblem = form.problem 
+          ? `${form.problem}, ${problem}`
+          : problem;
+      }
+      
+      return {
+        ...form,
+        problem: updatedProblem,
+        selectedProblems: updatedSelected
+      };
+    }));
   };
 
-  // ฟังก์ชันเดิมทั้งหมดคงเดิม
   const addNewForm = () => {
     const newId = forms.length ? Math.max(...forms.map((f) => f.id)) + 1 : 1;
     setForms([
@@ -134,13 +155,13 @@ function CreateForm({ onClose, initialData }) {
 
   const confirmSend = async () => {
     const emptyFields = forms.some(
-      (form) => !form.serialNumber || !form.problem
+      (form) => !form.serialNumber || !form.problem.trim()
     );
 
     if (emptyFields) {
       SweetAlert.fire({
         title: "Incomplete Forms",
-        text: "Please fill all required fields before submitting",
+        text: "Please enter problem description before submitting",
         icon: "warning",
         confirmButtonColor: "#4F46E5",
       });
@@ -187,13 +208,15 @@ function CreateForm({ onClose, initialData }) {
           confirmButtonColor: "#4F46E5",
         });
 
-        setForms([{
-          id: 1,
-          serialNumber: initialData?.serialNumber || "",
-          problem: "",
-          image: null, // รีเซ็ตภาพ
-          isCollapsed: false,
-        }])
+        setForms([
+          {
+            id: 1,
+            serialNumber: initialData?.serialNumber || "",
+            problem: "",
+            selectedProblems: [],
+            isCollapsed: false,
+          },
+        ]);
         onClose();
       } catch (error) {
         let errorMessage = "Failed to send reports. Please try again.";
@@ -218,7 +241,7 @@ function CreateForm({ onClose, initialData }) {
 
   const confirmClose = () => {
     const hasUnsavedData = forms.some(
-      (form) => form.serialNumber || form.problem || form.image
+      (form) => form.serialNumber || form.problem || form.image || form.selectedProblems.length > 0
     );
 
     if (hasUnsavedData) {
@@ -257,7 +280,7 @@ function CreateForm({ onClose, initialData }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-md flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50"
       onClick={handleOverlayClick}
     >
       <div
@@ -271,7 +294,6 @@ function CreateForm({ onClose, initialData }) {
           </div>
         )}
 
-        {/* Header - คงเดิมทั้งหมด */}
         <div className="sticky top-0 z-10 p-6 bg-[#2f6690] text-white">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -300,7 +322,6 @@ function CreateForm({ onClose, initialData }) {
           </div>
         </div>
 
-        {/* Form Content - คงเดิม แต่เพิ่มส่วนปุ่มปัญหา */}
         <div className="flex-1 overflow-y-auto p-6 relative z-10 bg-[#D9DCD6]">
           <div className="space-y-5">
             {forms.map((form, index) => (
@@ -347,7 +368,6 @@ function CreateForm({ onClose, initialData }) {
 
                 <div className={`${form.isCollapsed ? "hidden" : "p-6"}`}>
                   <div className="space-y-6">
-                    {/* Serial Number Field - คงเดิม */}
                     <div className="space-y-2">
                       <label className="block">
                         <span className="text-sm font-medium text-gray-700 flex items-center">
@@ -366,43 +386,42 @@ function CreateForm({ onClose, initialData }) {
                       </label>
                     </div>
 
-                    {/* Problem Description Field - เพิ่มปุ่มปัญหา */}
                     <div className="space-y-2">
                       <label className="block">
                         <span className="text-sm font-medium text-gray-700 flex items-center">
                           Problem Description
                           <span className="text-red-500 ml-1">*</span>
                         </span>
+                        
                         <textarea
                           name="problem"
                           value={form.problem}
                           onChange={(e) => handleChange(form.id, e)}
                           className="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#81c3d7] focus:border-[#3a7ca5] px-4 py-3 bg-white text-sm shadow-sm min-h-[120px] transition-all duration-200"
-                          placeholder="Describe the problem in detail..."
+                          placeholder="Describe the problem or select from common problems below..."
                           required
                         />
-                      </label>
-                      
-                      {/* ส่วนเพิ่มเติม: ปุ่มเลือกปัญหาที่พบบ่อย */}
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-600 mb-2">Common problems:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {commonProblems.map((problem) => (
-                            <button
-                              key={problem}
-                              type="button"
-                              onClick={() => handleSelectProblem(form.id, problem)}
-                              className={`px-3 py-1.5 text-sm rounded-full border transition-all ${
-                                form.problem === problem && problem !== "อื่น ๆ (กรุณาระบุ)"
-                                  ? "bg-[#81c3d7] text-white border-[#81c3d7]"
-                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                              }`}
-                            >
-                              {problem}
-                            </button>
-                          ))}
+                        
+                        <div className="mt-3">
+                          <p className="text-sm text-gray-600 mb-2">Common problems (click to add):</p>
+                          <div className="flex flex-wrap gap-2">
+                            {commonProblems.map((problem) => (
+                              <button
+                                key={problem}
+                                type="button"
+                                onClick={() => handleSelectProblem(form.id, problem)}
+                                className={`px-3 py-1.5 text-sm rounded-full border transition-all ${
+                                  form.selectedProblems.includes(problem)
+                                    ? "bg-[#81c3d7] text-white border-[#81c3d7]"
+                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                {problem}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      </label>
                     </div>
 
                     {/* รูปภาพที่อัปโหลด */}
@@ -440,9 +459,9 @@ function CreateForm({ onClose, initialData }) {
                           class="flex-shrink-0 mt-0.5"
                         ></box-icon>
                         <div className="space-y-2">
-                          <p className="text-sm text-[#16425b] leading-relaxed">
-                            <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
-                          </p>
+                        <p className="text-sm text-[#16425b] leading-relaxed">
+                          <span className="font-medium">Important:</span> "If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs."
+                        </p>
                         </div>
                       </div>
                     </div>
@@ -453,7 +472,6 @@ function CreateForm({ onClose, initialData }) {
           </div>
         </div>
 
-        {/* Footer - คงเดิมทั้งหมด */}
         <div className="sticky bottom-0 bg-white border-gray-200 p-4 flex justify-between items-center z-10 shadow-sm">
           <button
             onClick={addNewForm}
@@ -493,7 +511,6 @@ function CreateForm({ onClose, initialData }) {
         </div>
       </div>
 
-      {/* Loading Overlay - คงเดิม */}
       {isSending && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg flex items-center gap-3">
