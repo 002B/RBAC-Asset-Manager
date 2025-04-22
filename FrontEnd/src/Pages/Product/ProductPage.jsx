@@ -38,7 +38,6 @@ const ProductPage = ({ id }) => {
     setShowForm(false);
   };
 
-  // ฟังก์ชันสำหรับส่งรายงานจาก Guest
   const sendGuestReport = async (formData) => {
     try {
       const response = await fetch(
@@ -69,20 +68,22 @@ const ProductPage = ({ id }) => {
     }
   };
 
-  if (selectedData || !selectedData === 0) {
-    return (
-      <div className="flex flex-col bg-light min-h-screen justify-center items-center">
-        <div className="product-container bg-white p-4 flex flex-col justify-center items-center rounded-lg h-fit drop-shadow">
-          <div className="product-logo flex justify-center">
-            <img className="w-[256px]" src={Logo} alt="Logo" />
-          </div>
-          <div className="flex flex-col gap-2 justify-center items-center">
-            <box-icon name="question-mark" color="#FD6E28" size="lg"></box-icon>
-            <span className="text-2xl">Product Not Found</span>
+  if (selectedData) {
+    if(selectedData.length <= 0) {
+      return (
+        <div className="flex flex-col bg-light min-h-screen justify-center items-center">
+          <div className="product-container bg-white p-4 flex flex-col justify-center items-center rounded-lg h-fit drop-shadow">
+            <div className="product-logo flex justify-center">
+              <img className="w-[256px]" src={Logo} alt="Logo" />
+            </div>
+            <div className="flex flex-col gap-2 justify-center items-center">
+              <box-icon name="question-mark" color="#FD6E28" size="lg"></box-icon>
+              <span className="text-2xl">Product Not Found</span>
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 
   return (

@@ -5,7 +5,6 @@ import "boxicons";
 import "./Dashboard-Worker.css";
 import { useAuth } from "../../Auth/AuthProvider";
 import placeholderImg from "../../assets/img/placeholder.png";
-import L from 'leaflet';
 
 const DashboardWorker = () => {
   const { user } = useAuth();
@@ -69,57 +68,82 @@ const DashboardWorker = () => {
     filterBoxRef.current.classList.toggle("hidden");
   };
 
-  const handleViewDetails = (report) => {
-    SweetAlert.fire({
-      title: `<strong>Report ID: ${report.report_id}</strong>`,
-      html: `
-        <div style="text-align: left; font-size: 14px;">
-          <p><strong>Item ID:</strong> ${report.serial}</p>
-          <p><strong>Client:</strong> ${report.company}</p>
-          <p><strong>Branch:</strong> ${report.branch}</p>
-          <p><strong>Date:</strong> ${report.date}</p>
-        </div>
-      `,
-      imageUrl: placeholderImg,
-      imageWidth: 400,
-      imageHeight: 200,
-      imageAlt: "Report Image",
-      confirmButtonColor: "#FD6E28",
-      showCancelButton: true,
-      cancelButtonText: "Cancel",
-      confirmButtonText: "Open in Google Maps",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(
-            `http://localhost:3000/company/getLocation/${report.company}/${report.branch}`,
-            {
-              method: 'GET',
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          if (!response.ok) {
-            throw new Error('Failed to fetch location');
-          }
-          const locationData = await response.json();
-          if (locationData) {
-            const mapUrl = `https://www.google.com/maps?q=${locationData[0]},${locationData[1]}`;
-            window.open(mapUrl, "_blank");
-          }
-        } catch (error) {
-          console.error("Error fetching location for Google Maps:", error);
-          SweetAlert.fire({
-            title: "Error",
-            text: "Failed to retrieve location.",
-            icon: "error",
-            confirmButtonColor: "#FD6E28",
-          });
+  const handleViewDetails = async (report) => {
+    try {
+      let imageUrl = placeholderImg;
+  
+      try {
+        const res = await fetch(`http://localhost:3000/getImage/${report.report_id}`);
+
+        if (res.ok) {
+          const blob = await res.blob();
+          imageUrl = URL.createObjectURL(blob);
         }
+      } catch (error) {
+        console.error("Error fetching image:", error);
       }
-    });
+  
+      // แสดงรายละเอียดใน SweetAlert
+      SweetAlert.fire({
+        title: `<strong>Report ID: ${report.report_id}</strong>`,
+        html: `
+          <div style="text-align: left; font-size: 14px;">
+            <p><strong>Item ID:</strong> ${report.serial}</p>
+            <p><strong>Client:</strong> ${report.company}</p>
+            <p><strong>Branch:</strong> ${report.branch}</p>
+            <p><strong>Date:</strong> ${report.date}</p>
+          </div>
+        `,
+        imageUrl: imageUrl,
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: "Report Image",
+        confirmButtonColor: "#FD6E28",
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Open in Google Maps",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(
+              `http://localhost:3000/company/getLocation/${report.company}/${report.branch}`,
+              {
+                method: 'GET',
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            );
+            if (!response.ok) {
+              throw new Error('Failed to fetch location');
+            }
+            const locationData = await response.json();
+            if (locationData) {
+              const mapUrl = `https://www.google.com/maps?q=${locationData[0]},${locationData[1]}`;
+              window.open(mapUrl, "_blank");
+            }
+          } catch (error) {
+            console.error("Error fetching location for Google Maps:", error);
+            SweetAlert.fire({
+              title: "Error",
+              text: "Failed to retrieve location.",
+              icon: "error",
+              confirmButtonColor: "#FD6E28",
+            });
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error handling view details:", error);
+      SweetAlert.fire({
+        title: "Error",
+        text: "Something went wrong while fetching the image.",
+        icon: "error",
+        confirmButtonColor: "#FD6E28",
+      });
+    }
   };
+  
   
 
   const handleSubmit = async (reportId) => {

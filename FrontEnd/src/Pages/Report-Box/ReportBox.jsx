@@ -7,7 +7,6 @@ import "./ReportBox.css";
 const ReportBox = () => {
   const { user } = useAuth();
   const [reportList, setReportList] = useState([]); 
-  const [companyList, setCompanyList] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
   const [searchReportTerm, setSearchReportTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
@@ -35,15 +34,8 @@ const ReportBox = () => {
         .catch((error) => console.error("Error fetching reports:", error));
     };
 
-    const fetchCompanies = () => {
-      fetch("http://localhost:3000/company/getAllCompany")
-        .then((res) => res.json())
-        .then((data) => setCompanyList(data))
-        .catch((err) => console.error("Error fetching company list:", err));
-    };
-
     fetchReports();     // โหลดครั้งแรก
-    fetchCompanies();   // โหลดข้อมูลบริษัท
+
 
     const interval = setInterval(fetchReports, 1000); // ดึงซ้ำทุก 1 วินาที
 
