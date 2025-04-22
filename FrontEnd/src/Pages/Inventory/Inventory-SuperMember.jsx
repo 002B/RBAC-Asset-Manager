@@ -29,6 +29,7 @@ const InventorySuperMember = () => {
           item.item_id,
           item.client_id,
           item.client_branch_id,
+          item.item_location,
           item.item_brand,
           item.item_capacity,
           item.item_color,
@@ -43,8 +44,10 @@ const InventorySuperMember = () => {
         setLoading(false);
       }
     };
-
-    fetchData();
+    const intervalId = setInterval(async () => {
+      await fetchData();
+    }, 1000);
+    return () => clearInterval(intervalId);
   }, [user.company, user.selectedBranch]);
 
   if (loading) {
@@ -69,6 +72,7 @@ const InventorySuperMember = () => {
             "item_id",
             "client_id",
             "client_branch_id",
+            "item_location",
             "item_brand",
             "item_capacity",
             "item_color",

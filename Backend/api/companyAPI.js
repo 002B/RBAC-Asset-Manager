@@ -25,10 +25,9 @@ router.get('/getAllBranch/:company', auth, async (req, res) => {
     }
 });
 
-router.get('/getCompanyBranch/:company', authSuperMember, async (req, res) => {
-    const { company } = req.params;
+router.get('/getCompanyBranch/', authSuperMember, async (req, res) => {
     try {
-        const branches = await companyFunc.getCompanyBranch(company);
+        const branches = await companyFunc.getCompanyBranch();
         res.json(branches);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching company branches' });

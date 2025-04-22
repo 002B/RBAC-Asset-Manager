@@ -8,6 +8,7 @@ const InventoryMember = () => {
   const { user } = useAuth();
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,6 +27,7 @@ const InventoryMember = () => {
           item.item_id,
           item.client_id,
           item.client_branch_id,
+          item.item_location,
           item.item_brand,
           item.item_capacity,
           item.item_color,
@@ -41,7 +43,10 @@ const InventoryMember = () => {
       }
     };
 
-    fetchData();
+    const intervalId = setInterval(async () => {
+      await fetchData();
+    }, 1000);
+    return () => clearInterval(intervalId);
   }, [user.company, user.selectedBranch]);
 
   if (loading) return <div>Loading...</div>;
@@ -69,6 +74,7 @@ const InventoryMember = () => {
             "item_id",
             "client_id",
             "client_branch_id",
+            "item_location",
             "item_brand",
             "item_capacity",
             "item_color",
@@ -87,3 +93,4 @@ const InventoryMember = () => {
 };
 
 export default InventoryMember;
+

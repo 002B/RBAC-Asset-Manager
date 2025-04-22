@@ -70,7 +70,7 @@ router.get("/getItemList/count/:company/:branch", auth, async (req, res) => {
   }
 });
 
-router.get("/getItemInfo/:id", authWorkerAndAdmin, async (req, res) => {
+router.get("/getItemInfo/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const itemDetails = await itemFunc.getItemInfo(id);

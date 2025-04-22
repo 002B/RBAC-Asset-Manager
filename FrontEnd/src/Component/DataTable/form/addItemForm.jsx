@@ -16,7 +16,8 @@ const AddItemForm = ({ onClose, onSubmit }) => {
     item_color: "red",
     item_type: "foam",
     item_class: "ABC",
-    item_quantity: 1, // เพิ่มจำนวนใน formData
+    item_quantity: 1,
+    item_location: "", // เพิ่มฟิลด์สำหรับที่ตั้งของถัง
   });
 
   useEffect(() => {
@@ -73,7 +74,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
   const handleQuantityChange = (e) => {
     setFormData({
       ...formData,
-      item_quantity: e.target.value,  // ปรับจำนวนใน formData
+      item_quantity: e.target.value, 
     });
   };
 
@@ -88,11 +89,12 @@ const AddItemForm = ({ onClose, onSubmit }) => {
         item_color: formData.item_color,
         item_type: formData.item_type,
         item_class: formData.item_class,
-        item_quantity: formData.item_quantity, // ส่งจำนวนไปใน body ของ request
+        item_quantity: formData.item_quantity,
+        item_location: formData.item_location, // ส่งข้อมูลตำแหน่งด้วย
       };
 
       const response = await fetch(
-        `http://localhost:3000/item/createItem/${company}/${branch}/${formData.item_quantity}`,  // ส่งจำนวนใน URL
+        `http://localhost:3000/item/createItem/${company}/${branch}/${formData.item_quantity}`,
         {
           method: "POST",
           headers: {
@@ -166,6 +168,20 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                   </option>
                 ))}
               </select>
+            </div>
+                        {/* New Item Location Input */}
+                        <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Item Location
+              </label>
+              <input
+                type="text"
+                name="item_location"
+                value={formData.item_location}
+                onChange={handleChange}
+                className="border-2 border-primary rounded w-full p-2"
+                required
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -258,6 +274,8 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
+
           </div>
           <div className="flex justify-end space-x-2">
             <button
