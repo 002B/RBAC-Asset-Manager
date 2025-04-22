@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const companyFunc = require('./company');
 const {auth, authSuperMember, authWorkerAndAdmin, authAdmin} = require('./auth');
+const CompanyModel = require('./DB/client.js');
 
 router.get('/getAllCompany', authWorkerAndAdmin, async (req, res) => {
     try {
@@ -92,15 +93,41 @@ router.post('/createCompany/:company/:branch', authWorkerAndAdmin, async (req, r
 router.put('/updateCompany/:company/:branch', authWorkerAndAdmin, async (req, res) => {
     const { company, branch } = req.params;
     const { location } = req.body;
+    
     try {
-        const updateCompany = await companyFunc.updateCompany(company, branch, location);
-        if (updateCompany.nModified === 1) {
-            res.json({ message: `Company ${company} ${branch} updated successfully` });
+        const updateResult = await companyFunc.updateCompany(company, branch, location);
+        
+        if (updateResult) {
+            const updatedBranch = await CompanyModel.findOne({ // Make sure ClientModel is imported
+                client_id: company,
+                client_branch_id: branch
+            }).lean();
+            
+            if (!updatedBranch) {
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Branch not found after update' 
+                });
+            }
+            
+            res.status(200).json({
+                success: true,
+                message: `Branch updated successfully`,
+                data: updatedBranch
+            });
         } else {
-            res.status(304).json({ message: `Company ${company} ${branch} not modified` });
+            res.status(200).json({
+                success: false,
+                message: `No changes made to the branch` 
+            });
         }
     } catch (error) {
-        res.status(500).json({ message: 'Error updating company' });
+        console.error('Error updating company:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error updating company',
+            error: error.message 
+        });
     }
 });
 

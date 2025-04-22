@@ -112,20 +112,22 @@ async function createCompany(company, branch, location) {
 
 async function updateCompany(company, branch, location) {
     try {
-        const result = await CompanyModel.updateOne({
-            client_id: company,
-            client_branch_id: branch
-        }, {
-            $set: {
-                location: location
+        const result = await CompanyModel.updateOne(
+            {
+                client_id: company,
+                client_branch_id: branch
+            },
+            {
+                $set: { location: location }
             }
-        });
+        );
         return result.modifiedCount > 0;
     } catch (error) {
         console.error(`Error updating company ${company} branch ${branch}:`, error);
-        return false;
+        throw error;
     }
 }
+
 
 async function deleteCompany(company, branch) {
     try {

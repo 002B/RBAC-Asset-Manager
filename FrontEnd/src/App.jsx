@@ -18,6 +18,7 @@ import Setting from "./Pages/Setting/Setting.jsx";
 import ActivityLog from "./Pages/Activity-Log/ActivityLog";
 import ItemLog from "./Pages/Item-Log/ItemLog";
 import NotFound from './Pages/Not-Found/Not-Found';
+import ClientManagement from "./Pages/Client-Management/Client-Management.jsx";
 
 const router = createBrowserRouter(
   [
@@ -78,6 +79,20 @@ const router = createBrowserRouter(
               ]}
             >
               <Inventory />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/client-management",
+          element: (
+            <ProtectedRoute
+              allowedRoles={[
+                "Super Admin",
+                "Admin",
+                "Worker"
+              ]}
+            >
+              <ClientManagement />
             </ProtectedRoute>
           ),
         },
