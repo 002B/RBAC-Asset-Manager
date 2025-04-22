@@ -47,7 +47,7 @@ const ItemLog = () => {
             </div>
             <div className="w-full rounded drop-shadow">
                 <div className='bg-white p-1 rounded drop-shadow'>
-                    <DataTable tIcon={"revision"} tName={"Activity Log"} title={["Log_ID", "Item ID", "Date", "Time", "Activity", "Username", "Role"]} data={activityLog} hasButton={false} />
+                    <DataTable tIcon={"revision"} tName={"Activity Log"} title={["Log_ID", "Item ID", "Date", "Time", "Activity", "Username", "Role"]} data={activityLog} hasButton={false} itemPerPage={20}/>
                 </div>
             </div>
         </div>
