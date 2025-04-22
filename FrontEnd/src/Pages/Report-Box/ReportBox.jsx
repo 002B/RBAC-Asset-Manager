@@ -6,7 +6,7 @@ import "./ReportBox.css";
 
 const ReportBox = () => {
   const { user } = useAuth();
-  const [reportList, setReportList] = useState([]);
+  const [reportList, setReportList] = useState([]); 
   const [companyList, setCompanyList] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
   const [searchReportTerm, setSearchReportTerm] = useState("");
@@ -17,7 +17,6 @@ const ReportBox = () => {
 
   const filterBoxRef = useRef();
 
-  // ✅ ดึงข้อมูลรายงานแบบอัปเดตอัตโนมัติทุก 5 วินาที
   useEffect(() => {
     const fetchReports = () => {
       fetch("http://localhost:3000/report/getReportByStatus/pending", {
@@ -26,7 +25,13 @@ const ReportBox = () => {
         },
       })
         .then((response) => response.json())
-        .then((data) => setReportList(data))
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setReportList(data); // ตรวจสอบว่าเป็น array แล้วค่อยตั้งค่า
+          } else {
+            console.error("Fetched data is not an array:", data);
+          }
+        })
         .catch((error) => console.error("Error fetching reports:", error));
     };
 
@@ -40,10 +45,22 @@ const ReportBox = () => {
     fetchReports();     // โหลดครั้งแรก
     fetchCompanies();   // โหลดข้อมูลบริษัท
 
-    const interval = setInterval(fetchReports, 1000); // ✅ ดึงซ้ำทุก 1 วิ
+    const interval = setInterval(fetchReports, 1000); // ดึงซ้ำทุก 1 วินาที
 
     return () => clearInterval(interval); // เคลียร์ตอน unmount
   }, []);
+
+  const showImagePreview = (reportId) => {
+    // แสดงตัวอย่างภาพจาก API โดยใช้ SweetAlert
+    SweetAlert.fire({
+
+      imageUrl: `http://localhost:3000/getImage/${reportId}`, // ดึงภาพจาก API
+      imageWidth: 400,
+      imageHeight: 400,
+      imageAlt: "Image Preview",
+      showConfirmButton: true,
+    });
+  };
 
   const updateReportStatus = async (status) => {
     const selectedIds = Object.keys(checkedItems).filter((id) => checkedItems[id]);
@@ -54,7 +71,7 @@ const ReportBox = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ ids: selectedIds , user: user }),
+        body: JSON.stringify({ ids: selectedIds, user: user }),
       });
 
       const data = await response.json();
@@ -234,9 +251,8 @@ const ReportBox = () => {
             </div>
           </div>
         </div>
-
-        {/* LIST HEADER */}
-        <div className="report-box-list-body min-fit w-full gap-1 grid">
+                {/* LIST HEADER */}
+                <div className="report-box-list-body min-fit w-full gap-1 grid">
           <div className="report-box-list-header grid grid-cols-10 w-full h-[48px] p-2 bg-white border-2 border-secondary rounded-[8px] text-secondary">
             <div className="col-span-2 flex gap-2 items-center">
               <input type="checkbox" onChange={toggleAllItemCheckBox} />
@@ -249,30 +265,61 @@ const ReportBox = () => {
             <div className="text-center font-bold ">Date</div>
             <div className="text-center font-bold ">Time</div>
             <div className="text-center font-bold col-span-2">Problem</div>
+
           </div>
 
           {/* REPORT LIST */}
           <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-light gap-1 pt-1 pb-1">
-            {filteredReports.map((report, index) => (
-              <div
-                className="report-box-list-item grid grid-cols-10 w-full h-fit items-center p-2 bg-white border-2 border-light rounded-[8px] cursor-pointer hover:brightness-90"
-                key={index}
-                onClick={() => handleItemCheck(report.report_id)}
-              >
-                <span className="flex gap-2 items-center col-span-2">
-                  <input type="checkbox" checked={checkedItems[report.report_id] || false} onChange={() => handleItemCheck(report.report_id)} />
-                  <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
-                  {report.report_id}
-                </span>
-                <span className="text-center">{report.item_id}</span>
-                <span className="text-center">{report.client_id}</span>
-                <span className="text-center">{report.client_branch_id}</span>
-                <span className="text-center ">{report.send_by}</span>
-                <span className="text-center">{report.createAt.split("T")[0].split("-").reverse().join("-")}</span>
-                <span className="text-center">{report.createAt.split("T")[1].split(".")[0]}</span>
-                <span className="break-words col-span-2">{report.problem}</span>
-              </div>
-            ))}
+          {filteredReports.map((report, index) => (
+  <div
+    className="report-box-list-item grid grid-cols-10 w-full h-fit items-center p-2 bg-white border-2 border-light rounded-[8px] cursor-pointer hover:brightness-90"
+    key={index}
+    onClick={() => handleItemCheck(report.report_id)}
+  >
+    {/* Report Number */}
+    <span className="flex gap-2 items-center col-span-2">
+      <input type="checkbox" checked={checkedItems[report.report_id] || false} onChange={() => handleItemCheck(report.report_id)} />
+      <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
+      {report.report_id}
+    </span>
+
+    {/* Serial Number */}
+    <span className="text-center">{report.item_id}</span>
+
+    {/* Company */}
+    <span className="text-center">{report.client_id}</span>
+
+    {/* Branch */}
+    <span className="text-center">{report.client_branch_id}</span>
+
+    {/* Send By */}
+    <span className="text-center ">{report.send_by}</span>
+
+    {/* Date */}
+    <span className="text-center">{report.createAt.split("T")[0].split("-").reverse().join("-")}</span>
+
+    {/* Time */}
+    <span className="text-center">{report.createAt.split("T")[1].split(".")[0]}</span>
+
+    {/* Problem */}
+    <span className="break-words col-span-2">{report.problem}</span>
+
+    {/* เพิ่มคอลัมน์สำหรับปุ่ม Preview Image */}
+    {report.image && (
+      <div className="col-span-2 text-center">
+        <button
+          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent the row click from being triggered
+            showImagePreview(report.report_id);
+          }}
+        >
+          Preview Image
+        </button>
+      </div>
+    )}
+  </div>
+))}
           </div>
         </div>
 

@@ -1,3 +1,4 @@
+
 const reportModel = require("./DB/report.js");
 
 async function getAllReport() {
@@ -133,7 +134,7 @@ async function getReportByUserFixing(user) {
     }
 }
 
-async function createReport(company, branch, id, data) {
+async function createReport(company, branch, id, data, file) {
     try {
         const currentYear = new Date().getFullYear();
         const regex = new RegExp(`^RP-${currentYear}-\\d{7}$`, 'i');
@@ -152,8 +153,8 @@ async function createReport(company, branch, id, data) {
         }
 
         const newReportId = `RP-${new Date().getFullYear()}-${lastNumber.toString().padStart(7, '0')}`;
-
-        await reportModel.create({
+        const filePath = file ? file.path : null;
+        const newReport = await reportModel.create({
             report_id: newReportId,
             item_id: id,
             client_id: company,
@@ -161,16 +162,17 @@ async function createReport(company, branch, id, data) {
             createAt: new Date().toISOString(),
             status: "pending",
             send_by: data.send_by,
-            problem: data.problem
+            problem: data.problem,
+            image: filePath
         });
 
-        return true;
+        return newReport ? true : false;
     } catch (error) {
         console.log("Error adding new report:", error);
-
         return false;
     }
 }
+
 
 async function updateReport(ids, status, send_to) {
     try {
