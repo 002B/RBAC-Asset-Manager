@@ -1,0 +1,1230 @@
+swagger: "2.0"
+info:
+  title: "API Documentation"
+  version: "1.0.0"
+  description: "Documentation for all API endpoints"
+
+tags:
+  - name: "Items"
+    description: "Item management endpoints"
+  - name: "Item Logs"
+    description: "Item log endpoints"
+  - name: "Reports"
+    description: "Report management endpoints"
+  - name: "Users"
+    description: "User management endpoints"
+  - name: "Activity Logs"
+    description: "Activity log endpoints"
+  - name: "/company"
+    description: "Company management endpoints"
+
+paths:
+  # Item API Endpoints
+  /item/getAllItem:
+    get:
+      tags: ["Items"]
+      summary: "Get all items"
+      description: "Retrieve all items (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of all items"
+        500:
+          description: "Error fetching items"
+
+  /item/getAllItem/count:
+    get:
+      tags: ["Items"]
+      summary: "Get item count"
+      description: "Get count of all items (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "Count of all items"
+        500:
+          description: "Error fetching item count"
+
+  /item/getItemList/{company}:
+    get:
+      tags: ["Items"]
+      summary: "Get items by company"
+      description: "Retrieve items for a specific company (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of items for the company"
+        404:
+          description: "No items found"
+        500:
+          description: "Error fetching items"
+
+  /item/getItemList/count/{company}:
+    get:
+      tags: ["Items"]
+      summary: "Get item count by company"
+      description: "Get count of items for a specific company (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Count of items for the company"
+        404:
+          description: "No items found"
+        500:
+          description: "Error fetching item count"
+
+  /item/getItemList/{company}/{branch}:
+    get:
+      tags: ["Items"]
+      summary: "Get items by company and branch"
+      description: "Retrieve items for a specific company branch (Authenticated users)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of items for the branch"
+        404:
+          description: "No items found"
+        500:
+          description: "Error fetching items"
+
+  /item/getItemList/count/{company}/{branch}:
+    get:
+      tags: ["Items"]
+      summary: "Get item count by company and branch"
+      description: "Get count of items for a specific company branch (Authenticated users)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Count of items for the branch"
+        404:
+          description: "No items found"
+        500:
+          description: "Error fetching item count"
+
+  /item/getItemInfo/{id}:
+    get:
+      tags: ["Items"]
+      summary: "Get item details"
+      description: "Retrieve details for a specific item (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Item details"
+        404:
+          description: "Item not found"
+        500:
+          description: "Error fetching item details"
+
+  /item/createItem/{company}/{branch}/{count}:
+    post:
+      tags: ["Items"]
+      summary: "Create multiple items"
+      description: "Create multiple items for a company branch (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "count"
+          in: "path"
+          required: true
+          type: "integer"
+        - name: "data"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+        - name: "user"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        200:
+          description: "Items created successfully"
+        500:
+          description: "Error creating items"
+
+  /item/updateItem/{id}:
+    put:
+      tags: ["Items"]
+      summary: "Update an item"
+      description: "Update details for a specific item (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "data"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+        - name: "user"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        200:
+          description: "Item updated successfully"
+        404:
+          description: "Item not found"
+        500:
+          description: "Error updating item"
+
+  /item/updateStatus:
+    put:
+      tags: ["Items"]
+      summary: "Update item status"
+      description: "Update status for multiple items (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "item_ids"
+          in: "body"
+          required: true
+          schema:
+            type: "array"
+            items:
+              type: "string"
+        - name: "status"
+          in: "body"
+          required: true
+          type: "string"
+        - name: "user"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        200:
+          description: "Items status updated successfully"
+        404:
+          description: "No items found or no updates were made"
+        500:
+          description: "Error updating item status"
+
+  /item/deleteItem/{id}:
+    delete:
+      tags: ["Items"]
+      summary: "Delete an item"
+      description: "Delete a specific item (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "user"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        200:
+          description: "Item deleted successfully"
+        404:
+          description: "Item not found"
+        500:
+          description: "Error deleting item"
+
+  # Item Log API Endpoints
+  /itemlog/getAllLog:
+    get:
+      tags: ["Item Logs"]
+      summary: "Get all item logs"
+      description: "Retrieve all item logs (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of all item logs"
+        500:
+          description: "Error fetching logs"
+
+  # Report API Endpoints
+  /report/getAllReport:
+    get:
+      tags: ["Reports"]
+      summary: "Get all reports"
+      description: "Retrieve all reports (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of all reports"
+        500:
+          description: "Error fetching reports"
+
+  /report/getAllReport/count:
+    get:
+      tags: ["Reports"]
+      summary: "Get report count"
+      description: "Get count of all reports (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "Count of all reports"
+        500:
+          description: "Error fetching report count"
+
+  /report/getAllReportByStatus/{status}:
+    get:
+      tags: ["Reports"]
+      summary: "Get reports by status"
+      description: "Retrieve reports by status (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "status"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of reports with the specified status"
+        400:
+          description: "Status must not be empty"
+        500:
+          description: "Error fetching reports by status"
+
+  /report/getAllReportByStatus/count/{status}:
+    get:
+      tags: ["Reports"]
+      summary: "Get report count by status"
+      description: "Get count of reports by status (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "status"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Count of reports with the specified status"
+        400:
+          description: "Status must not be empty"
+        500:
+          description: "Error fetching reports by status"
+
+  /report/getReportByUserDone/{user}:
+    get:
+      tags: ["Reports"]
+      summary: "Get done reports by user"
+      description: "Retrieve done reports for a specific user (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "user"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of done reports for the user"
+        400:
+          description: "User must not be empty"
+        404:
+          description: "No done reports found for this user"
+        500:
+          description: "Error fetching done reports by user"
+
+  /report/getReportByUserFixing/{user}:
+    get:
+      tags: ["Reports"]
+      summary: "Get fixing reports by user"
+      description: "Retrieve fixing reports for a specific user (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "user"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of fixing reports for the user"
+        400:
+          description: "User must not be empty"
+        404:
+          description: "No fixing reports found for this user"
+        500:
+          description: "Error fetching fixing reports by user"
+
+  /report/getReportByUser/{user}:
+    get:
+      tags: ["Reports"]
+      summary: "Get reports by user"
+      description: "Retrieve all reports for a specific user (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "user"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of reports for the user"
+        400:
+          description: "User must not be empty"
+        404:
+          description: "User not found"
+        500:
+          description: "Error fetching reports by user"
+
+  /report/getReportByCom/{company}:
+    get:
+      tags: ["Reports"]
+      summary: "Get reports by company"
+      description: "Retrieve reports for a specific company (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of reports for the company"
+        400:
+          description: "Company must not be empty"
+        403:
+          description: "Access denied to this company data"
+        500:
+          description: "Error fetching reports by company"
+
+  /report/getReportByComCount/{company}:
+    get:
+      tags: ["Reports"]
+      summary: "Get report count by company"
+      description: "Get count of reports for a specific company (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Count of reports for the company"
+        400:
+          description: "Company must not be empty"
+        403:
+          description: "Access denied to this company data"
+        500:
+          description: "Error fetching report count by company"
+
+  /report/getReportByBranch/{company}/{branch}:
+    get:
+      tags: ["Reports"]
+      summary: "Get reports by branch"
+      description: "Retrieve reports for a specific company branch (Authenticated users)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of reports for the branch"
+        400:
+          description: "Company and branch must not be empty"
+        403:
+          description: "Access denied to this branch data"
+        500:
+          description: "Error fetching reports by branch"
+
+  /report/getReportStatusByCom/{company}/{status}:
+    get:
+      tags: ["Reports"]
+      summary: "Get reports by company and status"
+      description: "Retrieve reports for a company with specific status (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "status"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of reports matching the criteria"
+        400:
+          description: "Company and status must not be empty"
+        403:
+          description: "Access denied to this company data"
+        500:
+          description: "Error fetching reports by company and status"
+
+  /report/getReportStatusByCom/count/{company}/{status}:
+    get:
+      tags: ["Reports"]
+      summary: "Get report count by company and status"
+      description: "Get count of reports for a company with specific status (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "status"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Count of reports matching the criteria"
+        400:
+          description: "Company and status must not be empty"
+        403:
+          description: "Access denied to this company data"
+        500:
+          description: "Error fetching report count by company and status"
+
+  /report/getReportStatusByBranch/{company}/{branch}/{status}:
+    get:
+      tags: ["Reports"]
+      summary: "Get reports by branch and status"
+      description: "Retrieve reports for a branch with specific status (Authenticated users)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "status"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of reports matching the criteria"
+        400:
+          description: "Company, branch and status must not be empty"
+        403:
+          description: "Access denied to this branch data"
+        500:
+          description: "Error fetching reports by branch and status"
+
+  /report/getReportStatusByBranch/count/{company}/{branch}/{status}:
+    get:
+      tags: ["Reports"]
+      summary: "Get report count by branch and status"
+      description: "Get count of reports for a branch with specific status (Authenticated users)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "status"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Count of reports matching the criteria"
+        400:
+          description: "Company, branch and status must not be empty"
+        403:
+          description: "Access denied to this branch data"
+        500:
+          description: "Error fetching reports by branch and status"
+
+  /report/getReportById/{id}:
+    get:
+      tags: ["Reports"]
+      summary: "Get report by ID"
+      description: "Retrieve a specific report by ID (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Report details"
+        400:
+          description: "ID must not be empty"
+        500:
+          description: "Internal server error"
+
+  /report/createReport/{id}:
+    post:
+      tags: ["Reports"]
+      summary: "Create a report"
+      description: "Create a new report for an item (Public)"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "data"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              problem:
+                type: "string"
+        - name: "user"
+          in: "body"
+          schema:
+            type: "object"
+      responses:
+        200:
+          description: "Report created successfully"
+        400:
+          description: "Incomplete data"
+        404:
+          description: "Item not found"
+        500:
+          description: "Error creating report"
+
+  /report/updateReport/{status}:
+    put:
+      tags: ["Reports"]
+      summary: "Update report status"
+      description: "Update status for multiple reports (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "status"
+          in: "path"
+          required: true
+          type: "string"
+          enum: ["pending", "accepted", "fixing", "done", "rejected"]
+        - name: "ids"
+          in: "body"
+          required: true
+          schema:
+            type: "array"
+            items:
+              type: "string"
+        - name: "send_to"
+          in: "body"
+          type: "string"
+        - name: "user"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        200:
+          description: "Report and items updated successfully"
+        400:
+          description: "Invalid status or missing IDs"
+        404:
+          description: "Error updating item status"
+        500:
+          description: "Error updating report"
+
+  /report/getReportByStatus/{status}:
+    get:
+      tags: ["Reports"]
+      summary: "Get reports by status"
+      description: "Retrieve reports with specific status (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "status"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of reports with the specified status"
+        400:
+          description: "Status must not be empty"
+        500:
+          description: "Error fetching reports by status"
+
+  # Users API Endpoints
+  /users/me:
+    get:
+      tags: ["Users"]
+      summary: "Get current user info"
+      description: "Get information about the currently authenticated user"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "Current user information"
+        500:
+          description: "Error fetching user data"
+
+  /users/login:
+    post:
+      tags: ["Users"]
+      summary: "User login"
+      description: "Authenticate user and get access token"
+      parameters:
+        - name: "username"
+          in: "body"
+          required: true
+          type: "string"
+        - name: "password"
+          in: "body"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Login successful"
+        400:
+          description: "Username and password are required"
+        500:
+          description: "Error processing login"
+
+  /users/getClientUser/{client_id}:
+    get:
+      tags: ["Users"]
+      summary: "Get client users"
+      description: "Retrieve users for a specific client (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "client_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of client users"
+        403:
+          description: "Access denied to this client data"
+        500:
+          description: "Error fetching user details"
+
+  /users/getUsersCount/{client_id}:
+    get:
+      tags: ["Users"]
+      summary: "Get user count for client"
+      description: "Get count of users for a specific client (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "client_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Count of client users"
+        403:
+          description: "Access denied to this client data"
+        500:
+          description: "Error fetching user count"
+
+  /users/createClientUser:
+    post:
+      tags: ["Users"]
+      summary: "Create client user"
+      description: "Create a new user for a client (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "userData"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        201:
+          description: "User created successfully"
+        400:
+          description: "Missing required fields"
+        409:
+          description: "Username already exists"
+        500:
+          description: "Error processing user operation"
+
+  /users/updateClientUser/{username}:
+    put:
+      tags: ["Users"]
+      summary: "Update client user"
+      description: "Update a client user (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "username"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "userData"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        200:
+          description: "User updated successfully"
+        400:
+          description: "Missing required fields"
+        403:
+          description: "Cannot modify this user type"
+        500:
+          description: "Error processing user operation"
+
+  /users/deleteClientUser/{username}:
+    delete:
+      tags: ["Users"]
+      summary: "Delete client user"
+      description: "Delete a client user (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "username"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "User deleted successfully"
+        403:
+          description: "Cannot modify this user type"
+        500:
+          description: "Error processing user operation"
+
+  /users/getWorkerUser:
+    get:
+      tags: ["Users"]
+      summary: "Get worker users"
+      description: "Retrieve all worker users (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of worker users"
+        500:
+          description: "Error fetching user details"
+
+  /users/getAllUsers:
+    get:
+      tags: ["Users"]
+      summary: "Get all users"
+      description: "Retrieve all users (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of all users"
+        500:
+          description: "Error fetching user details"
+
+  /users/getOperatorUser:
+    get:
+      tags: ["Users"]
+      summary: "Get operator users"
+      description: "Retrieve all operator users (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of operator users"
+        500:
+          description: "Error fetching user details"
+
+  /users/getAllUsersCount:
+    get:
+      tags: ["Users"]
+      summary: "Get total user count"
+      description: "Get count of all users (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "Count of all users"
+        500:
+          description: "Error fetching user count"
+
+  /users/getUser/{username}:
+    get:
+      tags: ["Users"]
+      summary: "Get user by username"
+      description: "Retrieve a specific user by username (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "username"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "User details"
+        500:
+          description: "Error fetching user details"
+
+  /users/createUser:
+    post:
+      tags: ["Users"]
+      summary: "Create user"
+      description: "Create a new user (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "userData"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        201:
+          description: "User created successfully"
+        400:
+          description: "Missing required fields"
+        409:
+          description: "Username already exists"
+        500:
+          description: "Error processing user operation"
+
+  /users/updateUser/{username}:
+    put:
+      tags: ["Users"]
+      summary: "Update user"
+      description: "Update a user (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "username"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "userData"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        200:
+          description: "User updated successfully"
+        400:
+          description: "Missing required fields"
+        403:
+          description: "Cannot modify this user type"
+        500:
+          description: "Error processing user operation"
+
+  /users/deleteUser/{username}:
+    delete:
+      tags: ["Users"]
+      summary: "Delete user"
+      description: "Delete a user (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "username"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "User deleted successfully"
+        403:
+          description: "Cannot modify this user type"
+        500:
+          description: "Error processing user operation"
+
+  # Activity Log API Endpoints
+  /activitylog/all:
+    get:
+      tags: ["Activity Logs"]
+      summary: "Get all activity logs"
+      description: "Retrieve all activity logs (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of all activity logs"
+        404:
+          description: "No activity logs found"
+        500:
+          description: "Error fetching activity logs"
+
+  /activitylog/login-logout:
+    get:
+      tags: ["Activity Logs"]
+      summary: "Get login/logout logs"
+      description: "Retrieve login and logout activity logs (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of login/logout logs"
+        404:
+          description: "No activity logs found"
+        500:
+          description: "Error fetching activity logs"
+
+  /activitylog/create:
+    post:
+      tags: ["Activity Logs"]
+      summary: "Create activity log"
+      description: "Create a new activity log (Public)"
+      parameters:
+        - name: "logData"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+      responses:
+        201:
+          description: "Activity log created successfully"
+        500:
+          description: "Error creating activity log"
+
+  # Company API Endpoints
+  /company/getAllCompany:
+    get:
+      tags: ["/company"]
+      summary: "Get all /company"
+      description: "Retrieve all /company (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      responses:
+        200:
+          description: "List of all /company"
+        500:
+          description: "Error fetching all company"
+
+  /company/getAllBranch/{company}:
+    get:
+      tags: ["/company"]
+      summary: "Get all branches for company"
+      description: "Retrieve all branches for a specific company (Authenticated users)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of branches for the company"
+        404:
+          description: "No branches found"
+        500:
+          description: "Error fetching branch"
+
+  /company/getCompanyBranch/{company}:
+    get:
+      tags: ["/company"]
+      summary: "Get company branches"
+      description: "Retrieve branches for a specific company (Super Member only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "List of company branches"
+        500:
+          description: "Error fetching company branches"
+
+  /company/getNextCheck/{company}/{branch}:
+    get:
+      tags: ["/company"]
+      summary: "Get next check date"
+      description: "Retrieve next check date for a company branch (Authenticated users)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Next check date"
+        500:
+          description: "Error fetching next check"
+
+  /company/getLastCheck/{company}/{branch}:
+    get:
+      tags: ["/company"]
+      summary: "Get last check date"
+      description: "Retrieve last check date for a company branch (Authenticated users)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Last check date"
+        500:
+          description: "Error fetching last check"
+
+  /company/createCompany/{company}/{branch}:
+    post:
+      tags: ["/company"]
+      summary: "Create company"
+      description: "Create a new company branch (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "location"
+          in: "body"
+          required: true
+          type: "string"
+      responses:
+        201:
+          description: "Company created successfully"
+        500:
+          description: "Error creating company"
+
+  /company/updateCompany/{company}/{branch}:
+    put:
+      tags: ["/company"]
+      summary: "Update company"
+      description: "Update a company branch (Worker and Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "location"
+          in: "body"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Company updated successfully"
+        304:
+          description: "Company not modified"
+        500:
+          description: "Error updating company"
+
+  /company/deleteCompany/{company}/{branch}:
+    delete:
+      tags: ["/company"]
+      summary: "Delete company"
+      description: "Delete a company branch (Admin only)"
+      security:
+        - bearerAuth: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAyYjk3NWFjMTk0OTAwMDZmNjRhMjciLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwiZGlzcGxheV9uYW1lIjoiQWRtaW4iLCJpYXQiOjE3NDUyNjM2MTUsImV4cCI6MTc0NTI5MjQxNX0.jZUUnrPJMyrYQM5L5RzK3HPTvlTwl95FKCHgQUo9uf8] 
+      parameters:
+        - name: "company"
+          in: "path"
+          required: true
+          type: "string"
+        - name: "branch"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Company deleted successfully"
+        500:
+          description: "Error deleting company"
+
+securityDefinitions:
+  bearerAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    description: "JWT authorization token"
