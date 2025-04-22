@@ -18,14 +18,13 @@ const commonProblems = [
 async function sendReport(data, isGuest = false) {
   try {
     const formData = new FormData();
-    formData.append("data", JSON.stringify(data)); // ข้อมูลที่คุณจะส่ง
+    formData.append("data", JSON.stringify(data));
     if (data.image) {
-      formData.append("image", data.image); // เพิ่มไฟล์รูปที่อัปโหลด
+      formData.append("image", data.image);
     }
 
     const headers = {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "application/json",
     };
 
     const res = await fetch(
@@ -51,18 +50,21 @@ async function sendReport(data, isGuest = false) {
 
 function CreateForm({ onClose, initialData }) {
   const { user } = useAuth();
-  
   const [forms, setForms] = useState([
     {
       id: 1,
       serialNumber: initialData?.serialNumber || "",
       problem: "",
+      selectedProblems: [],
+      image: null,
+      selectedProblems: [], // Ensure this is initialized as an empty array
       image: null, // เพิ่ม state สำหรับจัดเก็บไฟล์รูปภาพ
       isCollapsed: false,
     },
   ]);
   const [isSending, setIsSending] = useState(false);
 
+  //...
   const [uploadedImage, setUploadedImage] = useState(null); // state สำหรับเก็บรูปที่อัปโหลด
 
   // ฟังก์ชันเดิมทั้งหมดคงเดิม
@@ -154,6 +156,7 @@ function CreateForm({ onClose, initialData }) {
   };
 
   const confirmSend = async () => {
+    //...
     const emptyFields = forms.some(
       (form) => !form.serialNumber || !form.problem.trim()
     );
@@ -194,11 +197,13 @@ function CreateForm({ onClose, initialData }) {
               serialNumber: form.serialNumber,
               problem: form.problem,
               user: user,
+              image: form.image,
               image: form.image, // ส่งรูปภาพในแต่ละฟอร์ม
             }, isGuest)
           );
         }
 
+        //...
         SweetAlert.fire({
           title: "Success!",
           text: `Your ${forms.length} report${
@@ -219,6 +224,7 @@ function CreateForm({ onClose, initialData }) {
         ]);
         onClose();
       } catch (error) {
+        //...
         let errorMessage = "Failed to send reports. Please try again.";
         if (error.message.includes("Network Error")) {
           errorMessage =
@@ -239,6 +245,7 @@ function CreateForm({ onClose, initialData }) {
     }
   };
 
+  //...
   const confirmClose = () => {
     const hasUnsavedData = forms.some(
       (form) => form.serialNumber || form.problem || form.image || form.selectedProblems.length > 0
@@ -460,7 +467,7 @@ function CreateForm({ onClose, initialData }) {
                         ></box-icon>
                         <div className="space-y-2">
                         <p className="text-sm text-[#16425b] leading-relaxed">
-                          <span className="font-medium">Important:</span> "If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs."
+                          <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
                         </p>
                         </div>
                       </div>
@@ -540,3 +547,4 @@ CreateForm.propTypes = {
 };
 
 export default CreateForm;
+
