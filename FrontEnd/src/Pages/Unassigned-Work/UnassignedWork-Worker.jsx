@@ -228,26 +228,7 @@ const UnassignedWork = () => {
                 <div className="unassigned-work-card-body flex flex-col justify-center items-center">
                   <h3 className="text-secondary font-bold">{item.client_id}</h3>
                   <h4 className="italic">{item.client_branch_id}</h4>
-                  <div className="flex items-center justify-center">
-                    <box-icon
-                      name="time"
-                      type="regular"
-                      color="#FD6E28"
-                      size="sm"
-                    ></box-icon>
-                    <span className="text-center">{item.createAt.split("T")[0].split("-").reverse().join("-")}</span>
-                    
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <box-icon
-                      name="time"
-                      type="regular"
-                      color="#FD6E28"
-                      size="sm"
-                    ></box-icon>
-                    <span className="text-center">{item.createAt.split("T")[1].split(".")[0]}</span>
-                    
-                  </div>
+                 
                   <div className="flex items-center justify-center">
                     <box-icon
                       name="spray-can"
