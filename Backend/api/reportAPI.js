@@ -360,6 +360,7 @@ router.post("/createReport/:id", upload.single('image'), async (req, res) => {
   if (!validateParams({ id }, res)) {
       return res.status(400).json({ message: "Incomplete data" });
   }
+console.log(data);
 
   try {
       const item = await itemFunc.checkItemExist(id);
