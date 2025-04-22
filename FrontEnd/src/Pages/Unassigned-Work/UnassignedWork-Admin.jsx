@@ -232,7 +232,7 @@ const UnassignedWorkAdmin = () => {
                 <span>
                   {Worker.username}
                   <span className="text-xs text-gray-500 ml-2">
-                    ({workerWorkCount[Worker.username] || 0} งาน)
+                    ({workerWorkCount[Worker.username] || 0} works)
                   </span>
                 </span>
               </span>
