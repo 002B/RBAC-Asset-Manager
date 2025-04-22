@@ -246,22 +246,22 @@ const ReportBox = () => {
                 {/* LIST HEADER */}
                 <div className="report-box-list-body min-fit w-full gap-1 grid">
           <div className="report-box-list-header grid grid-cols-10 w-full h-[48px] p-2 bg-white border-2 border-secondary rounded-[8px] text-secondary">
-            <div className="col-span-2 flex gap-2 items-center">
-              <input type="checkbox" onChange={toggleAllItemCheckBox} />
-              <label className="font-bold">Report Number</label>
+            <div className="col-span-2 flex gap-2 items-center report-box-select-all">
+              <input type="checkbox"  onChange={toggleAllItemCheckBox} />
+              <label className="font-bold">Serial Number</label>
             </div>
-            <div className="text-center font-bold">Serial Number</div>
             <div className="text-center font-bold">Company</div>
             <div className="text-center font-bold">Branch</div>
             <div className="text-center font-bold ">Send By</div>
             <div className="text-center font-bold ">Date</div>
             <div className="text-center font-bold ">Time</div>
-            <div className="text-center font-bold col-span-2">Problem</div>
+            <div className="text-center font-bold col-span-2 ">Problem</div>
+            <div className="text-center font-bold">View Images</div>
 
           </div>
 
           {/* REPORT LIST */}
-          <div className="report-box-list-container overflow-scroll grid max-h-[552px] border-b-2 border-t-2 border-light gap-1 pt-1 pb-1">
+          <div className="report-box-list-container overflow-y-scroll scrollbar-hidden grid max-h-[552px] border-b-2 border-t-2 border-light gap-1 pt-1 pb-1">
           {filteredReports.map((report, index) => (
   <div
     className="report-box-list-item grid grid-cols-10 w-full h-fit items-center p-2 bg-white border-2 border-light rounded-[8px] cursor-pointer hover:brightness-90"
@@ -272,11 +272,10 @@ const ReportBox = () => {
     <span className="flex gap-2 items-center col-span-2">
       <input type="checkbox" checked={checkedItems[report.report_id] || false} onChange={() => handleItemCheck(report.report_id)} />
       <box-icon name="spray-can" type="regular" size="sm" color="#FD6E28"></box-icon>
-      {report.report_id}
+      {report.item_id}
     </span>
 
     {/* Serial Number */}
-    <span className="text-center">{report.item_id}</span>
 
     {/* Company */}
     <span className="text-center">{report.client_id}</span>
@@ -294,22 +293,23 @@ const ReportBox = () => {
     <span className="text-center">{report.createAt.split("T")[1].split(".")[0]}</span>
 
     {/* Problem */}
-    <span className="break-words col-span-2">{report.problem}</span>
-
+    <span className="break-words col-span-2 overflow-y-scroll max-h-[48px]">{report.problem}</span>
+<span>
     {/* เพิ่มคอลัมน์สำหรับปุ่ม Preview Image */}
     {report.image && (
-      <div className="col-span-2 text-center">
+      <div className="col-span-2 text-center flex justify-center items-center">
         <button
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+          className="bg-highlight text-white flex items-center justify-center rounded hover:bg-blue-700 w-1/2"
           onClick={(e) => {
             e.stopPropagation(); // Prevent the row click from being triggered
             showImagePreview(report.report_id);
           }}
         >
-          Preview Image
+          <box-icon name='show' type='solid' color='white' ></box-icon>
         </button>
       </div>
     )}
+    </span>
   </div>
 ))}
           </div>
