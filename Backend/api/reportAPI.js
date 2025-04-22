@@ -354,14 +354,21 @@ router.get("/getReportById/:id", authWorkerAndAdmin, async (req, res) => {
 
 router.post("/createReport/:id", upload.single('image'), async (req, res) => {
   const { id } = req.params;
-  const { data } = req.body;
+  let { data } = req.body;
   const user = req.body.user || { user: "guest", role: "guest" };
 
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+    } catch (err) {
+      return res.status(400).json({ message: "Invalid JSON format for data." });
+    }
+  }
   if (!validateParams({ id }, res)) {
       return res.status(400).json({ message: "Incomplete data" });
   }
-console.log(data);
-
+  console.log(data);
+  
   try {
       const item = await itemFunc.checkItemExist(id);
       if (!item) return res.status(404).json({ message: "Item not found" });

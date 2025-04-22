@@ -151,7 +151,6 @@ async function createReport(company, branch, id, data, file) {
                 lastNumber = parseInt(parts[2], 10) + 1;
             }
         }
-
         const newReportId = `RP-${new Date().getFullYear()}-${lastNumber.toString().padStart(7, '0')}`;
         const filePath = file ? file.path : null;
         const newReport = await reportModel.create({
