@@ -355,8 +355,7 @@ router.get("/getReportById/:id", authWorkerAndAdmin, async (req, res) => {
 router.post("/createReport/:id", upload.single('image'), async (req, res) => {
   const { id } = req.params;
   let { data } = req.body;
-  const user = req.body.user || { user: "guest", role: "guest" };
-
+  let user = req.body.user || { user: "guest", role: "guest" };
   if (typeof data === 'string') {
     try {
       data = JSON.parse(data);
@@ -364,11 +363,16 @@ router.post("/createReport/:id", upload.single('image'), async (req, res) => {
       return res.status(400).json({ message: "Invalid JSON format for data." });
     }
   }
+  if (typeof user === 'string') {
+      try {
+          user = JSON.parse(user);
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid JSON format for user." });
+      }
+  }
   if (!validateParams({ id }, res)) {
       return res.status(400).json({ message: "Incomplete data" });
   }
-  console.log(data);
-  
   try {
       const item = await itemFunc.checkItemExist(id);
       if (!item) return res.status(404).json({ message: "Item not found" });
@@ -383,8 +387,8 @@ router.post("/createReport/:id", upload.single('image'), async (req, res) => {
           req.file
       );
       await itemFunc.updateStatus([id], "reporting");
-      await logItemFunc.createLog([item.item_id, "reporting", user.user, user.role]);
-      await activityLogFunc.createLog(["reporting", user.user, user.role]);
+      await logItemFunc.createLog([item.item_id, "reporting", user.username, user.role]);
+      await activityLogFunc.createLog(["reporting", user.username, user.role]);
 
       res.json(report);
   } catch (error) {
@@ -397,7 +401,6 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
   const { status } = req.params;
   const { ids, send_to } = req.body;
   const { user } = req.body;
-
   if (!Array.isArray(ids) || ids.length === 0) {
     return res
       .status(400)
@@ -429,13 +432,13 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
       return res.status(404).json({ message: "Error updating item status" });
     await activityLogFunc.createLog([
       status.toLowerCase(),
-      user.user,
+      user.username,
       user.role,
     ]);
     await logItemFunc.createLog([
       updateStatusResult[0],
       updateResult.itemStatus,
-      user.user,
+      user.username,
       user.role,
     ]);
     res.json({ message: "Report and items updated successfully" });

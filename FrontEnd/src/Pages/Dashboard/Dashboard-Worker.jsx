@@ -159,7 +159,7 @@ const DashboardWorker = () => {
           // ลบรายการที่ submit แล้วออกจาก list
           try {
             const res = await axios.get(
-              `http://localhost:3000/report/getReportByUserFixing/${user.user}`,
+              `http://localhost:3000/report/getReportByUserFixing/${user.username}`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
