@@ -123,18 +123,19 @@ const UnassignedWork = () => {
     SweetAlert.fire({
       title: `<strong>Report ID: ${report.report_id}</strong>`,
       html: `
-        <div style="text-align: left; font-size: 14px;">
+        <div  style="text-align: left; font-size: 20px;">
           <p><strong>Item ID:</strong> ${report.item_id}</p>
           <p><strong>Client:</strong> ${report.client_id}</p>
           <p><strong>Branch:</strong> ${report.client_branch_id}</p>
-          <p><strong>Date:</strong> ${report.createAt}</p>
+          <p><strong>Date:</strong> ${report.createAt.split("T")[0].split("-").reverse().join("-")}</p>
+          <p><strong>Time:</strong> ${report.createAt.split("T")[1].split(".")[0]}</p>
           <p><strong>Problem:</strong> ${report.problem}</p>
           <p><strong>Status:</strong> ${report.status}</p>
         </div>
       `,
       imageUrl: placeholderImg,
-      imageWidth: 400,
-      imageHeight: 200,
+      imageWidth: 150,
+      imageHeight: 150,
       imageAlt: "Report Image",
       confirmButtonColor: "#FD6E28",
     });
@@ -234,7 +235,18 @@ const UnassignedWork = () => {
                       color="#FD6E28"
                       size="sm"
                     ></box-icon>
-                    <span>{item.createAt}</span>
+                    <span className="text-center">{item.createAt.split("T")[0].split("-").reverse().join("-")}</span>
+                    
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <box-icon
+                      name="time"
+                      type="regular"
+                      color="#FD6E28"
+                      size="sm"
+                    ></box-icon>
+                    <span className="text-center">{item.createAt.split("T")[1].split(".")[0]}</span>
+                    
                   </div>
                   <div className="flex items-center justify-center">
                     <box-icon
