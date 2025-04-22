@@ -49,6 +49,7 @@ const ActivityLog = () => {
             title={["Log_ID", "Date", "Time", "Activity", "Username", "Role"]}
             data={activityLog}
             hasButton={false}
+            itemPerPage={20}
           />
         </div>
       </div>

@@ -18,8 +18,6 @@ const DataTable = (props) => {
     hasButton = true,
     hasPagination = true,
     hasSearch = true,
-    formData = [],
-    formPlaceholder = {},
     hasExport = false,
     hasAddItem = false,
     hasEdit = false,
@@ -33,8 +31,8 @@ const DataTable = (props) => {
   const [showAddItemForm, setShowAddItemForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [showQRCodeModal, setShowQRCodeModal] = useState(false); // สถานะในการแสดง QRCodeModal
-  const [selectedItemId, setSelectedItemId] = useState(null); // เก็บ id ของรายการที่เลือก
+  const [showQRCodeModal, setShowQRCodeModal] = useState(false); 
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
   const itemsPerPage = itemPerPage || 10;
   const headerHeight = 32;
@@ -232,7 +230,7 @@ const DataTable = (props) => {
                       direction:
                         isSameColumn && sortConfig.direction === "asc"
                           ? "desc"
-                          : "asc", // Toggle between asc and desc
+                          : "asc",
                     });
                   }}
                 >

@@ -25,7 +25,6 @@ router.get('/getCompanyInfo/:company', authWorkerAndAdmin, async (req, res) => {
     }
 });
 
-
 router.get('/getAllBranch/:company', auth, async (req, res) => {
     const { company } = req.params;
     try {
