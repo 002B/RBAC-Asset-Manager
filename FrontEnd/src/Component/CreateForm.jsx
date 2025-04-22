@@ -5,6 +5,7 @@ import "boxicons";
 import "./CreateForm.css";
 import { useAuth } from "../Auth/AuthProvider";
 
+// ส่วนนี้คงเดิมทั้งหมด
 async function sendReport(data, isGuest = false) {
   try {
     const headers = {
@@ -12,7 +13,6 @@ async function sendReport(data, isGuest = false) {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     };
 
-    // เพิ่ม Authorization header เฉพาะกรณีไม่ใช่ Guest
     if (!isGuest) {
       headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
     }
@@ -46,8 +46,19 @@ async function sendReport(data, isGuest = false) {
 
 function CreateForm({ onClose, initialData }) {
   const { user } = useAuth();
-  // ใช้ user จาก initialData (สำหรับ Guest) หรือจาก authUser (สำหรับผู้ที่ล็อกอิน)
   
+  // เพิ่มส่วนของปัญหาที่พบบ่อย
+  const commonProblems = [
+    "Fire extinguisher expired",
+    "Pressure gauge damaged",
+    "Hose torn or damaged",
+    "Nozzle clogged",
+    "Tank swollen or rusted",
+    "Sticker or label fallen off",
+    "Mounting bracket damaged",
+  ];
+
+  // ส่วน state เดิมคงเดิมทั้งหมด
   const [forms, setForms] = useState([
     {
       id: 1,
@@ -58,11 +69,23 @@ function CreateForm({ onClose, initialData }) {
   ]);
   const [isSending, setIsSending] = useState(false);
 
+  // ฟังก์ชันเดิมทั้งหมดคงเดิม
   const handleChange = (id, e) => {
     const { name, value } = e.target;
     setForms(forms.map((f) => (f.id === id ? { ...f, [name]: value } : f)));
   };
 
+  // เพิ่มฟังก์ชันสำหรับเลือกปัญหาจากปุ่ม (ใหม่)
+  const handleSelectProblem = (id, problem) => {
+    setForms(forms.map((f) => 
+      f.id === id ? { 
+        ...f, 
+        problem: problem === "อื่น ๆ (กรุณาระบุ)" ? "" : problem 
+      } : f
+    ));
+  };
+
+  // ฟังก์ชันเดิมทั้งหมดคงเดิม
   const addNewForm = () => {
     const newId = forms.length ? Math.max(...forms.map((f) => f.id)) + 1 : 1;
     setForms([
@@ -125,7 +148,7 @@ function CreateForm({ onClose, initialData }) {
       return;
     }
 
-    const isGuest = !user; // ตรวจสอบว่าเป็น Guest หรือไม่
+    const isGuest = !user;
 
     const result = await SweetAlert.fire({
       title: "Are you sure?",
@@ -146,7 +169,6 @@ function CreateForm({ onClose, initialData }) {
       try {
         const results = [];
         for (const form of forms) {
-          // await new Promise((resolve) => setTimeout(resolve, 500));
           results.push(
             await sendReport({
               serialNumber: form.serialNumber,
@@ -235,7 +257,6 @@ function CreateForm({ onClose, initialData }) {
         className="relative w-full max-w-4xl max-h-[90vh] rounded-2xl bg-white shadow-xl overflow-hidden border-gray-100 flex flex-col form-container"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* แสดงสถานะ Guest ถ้าไม่ได้ล็อกอิน */}
         {!user && (
           <div className="absolute top-4 right-4 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center gap-2 z-20">
             <box-icon name="user" size="xs"></box-icon>
@@ -243,7 +264,7 @@ function CreateForm({ onClose, initialData }) {
           </div>
         )}
 
-        {/* Header */}
+        {/* Header - คงเดิมทั้งหมด */}
         <div className="sticky top-0 z-10 p-6 bg-[#2f6690] text-white">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -272,7 +293,7 @@ function CreateForm({ onClose, initialData }) {
           </div>
         </div>
 
-        {/* Form Content */}
+        {/* Form Content - คงเดิม แต่เพิ่มส่วนปุ่มปัญหา */}
         <div className="flex-1 overflow-y-auto p-6 relative z-10 bg-[#D9DCD6]">
           <div className="space-y-5">
             {forms.map((form, index) => (
@@ -319,7 +340,7 @@ function CreateForm({ onClose, initialData }) {
 
                 <div className={`${form.isCollapsed ? "hidden" : "p-6"}`}>
                   <div className="space-y-6">
-                    {/* Serial Number Field */}
+                    {/* Serial Number Field - คงเดิม */}
                     <div className="space-y-2">
                       <label className="block">
                         <span className="text-sm font-medium text-gray-700 flex items-center">
@@ -338,7 +359,7 @@ function CreateForm({ onClose, initialData }) {
                       </label>
                     </div>
 
-                    {/* Problem Description Field */}
+                    {/* Problem Description Field - เพิ่มปุ่มปัญหา */}
                     <div className="space-y-2">
                       <label className="block">
                         <span className="text-sm font-medium text-gray-700 flex items-center">
@@ -354,9 +375,30 @@ function CreateForm({ onClose, initialData }) {
                           required
                         />
                       </label>
+                      
+                      {/* ส่วนเพิ่มเติม: ปุ่มเลือกปัญหาที่พบบ่อย */}
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-600 mb-2">Common problems:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {commonProblems.map((problem) => (
+                            <button
+                              key={problem}
+                              type="button"
+                              onClick={() => handleSelectProblem(form.id, problem)}
+                              className={`px-3 py-1.5 text-sm rounded-full border transition-all ${
+                                form.problem === problem && problem !== "อื่น ๆ (กรุณาระบุ)"
+                                  ? "bg-[#81c3d7] text-white border-[#81c3d7]"
+                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              {problem}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Information Box */}
+                    {/* Information Box - คงเดิม */}
                     <div className="p-4 bg-[#81c3d7] bg-opacity-30 rounded-lg border border-[#3a7ca5] border-opacity-30 shadow-inner">
                       <div className="flex items-start gap-3">
                         <box-icon
@@ -367,7 +409,7 @@ function CreateForm({ onClose, initialData }) {
                         ></box-icon>
                         <div className="space-y-2">
                         <p className="text-sm text-[#16425b] leading-relaxed">
-                          <span className="font-medium">Important:</span> "If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs."
+                          <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
                         </p>
                         </div>
                       </div>
@@ -379,7 +421,7 @@ function CreateForm({ onClose, initialData }) {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer - คงเดิมทั้งหมด */}
         <div className="sticky bottom-0 bg-white border-gray-200 p-4 flex justify-between items-center z-10 shadow-sm">
           <button
             onClick={addNewForm}
@@ -419,7 +461,7 @@ function CreateForm({ onClose, initialData }) {
         </div>
       </div>
 
-      {/* Loading Overlay */}
+      {/* Loading Overlay - คงเดิม */}
       {isSending && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg flex items-center gap-3">
