@@ -16,6 +16,7 @@ const company = require('./api/companyAPI');
 const report = require('./api/reportAPI');
 const activityLog = require('./api/activityLogAPI');
 const users = require('./api/usersAPI');
+const getImg = require('./api/getImg');
 // const Test = require('./api/DB/companyModal');
 
 app.use(cors());
@@ -26,7 +27,7 @@ app.use('/item', item);
 app.use('/report', report);
 app.use('/itemlog', log);
 app.use('/activitylog', activityLog);
-
+app.use('/getImage', getImg);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {
