@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../Auth/AuthProvider";
+import Swal from "sweetalert2"; // นำเข้า SweetAlert2
 
 const EditItemForm = ({ onClose, onSubmit, initialData }) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     item_id: initialData?.item_id || "",
-    client_id: initialData?.client_id || "",
-    client_branch_id: initialData?.client_branch_id || "",
     item_brand: initialData?.item_brand || "",
     item_capacity: initialData?.item_capacity || "",
     item_color: initialData?.item_color || "red",
@@ -20,8 +19,6 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
     if (initialData) {
       setFormData({
         item_id: initialData.item_id || "",
-        client_id: initialData.client_id || "",
-        client_branch_id: initialData.client_branch_id || "",
         item_brand: initialData.item_brand || "",
         item_capacity: initialData.item_capacity || "",
         item_color: initialData.item_color || "red",
@@ -35,7 +32,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { item_id, client_id, client_branch_id, ...requestBody } = formData;
+      const { item_id, ...requestBody } = formData;
 
       const response = await fetch(
         `http://localhost:3000/item/updateItem/${formData.item_id}`,
@@ -50,14 +47,81 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
       );
 
       if (response.ok) {
-        onSubmit();
-        onClose();
+        Swal.fire({
+          icon: 'success',
+          title: 'Item Updated Successfully!',
+          text: 'The item has been updated.',
+        }).then(() => {
+          onSubmit();
+          onClose();
+        });
       } else {
-        console.error("Failed to update item");
+        Swal.fire({
+          icon: 'error',
+          title: 'Update Failed',
+          text: 'There was an issue updating the item. Please try again.',
+        });
       }
     } catch (error) {
       console.error("Error:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.',
+      });
     }
+  };
+
+  const handleDelete = async () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this item?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/item/deleteItem/${formData.item_id}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify({ user: user }),
+            }
+          );
+
+          if (response.ok) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Item Deleted!',
+              text: 'The item has been deleted.',
+            }).then(() => {
+              onSubmit();
+              onClose();
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Delete Failed',
+              text: 'There was an issue deleting the item. Please try again.',
+            });
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An unexpected error occurred. Please try again later.',
+          });
+        }
+      }
+    });
   };
 
   const handleChange = (e) => {
@@ -68,63 +132,12 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
     });
   };
 
-  const handleDelete = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/item/deleteItem/${formData.item_id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ user: user }),
-        }
-      );
-
-      if (response.ok) {
-        onSubmit();
-        onClose();
-      } else {
-        console.error("Failed to delete item");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold text-primary mb-4">Edit Item</h2>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Client ID
-              </label>
-              <input
-                type="text"
-                name="client_id"
-                value={formData.client_id}
-                onChange={handleChange}
-                className="border-2 border-primary rounded w-full p-2"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Client Branch ID
-              </label>
-              <input
-                type="text"
-                name="client_branch_id"
-                value={formData.client_branch_id}
-                onChange={handleChange}
-                className="border-2 border-primary rounded w-full p-2"
-                required
-              />
-            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Item Location
@@ -214,9 +227,6 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
                 required
               />
             </div>
-
-            {/* New Field for Item Location */}
-
           </div>
           <div className="flex justify-between">
             <button
@@ -249,3 +259,4 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
 };
 
 export default EditItemForm;
+

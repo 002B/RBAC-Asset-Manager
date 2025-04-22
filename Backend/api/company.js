@@ -6,10 +6,28 @@ async function getAllCompany() {
         const uniqueCompanies = [...new Set(data.map(item => item.client_id))];
         return uniqueCompanies.map(client_id => ({ client_id }));
     } catch (error) {
-        throw error;
+        console.log(error);
     }
 }
 
+async function getCompanyInfo(company) {
+    try{
+        const data = await CompanyModel.find({ client_id: company }, { _id: 0 }).lean();
+        const formatData = data.map(item => {
+            return {
+                    client_branch_id: item.client_branch_id,
+                    location: item.location,
+                    next_check: item.next_check,
+                    last_check: item.last_check
+            };
+        });
+        let companyInfo = {};
+        companyInfo[company] = formatData;
+        return companyInfo;
+    }catch (error) {
+        console.log(error);
+    }
+}
 
 async function getBranchList(company) {
     try {
@@ -33,6 +51,7 @@ async function getCompanyBranch() {
         throw error;
     }
 }
+
 async function getNextCheck(company, branch) {
     try {
         const result = await CompanyModel.findOne(
@@ -122,4 +141,4 @@ async function deleteCompany(company, branch) {
 }
 
 
-module.exports = { getAllCompany, getBranchList, getCompanyBranch, getNextCheck, getLastCheck,getLocation, createCompany, updateCompany, deleteCompany };
+module.exports = { getAllCompany, getCompanyInfo, getBranchList, getCompanyBranch, getNextCheck, getLastCheck,getLocation, createCompany, updateCompany, deleteCompany };
