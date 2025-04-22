@@ -12,6 +12,20 @@ router.get('/getAllCompany', authWorkerAndAdmin, async (req, res) => {
     }
 });
 
+router.get('/getCompanyInfo/:company', async (req, res) => {
+    const { company } = req.params;
+    try {
+        const companyInfo = await companyFunc.getCompanyInfo(company);
+        if (!companyInfo) {
+            return res.status(404).json({ message: 'Company not found' });
+        }
+        res.json(companyInfo);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching company info' });
+    }
+});
+
+
 router.get('/getAllBranch/:company', auth, async (req, res) => {
     const { company } = req.params;
     try {

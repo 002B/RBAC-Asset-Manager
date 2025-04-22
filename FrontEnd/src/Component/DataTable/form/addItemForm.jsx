@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../Auth/AuthProvider";
+import Swal from "sweetalert2"; // นำเข้า SweetAlert2
 
 const AddItemForm = ({ onClose, onSubmit }) => {
   const { user } = useAuth();
@@ -80,6 +81,17 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // เช็คว่าเลือก Company และ Branch หรือยัง
+    if (!formData.item_client || !formData.item_client_branch) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Please Select Company and Branch',
+        text: 'You must select both Company and Branch before proceeding.',
+      });
+      return; // หยุดการส่งฟอร์มหากยังไม่เลือก
+    }
+
     try {
       const requestBody = {
         item_client: formData.item_client,
@@ -106,13 +118,28 @@ const AddItemForm = ({ onClose, onSubmit }) => {
       );
 
       if (response.ok) {
-        onSubmit();
-        onClose();
+        Swal.fire({
+          icon: 'success',
+          title: 'Item Added Successfully!',
+          text: 'Your new item has been added.',
+        }).then(() => {
+          onSubmit();
+          onClose();
+        });
       } else {
-        console.error("Failed to create item");
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to Create Item',
+          text: 'There was an issue creating the item. Please try again.',
+        });
       }
     } catch (error) {
       console.error("Error:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.',
+      });
     }
   };
 
@@ -169,8 +196,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 ))}
               </select>
             </div>
-                        {/* New Item Location Input */}
-                        <div>
+            <div>
               <label className="block text-sm font-medium text-gray-700">
                 Item Location
               </label>
@@ -274,8 +300,6 @@ const AddItemForm = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
-
-
           </div>
           <div className="flex justify-end space-x-2">
             <button

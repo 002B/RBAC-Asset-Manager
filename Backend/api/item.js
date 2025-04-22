@@ -1,4 +1,5 @@
 const itemModel = require('./DB/item.js');
+const reportModel = require('./DB/report.js');
 
 async function getAllItems() {
     try {
@@ -142,6 +143,7 @@ async function updateItem(id, data) {
 async function deleteItem(id) {
     try {
         const result = await itemModel.deleteOne({ item_id: id });
+        reportModel.deleteMany({ "item_id": id });
         return result.deletedCount > 0 ? id : false;
     } catch (error) {
         console.error('Error deleting item:', error);
