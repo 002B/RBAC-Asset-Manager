@@ -467,7 +467,7 @@ function CreateForm({ onClose, initialData }) {
                         ></box-icon>
                         <div className="space-y-2">
                         <p className="text-sm text-[#16425b] leading-relaxed">
-                          <span className="font-medium">Important:</span> "If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs."
+                          <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
                         </p>
                         </div>
                       </div>
