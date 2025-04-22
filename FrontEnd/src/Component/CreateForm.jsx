@@ -8,27 +8,22 @@ import { useAuth } from "../Auth/AuthProvider";
 // ส่วนนี้คงเดิมทั้งหมด
 async function sendReport(data, isGuest = false) {
   try {
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(data)); // ข้อมูลที่คุณจะส่ง
+    if (data.image) {
+      formData.append("image", data.image); // เพิ่มไฟล์รูปที่อัปโหลด
+    }
+
     const headers = {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     };
-
-    if (!isGuest) {
-      headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
-    }
 
     const res = await fetch(
       `http://localhost:3000/report/createReport/${data.serialNumber}`,
       {
         method: "POST",
         headers,
-        body: JSON.stringify({
-          data: {
-            send_by: data.user.display_name || 'guest',
-            problem: data.problem,
-          },
-          user: data.user || { user: 'guest', role: 'guest' },
-        }),
+        body: formData,
       }
     );
 
@@ -64,10 +59,13 @@ function CreateForm({ onClose, initialData }) {
       id: 1,
       serialNumber: initialData?.serialNumber || "",
       problem: "",
+      image: null, // เพิ่ม state สำหรับจัดเก็บไฟล์รูปภาพ
       isCollapsed: false,
     },
   ]);
   const [isSending, setIsSending] = useState(false);
+
+  const [uploadedImage, setUploadedImage] = useState(null); // state สำหรับเก็บรูปที่อัปโหลด
 
   // ฟังก์ชันเดิมทั้งหมดคงเดิม
   const handleChange = (id, e) => {
@@ -94,6 +92,7 @@ function CreateForm({ onClose, initialData }) {
         id: newId,
         serialNumber: "",
         problem: "",
+        image: null, // เพิ่มส่วนของรูปภาพ
         isCollapsed: false,
       },
     ]);
@@ -174,6 +173,7 @@ function CreateForm({ onClose, initialData }) {
               serialNumber: form.serialNumber,
               problem: form.problem,
               user: user,
+              image: form.image, // ส่งรูปภาพในแต่ละฟอร์ม
             }, isGuest)
           );
         }
@@ -187,16 +187,14 @@ function CreateForm({ onClose, initialData }) {
           confirmButtonColor: "#4F46E5",
         });
 
-        setForms([
-          {
-            id: 1,
-            serialNumber: initialData?.serialNumber || "",
-            problem: "",
-            isCollapsed: false,
-          },
-        ])
+        setForms([{
+          id: 1,
+          serialNumber: initialData?.serialNumber || "",
+          problem: "",
+          image: null, // รีเซ็ตภาพ
+          isCollapsed: false,
+        }])
         onClose();
-        ;
       } catch (error) {
         let errorMessage = "Failed to send reports. Please try again.";
         if (error.message.includes("Network Error")) {
@@ -220,7 +218,7 @@ function CreateForm({ onClose, initialData }) {
 
   const confirmClose = () => {
     const hasUnsavedData = forms.some(
-      (form) => form.serialNumber || form.problem
+      (form) => form.serialNumber || form.problem || form.image
     );
 
     if (hasUnsavedData) {
@@ -245,6 +243,15 @@ function CreateForm({ onClose, initialData }) {
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       confirmClose();
+    }
+  };
+
+  const handleImageUpload = (id, e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForms(forms.map((f) => 
+        f.id === id ? { ...f, image: file } : f
+      ));
     }
   };
 
@@ -398,6 +405,31 @@ function CreateForm({ onClose, initialData }) {
                       </div>
                     </div>
 
+                    {/* รูปภาพที่อัปโหลด */}
+                    <div className="space-y-2">
+                      <label className="block">
+                        <span className="text-sm font-medium text-gray-700">
+                          Upload Image
+                        </span>
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(form.id, e)}
+                        className="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#81c3d7] focus:border-[#3a7ca5] px-4 py-3 bg-white text-sm shadow-sm"
+                      />
+                      {form.image && (
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-600">Preview:</p>
+                          <img
+                            src={URL.createObjectURL(form.image)}
+                            alt="Uploaded Preview"
+                            className="w-full h-auto rounded-lg shadow-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+
                     {/* Information Box - คงเดิม */}
                     <div className="p-4 bg-[#81c3d7] bg-opacity-30 rounded-lg border border-[#3a7ca5] border-opacity-30 shadow-inner">
                       <div className="flex items-start gap-3">
@@ -408,9 +440,9 @@ function CreateForm({ onClose, initialData }) {
                           class="flex-shrink-0 mt-0.5"
                         ></box-icon>
                         <div className="space-y-2">
-                        <p className="text-sm text-[#16425b] leading-relaxed">
-                          <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
-                        </p>
+                          <p className="text-sm text-[#16425b] leading-relaxed">
+                            <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
+                          </p>
                         </div>
                       </div>
                     </div>
