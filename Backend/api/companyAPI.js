@@ -12,7 +12,7 @@ router.get('/getAllCompany', authWorkerAndAdmin, async (req, res) => {
     }
 });
 
-router.get('/getCompanyInfo/:company', async (req, res) => {
+router.get('/getCompanyInfo/:company', authWorkerAndAdmin, async (req, res) => {
     const { company } = req.params;
     try {
         const companyInfo = await companyFunc.getCompanyInfo(company);
