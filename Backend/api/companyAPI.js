@@ -54,6 +54,16 @@ router.get('/getLastCheck/:company/:branch', auth, async (req, res) => {
     }
 });
 
+router.get('/getLocation/:company/:branch', auth, async (req, res) => {
+    const { company, branch } = req.params;
+    try {
+        const companyInfo = await companyFunc.getLocation(company, branch);
+        res.json(companyInfo);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching company info' });
+    }
+});
+
 router.post('/createCompany/:company/:branch', authWorkerAndAdmin, async (req, res) => {
     const { company, branch } = req.params;
     const { location } = req.body;

@@ -5,6 +5,7 @@ import "boxicons";
 import "./Dashboard-Worker.css";
 import { useAuth } from "../../Auth/AuthProvider";
 import placeholderImg from "../../assets/img/placeholder.png";
+import L from 'leaflet';
 
 const DashboardWorker = () => {
   const { user } = useAuth();
@@ -84,8 +85,42 @@ const DashboardWorker = () => {
       imageHeight: 200,
       imageAlt: "Report Image",
       confirmButtonColor: "#FD6E28",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Open in Google Maps",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/company/getLocation/${report.company}/${report.branch}`,
+            {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          if (!response.ok) {
+            throw new Error('Failed to fetch location');
+          }
+          const locationData = await response.json();
+          if (locationData) {
+            const mapUrl = `https://www.google.com/maps?q=${locationData[0]},${locationData[1]}`;
+            window.open(mapUrl, "_blank");
+          }
+        } catch (error) {
+          console.error("Error fetching location for Google Maps:", error);
+          SweetAlert.fire({
+            title: "Error",
+            text: "Failed to retrieve location.",
+            icon: "error",
+            confirmButtonColor: "#FD6E28",
+          });
+        }
+      }
     });
   };
+  
 
   const handleSubmit = async (reportId) => {
     SweetAlert.fire({

@@ -59,6 +59,19 @@ async function getLastCheck(company) {
     }
 }
 
+async function getLocation(company, branch) {
+    try {
+        const result = await CompanyModel.findOne(
+            { client_id: company, 'client_branch_id': branch },
+            { _id: 0 }
+        ).lean();
+        return [result.location.latitude, result.location.longitude];
+    } catch (error) {
+        console.error(`Error fetching location for ${company}/${branch}:`, error);
+        return null;
+    }
+}
+
 async function createCompany(company, branch, location) {
     try {
         await CompanyModel.create({
@@ -109,4 +122,4 @@ async function deleteCompany(company, branch) {
 }
 
 
-module.exports = { getAllCompany, getBranchList, getCompanyBranch, getNextCheck, getLastCheck, createCompany, updateCompany, deleteCompany };
+module.exports = { getAllCompany, getBranchList, getCompanyBranch, getNextCheck, getLastCheck,getLocation, createCompany, updateCompany, deleteCompany };
