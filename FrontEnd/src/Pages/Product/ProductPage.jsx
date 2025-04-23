@@ -154,8 +154,8 @@ const ProductPage = ({ id }) => {
             onClose={handleCloseForm}
             onSuccess={handleReportSubmit}
             initialData={{
-              serialNumber: selectedData.id || "",
-              user: guestUser
+              serialNumber: id || "",
+              user: guestUser // ส่ง guestUser ไปยัง CreateForm
             }}
             customSubmitHandler={sendGuestReport}
           />

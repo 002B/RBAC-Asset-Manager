@@ -164,8 +164,7 @@ const router = createBrowserRouter(
         },
       ],
     },
-  ],
-  { basename: "/Metthier/" }
+  ]
 );
 
 const queryParameters = new URLSearchParams(window.location.search);
