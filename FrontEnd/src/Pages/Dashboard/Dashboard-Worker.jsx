@@ -71,10 +71,10 @@ const DashboardWorker = () => {
   const handleViewDetails = async (report) => {
     try {
       let imageUrl = placeholderImg;
+      let locationData = null;
   
       try {
         const res = await fetch(`http://localhost:3000/getImage/${report.report_id}`);
-
         if (res.ok) {
           const blob = await res.blob();
           imageUrl = URL.createObjectURL(blob);
@@ -83,7 +83,26 @@ const DashboardWorker = () => {
         console.error("Error fetching image:", error);
       }
   
-      // แสดงรายละเอียดใน SweetAlert
+      try {
+        const locationRes = await fetch(
+          `http://localhost:3000/company/getLocation/${report.company}/${report.branch}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+  
+        if (locationRes.ok) {
+          locationData = await locationRes.json();
+        } else {
+          throw new Error('Failed to fetch location');
+        }
+      } catch (error) {
+        console.error("Error fetching location for Google Maps:", error);
+      }
+  
       SweetAlert.fire({
         title: `<strong>Report ID: ${report.report_id}</strong>`,
         html: `
@@ -92,6 +111,7 @@ const DashboardWorker = () => {
             <p><strong>Client:</strong> ${report.company}</p>
             <p><strong>Branch:</strong> ${report.branch}</p>
             <p><strong>Date:</strong> ${report.date}</p>
+            <p><strong>Location:</strong> ${locationData ? `${locationData.province} ${locationData.district} ${locationData.street} ${locationData.alley || ''} ${locationData.building_number} ${locationData.postal_code}` : ''}</p>
           </div>
         `,
         imageUrl: imageUrl,
@@ -103,41 +123,24 @@ const DashboardWorker = () => {
         cancelButtonText: "Cancel",
         confirmButtonText: "Open in Google Maps",
       }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            const response = await fetch(
-              `http://localhost:3000/company/getLocation/${report.company}/${report.branch}`,
-              {
-                method: 'GET',
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              }
-            );
-            if (!response.ok) {
-              throw new Error('Failed to fetch location');
-            }
-            const locationData = await response.json();
-            if (locationData) {
-              const mapUrl = `https://www.google.com/maps?q=${locationData[0]},${locationData[1]}`;
-              window.open(mapUrl, "_blank");
-            }
-          } catch (error) {
-            console.error("Error fetching location for Google Maps:", error);
-            SweetAlert.fire({
-              title: "Error",
-              text: "Failed to retrieve location.",
-              icon: "error",
-              confirmButtonColor: "#FD6E28",
-            });
-          }
+        if (result.isConfirmed && locationData) {
+          const mapUrl = `https://www.google.com/maps?q=${locationData.latitude},${locationData.longitude}`;
+          window.open(mapUrl, "_blank");
+        } else if (result.isConfirmed && !locationData) {
+          SweetAlert.fire({
+            title: "Error",
+            text: "No location data available.",
+            icon: "error",
+            confirmButtonColor: "#FD6E28",
+          });
         }
       });
+  
     } catch (error) {
       console.error("Error handling view details:", error);
       SweetAlert.fire({
         title: "Error",
-        text: "Something went wrong while fetching the image.",
+        text: "Something went wrong while fetching the image or location.",
         icon: "error",
         confirmButtonColor: "#FD6E28",
       });

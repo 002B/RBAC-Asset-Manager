@@ -19,7 +19,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
     item_type: "foam",
     item_class: "ABC",
     item_quantity: 1,
-    item_location: "", // เพิ่มฟิลด์สำหรับที่ตั้งของถัง
+    item_location: "",
   });
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
         item_type: formData.item_type,
         item_class: formData.item_class,
         item_quantity: formData.item_quantity,
-        item_location: formData.item_location, // ส่งข้อมูลตำแหน่งด้วย
+        item_location: formData.item_location,
       };
 
       const response = await fetch(
@@ -149,8 +149,8 @@ const AddItemForm = ({ onClose, onSubmit }) => {
       }
     } catch (error) {
       console.error("Error:", error);
-      swalLoading.close(); // ปิด SweetAlert loading หากเกิดข้อผิดพลาด
-      setIsSubmitting(false); // หยุดสถานะการส่งข้อมูลหากเกิดข้อผิดพลาด
+      swalLoading.close();
+      setIsSubmitting(false);
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -328,7 +328,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
             <button
               type="submit"
               className="border-2 border-primary bg-primary rounded px-4 py-2 text-white transition-all duration-300 ease-in-out hover:bg-secondary hover:border-secondary"
-              disabled={isSubmitting} // ปิดปุ่มถ้ากำลังส่งข้อมูล
+              disabled={isSubmitting} 
             >
               {isSubmitting ? "Adding Item..." : "Add Item"} {/* แสดงข้อความที่ต่างกัน */}
             </button>
