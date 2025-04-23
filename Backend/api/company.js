@@ -103,7 +103,7 @@ async function createCompany(company, branch, location) {
             location: {
                 ...location
             },
-            next_check: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0].replace('-', '/'),
+            next_check: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB'),
             last_check: []
 
         });

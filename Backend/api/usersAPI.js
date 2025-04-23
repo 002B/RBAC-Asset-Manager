@@ -62,7 +62,7 @@ router.post("/login", async (req, res) => {
     }
 
     const [status, response] = await login(username, password);
-    if (status === 200) await activityLogFunc.createLog(["Log in", username, response.user.role]);
+    if (status === 200) await activityLogFunc.createLog(["Log in", username, response.user.role, response.user.client]);
     res.status(status).json(response);
   } catch (error) {
     res.status(500).json({ message: "Error processing login" });

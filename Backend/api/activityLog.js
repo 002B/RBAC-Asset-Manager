@@ -29,6 +29,7 @@ async function createLog(data) {
             activity: data[0],
             username: data[1],
             role: data[2],
+            client : data[3]
         });
     } catch (error) {
         console.error('Error creating log:', error);

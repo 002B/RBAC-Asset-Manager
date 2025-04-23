@@ -41,6 +41,8 @@ router.get('/login-logout', authSuperMember, async (req, res) => {
     }
 });
 
+
+
 router.post('/create', async (req, res) => {
     try {
         const logData = req.body;

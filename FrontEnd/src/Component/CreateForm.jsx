@@ -296,7 +296,7 @@ function CreateForm({ onClose, initialData }) {
       onClick={handleOverlayClick}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[90vh] rounded-2xl bg-white shadow-xl overflow-hidden border-gray-100 flex flex-col form-container"
+        className="relative w-full max-w-4xl max-h-[80vh] rounded-2xl bg-white shadow-xl overflow-hidden border-gray-100 flex flex-col form-container"
         onClick={(e) => e.stopPropagation()}
       >
         {!user && (
@@ -456,23 +456,6 @@ function CreateForm({ onClose, initialData }) {
                           />
                         </div>
                       )}
-                    </div>
-
-                    {/* Information Box - คงเดิม */}
-                    <div className="p-4 bg-[#81c3d7] bg-opacity-30 rounded-lg border border-[#3a7ca5] border-opacity-30 shadow-inner">
-                      <div className="flex items-start gap-3">
-                        <box-icon
-                          name="info-circle"
-                          type="solid"
-                          color="#16425b"
-                          class="flex-shrink-0 mt-0.5"
-                        ></box-icon>
-                        <div className="space-y-2">
-                          <p className="text-sm text-[#16425b] leading-relaxed">
-                            <span className="font-medium">Important : </span>If any defects are found regarding the fire extinguisher, please submit the information through this form. We will then coordinate to promptly conduct an inspection and proceed with repairs.
-                          </p>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
