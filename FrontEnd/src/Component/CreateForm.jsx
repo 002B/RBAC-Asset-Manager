@@ -224,22 +224,27 @@ function CreateForm({ onClose, initialData }) {
       } catch (error) {
         //...
         let errorMessage = "Failed to send reports. Please try again.";
+        let title = "Error"
+        let icon = "error"
         if (error.message.includes("Network Error")) {
           errorMessage =
             "Network error. Please check your internet connection.";
         } else if (error.message.includes("401") && !isGuest) {
           errorMessage = "Session expired. Please login again.";
-        } else if (error.message.includes("400") && isGuest) {
-          errorMessage = "Item is already in fixing";
+        } else if (error.message.includes("Item is already in fixing")){
+          title = "Item is already in fixing"
+          errorMessage = "Please wait for operator to fix this item";
+          icon = "warning"
         }
-
         SweetAlert.fire({
-          title: "Error",
+          title: title,
           text: errorMessage,
-          icon: "error",
+          icon: icon,
           confirmButtonColor: "#4F46E5",
         });
+        
       } finally {
+        onClose()
         setIsSending(false);
       }
     }
