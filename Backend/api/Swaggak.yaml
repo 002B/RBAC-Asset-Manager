@@ -544,7 +544,7 @@ paths:
         500:
           description: "Error fetching report by branch"
 
-  /report/getreporttatusByCom/{company}/{status}:
+  /report/getReportStatusByCom/{company}/{status}:
     get:
       tags: ["report"]
       summary: "Get report by company and status"
@@ -570,7 +570,7 @@ paths:
         500:
           description: "Error fetching report by company and status"
 
-  /report/getreporttatusByCom/count/{company}/{status}:
+  /report/getReportStatusByCom/count/{company}/{status}:
     get:
       tags: ["report"]
       summary: "Get report count by company and status"
@@ -596,7 +596,7 @@ paths:
         500:
           description: "Error fetching report count by company and status"
 
-  /report/getreporttatusByBranch/{company}/{branch}/{status}:
+  /report/getReportStatusByBranch/{company}/{branch}/{status}:
     get:
       tags: ["report"]
       summary: "Get report by branch and status"
@@ -626,7 +626,7 @@ paths:
         500:
           description: "Error fetching report by branch and status"
 
-  /report/getreporttatusByBranch/count/{company}/{branch}/{status}:
+  /report/getReportStatusByBranch/count/{company}/{branch}/{status}:
     get:
       tags: ["report"]
       summary: "Get report count by branch and status"
