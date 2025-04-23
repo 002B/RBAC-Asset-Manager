@@ -77,7 +77,6 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers }) => {
     "Super Member",
     "Worker",
     "Admin",
-    "Super Admin",
   ];
 
   // Roles that should hide company/branch inputs
@@ -555,8 +554,7 @@ const MemberManagementAdmin = () => {
       "Member",
       "Super Member",
       "Worker",
-      "Admin",
-      "Super Admin",
+      "Admin"
     ];
 
     useEffect(() => {

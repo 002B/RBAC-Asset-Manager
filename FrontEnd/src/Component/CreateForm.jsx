@@ -229,6 +229,8 @@ function CreateForm({ onClose, initialData }) {
             "Network error. Please check your internet connection.";
         } else if (error.message.includes("401") && !isGuest) {
           errorMessage = "Session expired. Please login again.";
+        } else if (error.message.includes("400") && isGuest) {
+          errorMessage = "Item is already in fixing";
         }
 
         SweetAlert.fire({
