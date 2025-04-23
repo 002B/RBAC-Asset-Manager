@@ -39,6 +39,10 @@ const DataTable = (props) => {
   const rowHeight = 40;
   const minTableHeight = rowHeight * itemsPerPage + headerHeight;
 
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+
   const normalizedData = useMemo(() => {
     if (Array.isArray(data)) return data;
     if (typeof data === "object" && data !== null) return Object.values(data);
@@ -53,6 +57,10 @@ const DataTable = (props) => {
     [normalizedData.length, itemsPerPage]
   );
 
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+
   const sortedData = useMemo(() => {
     const filteredData = normalizedData.filter((row) => {
       const rowValues = isObjectData ? Object.values(row) : row;
@@ -66,7 +74,6 @@ const DataTable = (props) => {
 
     return filteredData.sort((a, b) => {
       if (sortConfig.key === null) return 0;
-
       const itemA = isObjectData
         ? a[sortConfig.key]
         : a[title.indexOf(sortConfig.key)];
@@ -84,12 +91,20 @@ const DataTable = (props) => {
     });
   }, [normalizedData, sortConfig, searchQuery, title, isObjectData]);
 
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+
   const currentData = useMemo(() => {
     return sortedData.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
   }, [sortedData, currentPage, itemsPerPage]);
+
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
 
   const handleEditClick = (rowData) => {
     const value = isObjectData
@@ -112,6 +127,10 @@ const DataTable = (props) => {
     setShowCreateForm(true);
   };
 
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  
   const handleFormSubmit = async (formData) => {
     try {
       const response = await fetch("http://localhost:3000/report/create", {
@@ -137,6 +156,10 @@ const DataTable = (props) => {
     }
   };
 
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+
   const colorIcon = (row) => {
     const value = isObjectData ? Object.values(row).join(" ") : row.join(" ");
     if (/Good|Login|Install|Report Accepted/.test(value)) return "green";
@@ -144,6 +167,10 @@ const DataTable = (props) => {
     if (/Bad|Uninstall|Logout|Rejected/.test(value)) return "red";
     return "#FF6700";
   };
+
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
 
   const getPaginationRange = () => {
     const start = Math.max(currentPage - 1, 1);
@@ -283,7 +310,7 @@ const DataTable = (props) => {
                     </td>
                   )}
                   {title.map((key, colIndex) => (
-                    <td key={colIndex}>
+                    <td key={colIndex} className="overflow-x-scroll max-w-xs ">
                       {isObjectData ? row[key] || "-" : row[colIndex] || "-"}
                     </td>
                   ))}
@@ -346,7 +373,7 @@ const DataTable = (props) => {
       {showQRCodeModal && (
         <QRCodeModal
           onClose={() => setShowQRCodeModal(false)}
-          id={selectedItemId} // ส่ง selectedItemId ไปที่ QRCodeModal
+          id={selectedItemId}
         />
       )}
       {hasPagination && (
