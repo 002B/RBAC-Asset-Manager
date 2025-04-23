@@ -20,7 +20,7 @@ const InventoryWorker = () => {
           redirect: "follow",
         };
         const response = await fetch(
-          `http://localhost:3000/item/getAllItem`,
+          `http://${window.location.hostname}:3000/item/getAllItem`,
           requestOptions
         );
         const data = await response.json();

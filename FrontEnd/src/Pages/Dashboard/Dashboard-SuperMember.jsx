@@ -44,7 +44,7 @@ const fetchLoginActivity = async () => {
       redirect: "follow",
     };
     const response = await fetch(
-      "http://localhost:3000/activitylog/login-logout",
+      "http://${window.location.hostname}:3000/activitylog/login-logout",
       requestOptions
     );
     const data = await response.json();
@@ -69,7 +69,7 @@ const fetchLoginActivity = async () => {
 async function fetchBranchWithItemCount(user) {
   try {
     const branchResponse = await fetch(
-      `http://localhost:3000/company/getAllBranch/${user.client}`,
+      `http://${window.location.hostname}:3000/company/getAllBranch/${user.client}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -84,7 +84,7 @@ async function fetchBranchWithItemCount(user) {
       branches.map(async (branch) => {
         try {
           const itemRes = await fetch(
-            `http://localhost:3000/item/getItemList/count/${user.client}/${branch.client_branch_id}`,
+            `http://${window.location.hostname}:3000/item/getItemList/count/${user.client}/${branch.client_branch_id}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,

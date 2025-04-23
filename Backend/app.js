@@ -30,8 +30,7 @@ app.use('/activitylog', activityLog);
 app.use('/getImage', getImg);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${port}/`);
   console.log('Swagger UI available on http://localhost:3000/api-docs');
-
 });

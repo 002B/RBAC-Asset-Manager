@@ -14,7 +14,7 @@ const fetchReport = async () => {
       redirect: "follow",
     };
     const response = await fetch(
-      `http://localhost:3000/report/getReportByStatus/pending`,
+      `http://${window.location.hostname}:3000/report/getReportByStatus/pending`,
       requestOptions
     );
     const data = await response.json();
@@ -41,7 +41,7 @@ const fetchAccepted = async () => {
       redirect: "follow",
     };
     const response = await fetch(
-      `http://localhost:3000/report/getReportByStatus/done`,
+      `http://${window.location.hostname}:3000/report/getReportByStatus/done`,
       requestOptions
     );
     const data = await response.json();

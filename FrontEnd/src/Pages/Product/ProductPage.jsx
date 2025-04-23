@@ -19,7 +19,7 @@ const ProductPage = ({ id }) => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3000/item/getItemInfo/${id}`)
+    fetch(`http://${window.location.hostname}:3000/item/getItemInfo/${id}`)
       .then((response) => response.json())
       .then((result) => setSelectedData(result))
       .catch((error) => console.error(error));
@@ -41,7 +41,7 @@ const ProductPage = ({ id }) => {
   const sendGuestReport = async (formData) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/report/createReport/${formData.serialNumber}`,
+        `http://${window.location.hostname}:3000/report/createReport/${formData.serialNumber}`,
         {
           method: "POST",
           headers: {

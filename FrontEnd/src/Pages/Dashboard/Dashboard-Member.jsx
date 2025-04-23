@@ -8,7 +8,7 @@ import { useAuth } from "../../Auth/AuthProvider";
 const fetchData = async (user) => {
   try {
     const [inbox, inventory, nextCheck, lastCheck] = await Promise.all([
-      fetch(`http://localhost:3000/report/getReportByBranch/${user.client}/${user.selectedBranch}`, {
+      fetch(`http://${window.location.hostname}:3000/report/getReportByBranch/${user.client}/${user.selectedBranch}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -16,7 +16,7 @@ const fetchData = async (user) => {
         .then(res => res.json())
         .then(data => data.map(item => [item.report_id, item.item_id, item.createAt.split("T")[0], item.createAt.split("T")[1].split(".")[0], item.status])),
 
-      fetch(`http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`,{
+      fetch(`http://${window.location.hostname}:3000/item/getItemList/${user.client}/${user.selectedBranch}`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -24,7 +24,7 @@ const fetchData = async (user) => {
         .then(res => res.json())
         .then(data => data.map(item => [item.item_id, item.item_brand, item.item_status])),
 
-      fetch(`http://localhost:3000/company/getNextCheck/${user.client}/${user.selectedBranch}`,{
+      fetch(`http://${window.location.hostname}:3000/company/getNextCheck/${user.client}/${user.selectedBranch}`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -36,7 +36,7 @@ const fetchData = async (user) => {
           return Math.ceil((receivedDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
         }),
 
-      fetch(`http://localhost:3000/company/getLastCheck/${user.client}/${user.selectedBranch}`,{
+      fetch(`http://${window.location.hostname}:3000/company/getLastCheck/${user.client}/${user.selectedBranch}`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }

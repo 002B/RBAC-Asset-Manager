@@ -18,8 +18,8 @@ const InventorySuperMember = () => {
           redirect: "follow",
         };
         const url = user.selectedBranch === "All Branches" || !user.selectedBranch
-          ? `http://localhost:3000/item/getItemList/${user.client}`
-          : `http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`;
+          ? `http://${window.location.hostname}:3000/item/getItemList/${user.client}`
+          : `http://${window.location.hostname}:3000/item/getItemList/${user.client}/${user.selectedBranch}`;
         const response = await fetch(
           url,
           requestOptions

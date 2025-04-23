@@ -60,8 +60,6 @@ function CreateForm({ onClose, initialData }) {
       problem: "",
       selectedProblems: [],
       image: null,
-      selectedProblems: [], // Ensure this is initialized as an empty array
-      image: null, // เพิ่ม state สำหรับจัดเก็บไฟล์รูปภาพ
       isCollapsed: false,
     },
   ]);
@@ -199,7 +197,6 @@ function CreateForm({ onClose, initialData }) {
               serialNumber: form.serialNumber,
               problem: form.problem,
               user: user || "Guest",
-              image: form.image,
               image: form.image,
             }, user)
           );
@@ -545,4 +542,5 @@ CreateForm.propTypes = {
 };
 
 export default CreateForm;
+
 

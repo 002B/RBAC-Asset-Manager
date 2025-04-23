@@ -18,7 +18,7 @@ const ReportBox = () => {
 
   useEffect(() => {
     const fetchReports = () => {
-      fetch("http://localhost:3000/report/getReportByStatus/pending", {
+      fetch("http://${window.location.hostname}:3000/report/getReportByStatus/pending", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -46,7 +46,7 @@ const ReportBox = () => {
     // แสดงตัวอย่างภาพจาก API โดยใช้ SweetAlert
     SweetAlert.fire({
 
-      imageUrl: `http://localhost:3000/getImage/${reportId}`, // ดึงภาพจาก API
+      imageUrl: `http://${window.location.hostname}:3000/getImage/${reportId}`, // ดึงภาพจาก API
       imageWidth: 400,
       imageHeight: 400,
       imageAlt: "Image Preview",
@@ -57,7 +57,7 @@ const ReportBox = () => {
   const updateReportStatus = async (status) => {
     const selectedIds = Object.keys(checkedItems).filter((id) => checkedItems[id]);
     try {
-      const response = await fetch(`http://localhost:3000/report/updateReport/${status}`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/report/updateReport/${status}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +70,7 @@ const ReportBox = () => {
 
       if (response.ok) {
         SweetAlert.fire("Success", data.message, "success");
-        const newReports = await fetch("http://localhost:3000/report/getReportByStatus/pending", {
+        const newReports = await fetch("http://${window.location.hostname}:3000/report/getReportByStatus/pending", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
