@@ -437,7 +437,7 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
     ]);
     await logItemFunc.createLog([
       updateStatusResult[0],
-      updateResult.itemStatus,
+      updateResult.itemStatus === "fixing" ? "assigned to worker" : updateResult.itemStatus === "accepted" ? "work accepted" : updateResult.itemStatus === "rejected" ? "work rejected" : updateResult.itemStatus,
       user.username,
       user.role,
     ]);

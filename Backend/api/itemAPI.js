@@ -130,7 +130,7 @@ router.put("/updateStatus", authWorkerAndAdmin, async (req, res) => {
         .json({ message: "No items found or no updates were made" });
     await logItemFunc.createLog([
       updateResult[0],
-      updateResult[1],
+      "updated status " +updateResult[1],
       user.username,
       user.role,
     ]);
