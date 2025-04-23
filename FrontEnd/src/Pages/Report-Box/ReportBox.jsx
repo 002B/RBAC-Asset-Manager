@@ -26,7 +26,7 @@ const ReportBox = () => {
         .then((response) => response.json())
         .then((data) => {
           if (Array.isArray(data)) {
-            setReportList(data); // ตรวจสอบว่าเป็น array แล้วค่อยตั้งค่า
+            setReportList(data);
           } else {
             console.error("Fetched data is not an array:", data);
           }
@@ -34,21 +34,20 @@ const ReportBox = () => {
         .catch((error) => console.error("Error fetching reports:", error));
     };
 
-    fetchReports();     // โหลดครั้งแรก
+    fetchReports();
 
 
-    const interval = setInterval(fetchReports, 1000); // ดึงซ้ำทุก 1 วินาที
+    const interval = setInterval(fetchReports, 1000);
 
-    return () => clearInterval(interval); // เคลียร์ตอน unmount
+    return () => clearInterval(interval);
   }, []);
 
   const showImagePreview = (reportId) => {
-    // แสดงตัวอย่างภาพจาก API โดยใช้ SweetAlert
     SweetAlert.fire({
 
-      imageUrl: `http://${window.location.hostname}:3000/getImage/${reportId}`, // ดึงภาพจาก API
-      imageWidth: 400,
-      imageHeight: 400,
+      imageUrl: `http://${window.location.hostname}:3000/getImage/${reportId}`,
+      imageWidth: 250,
+      imageHeight: 250,
       imageAlt: "Image Preview",
       showConfirmButton: true,
     });
