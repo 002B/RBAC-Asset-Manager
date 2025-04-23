@@ -41,9 +41,9 @@ const UnassignedWorkAdmin = () => {
   
     if (workerList.length > 0) {
       fetchWorkCount(); // ดึงครั้งแรกก่อน
-      const intervalId = setInterval(fetchWorkCount, 1000); // อัปเดตทุก 5 วินาที
+      const intervalId = setInterval(fetchWorkCount, 10000);
   
-      return () => clearInterval(intervalId); // เคลียร์เมื่อ component ถูกถอด
+      return () => clearInterval(intervalId); 
     }
   }, [workerList]);
   
