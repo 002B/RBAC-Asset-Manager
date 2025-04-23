@@ -764,30 +764,6 @@ const ClientManagement = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-secondary">
-                      Branch ID
-                    </label>
-                    <input
-                      type="text"
-                      name="client_branch_id"
-                      value={createFormData.client_branch_id}
-                      onChange={handleCreateFormChange}
-                      className="w-full p-2 border border-secondary rounded focus:ring-2 focus:ring-primary focus:border-transparent"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-secondary">
-                      Search Address
-                    </label>
-                    <input
-                      ref={autocompleteRef}
-                      type="text"
-                      className="w-full p-2 border border-secondary rounded focus:ring-2 focus:ring-primary focus:border-transparent"
-                      placeholder="Search for an address"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-secondary">
                       Province
                     </label>
                     <input
@@ -824,16 +800,6 @@ const ClientManagement = () => {
                       className="w-full p-2 border border-secondary rounded focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
                     />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="h-64 bg-gray-200 rounded-md overflow-hidden">
-                    <div
-                      ref={mapRef}
-                      className="w-full h-full"
-                      style={{ minHeight: "256px" }}
-                    ></div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -875,6 +841,40 @@ const ClientManagement = () => {
                       required
                     />
                   </div>
+                </div>
+                <div className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium mb-1 text-secondary">
+                      Branch ID
+                    </label>
+                    <input
+                      type="text"
+                      name="client_branch_id"
+                      value={createFormData.client_branch_id}
+                      onChange={handleCreateFormChange}
+                      className="w-full p-2 border border-secondary rounded focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                <div>
+                    <label className="block text-sm font-medium mb-1 text-secondary">
+                      Search Address
+                    </label>
+                    <input
+                      ref={autocompleteRef}
+                      type="text"
+                      className="w-full p-2 border border-secondary rounded focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="Search for an address"
+                    />
+                  </div>
+                  <div className="h-64 bg-gray-200 rounded-md overflow-hidden">
+                    <div
+                      ref={mapRef}
+                      className="w-full h-full"
+                      style={{ minHeight: "256px" }}
+                    ></div>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1 text-secondary">
