@@ -9,6 +9,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 
   const [companyBranchData, setCompanyBranchData] = useState({});
   const [isLoading, setIsLoading] = useState(true); 
+  const [isSubmitting, setIsSubmitting] = useState(false); // สถานะการกำลังส่งข้อมูล
   const [formData, setFormData] = useState({
     item_client: "", 
     item_client_branch: "", 
@@ -81,16 +82,25 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // เช็คว่าเลือก Company และ Branch หรือยัง
     if (!formData.item_client || !formData.item_client_branch) {
       Swal.fire({
         icon: 'warning',
         title: 'Please Select Company and Branch',
         text: 'You must select both Company and Branch before proceeding.',
       });
-      return; // หยุดการส่งฟอร์มหากยังไม่เลือก
+      return;
     }
+
+    setIsSubmitting(true);
+
+    const swalLoading = Swal.fire({
+      title: 'Adding Item...',
+      html: 'Please wait while we add your item.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
 
     try {
       const requestBody = {
@@ -117,6 +127,10 @@ const AddItemForm = ({ onClose, onSubmit }) => {
         }
       );
 
+
+      swalLoading.close();
+      setIsSubmitting(false);
+
       if (response.ok) {
         Swal.fire({
           icon: 'success',
@@ -135,6 +149,8 @@ const AddItemForm = ({ onClose, onSubmit }) => {
       }
     } catch (error) {
       console.error("Error:", error);
+      swalLoading.close(); // ปิด SweetAlert loading หากเกิดข้อผิดพลาด
+      setIsSubmitting(false); // หยุดสถานะการส่งข้อมูลหากเกิดข้อผิดพลาด
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -312,8 +328,9 @@ const AddItemForm = ({ onClose, onSubmit }) => {
             <button
               type="submit"
               className="border-2 border-primary bg-primary rounded px-4 py-2 text-white transition-all duration-300 ease-in-out hover:bg-secondary hover:border-secondary"
+              disabled={isSubmitting} // ปิดปุ่มถ้ากำลังส่งข้อมูล
             >
-              Add Item
+              {isSubmitting ? "Adding Item..." : "Add Item"} {/* แสดงข้อความที่ต่างกัน */}
             </button>
           </div>
         </form>
@@ -323,3 +340,4 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 };
 
 export default AddItemForm;
+

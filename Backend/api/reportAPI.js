@@ -41,7 +41,7 @@ const validateParams = (params, res) => {
   return true;
 };
 
-// Admin only routes
+
 router.get("/getAllReport", authAdmin, async (req, res) => {
   try {
     const data = await reportFunc.getAllReport();
@@ -53,14 +53,14 @@ router.get("/getAllReport", authAdmin, async (req, res) => {
 
 router.get("/getAllReport/count", authAdmin, async (req, res) => {
   try {
-    const count = await reportFunc.getAllReportCount();
-    res.json(count);
+    const count = await reportFunc.getAllReport();
+    res.json(count.length);
   } catch (error) {
     handleError(res, "Error fetching report count", error);
   }
 });
 
-// Worker and Admin routes
+
 router.get(
   "/getAllReportByStatus/:status",
   authWorkerAndAdmin,
@@ -152,12 +152,11 @@ router.get("/getReportByUser/:user", authWorkerAndAdmin, async (req, res) => {
   }
 });
 
-// Super Member routes with client validation
+
 router.get("/getReportByCom/:company", authSuperMember, async (req, res) => {
   const { company } = req.params;
   if (!validateParams({ company }, res)) return;
 
-  // Verify Super Member can only access their own company data
   if (req.user.role === "Super Member" && req.user.client !== company) {
     return res
       .status(403)
@@ -186,20 +185,19 @@ router.get(
     }
 
     try {
-      const count = await reportFunc.getReportByComCount(company);
-      res.json(count);
+      const count = await reportFunc.getReportByCom(company);
+      res.json(count.length);
     } catch (error) {
       handleError(res, "Error fetching report count by company", error);
     }
   }
 );
 
-// Authenticated routes (all roles)
+
 router.get("/getReportByBranch/:company/:branch", auth, async (req, res) => {
   const { company, branch } = req.params;
   if (!validateParams({ company, branch }, res)) return;
 
-  // Verify user has access to this branch
   if (req.user.role === "Super Member" && req.user.client !== company) {
     return res
       .status(403)
@@ -226,7 +224,6 @@ router.get(
     const { company, status } = req.params;
     if (!validateParams({ company, status }, res)) return;
 
-    // Verify Super Member can only access their own company data and Super Member can only access their own company data
     if (req.user.role === "Super Member" && req.user.client !== company) {
       return res
         .status(403)
@@ -275,7 +272,6 @@ router.get(
     const { company, branch, status } = req.params;
     if (!validateParams({ company, branch, status }, res)) return;
 
-    // Verify user has access to this branch
     if (req.user.role === "Super Member" && req.user.client !== company) {
       return res
         .status(403)
@@ -310,7 +306,6 @@ router.get(
     const { company, branch, status } = req.params;
     if (!validateParams({ company, branch, status }, res)) return;
 
-    // Verify user has access to this branch
     if (req.user.role === "Super Member" && req.user.client !== company) {
       return res
         .status(403)
@@ -338,7 +333,7 @@ router.get(
   }
 );
 
-// Worker and Admin routes
+
 router.get("/getReportById/:id", authWorkerAndAdmin, async (req, res) => {
   const { id } = req.params;
   if (!validateParams({ id }, res)) return;
@@ -396,7 +391,7 @@ router.post("/createReport/:id", upload.single('image'), async (req, res) => {
   }
 });
 
-// Worker and Admin routes
+
 router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
   const { status } = req.params;
   const { ids, send_to } = req.body;

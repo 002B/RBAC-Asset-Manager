@@ -155,9 +155,8 @@ const ProductPage = ({ id }) => {
             onSuccess={handleReportSubmit}
             initialData={{
               serialNumber: selectedData.id || "",
-              user: guestUser // ส่ง guestUser ไปยัง CreateForm
+              user: guestUser
             }}
-            // ส่งฟังก์ชันสำหรับส่งรายงานแบบ Guest
             customSubmitHandler={sendGuestReport}
           />
         </div>

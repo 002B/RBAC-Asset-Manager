@@ -19,8 +19,8 @@ router.get("/getAllItem", authWorkerAndAdmin, async (req, res) => {
 
 router.get("/getAllItem/count", authWorkerAndAdmin, async (req, res) => {
   try {
-    const count = await itemFunc.getAllItemCount();
-    res.json(count);
+    const count = await itemFunc.getAllItems();
+    res.json(count.length);
   } catch (error) {
     res.status(500).json({ message: "Error fetching item count" });
   }
@@ -40,9 +40,9 @@ router.get("/getItemList/:company", authSuperMember, async (req, res) => {
 router.get("/getItemList/count/:company", authSuperMember, async (req, res) => {
   const { company } = req.params;
   try {
-    const count = await itemFunc.getItemCompanyCount(company);
+    const count = await itemFunc.getItemCompany(company);
     if (!count) return res.status(404).json(count);
-    res.json(count);
+    res.json(count.length);
   } catch (error) {
     res.status(500).json({ message: "Error fetching item count" });
   }
@@ -62,9 +62,9 @@ router.get("/getItemList/:company/:branch", auth, async (req, res) => {
 router.get("/getItemList/count/:company/:branch", auth, async (req, res) => {
   const { company, branch } = req.params;
   try {
-    const count = await itemFunc.getItemBranchCount(company, branch);
+    const count = await itemFunc.getItemCompanyBranch(company, branch);
     if (!count) return res.status(404).json(count);
-    res.json(count);
+    res.json(count.length);
   } catch (error) {
     res.status(500).json({ message: "Error fetching item count" });
   }
