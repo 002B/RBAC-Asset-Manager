@@ -93,6 +93,10 @@ async function getLocation(company, branch) {
 
 async function createCompany(company, branch, location) {
     try {
+        const findSame = await CompanyModel.findOne({ client_id: company, client_branch_id: branch });
+        if (findSame) {
+            return false;
+        }
         await CompanyModel.create({
             client_id: company,
             client_branch_id: branch,

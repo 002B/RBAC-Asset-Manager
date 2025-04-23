@@ -43,6 +43,7 @@ const InventoryWorker = () => {
         setLoading(false);
       }
     };
+    fetchData();
     const intervalId = setInterval(async () => {
       await fetchData();
     }, 1000);

@@ -42,7 +42,7 @@ const InventoryMember = () => {
         setLoading(false);
       }
     };
-
+    fetchData();
     const intervalId = setInterval(async () => {
       await fetchData();
     }, 1000);
