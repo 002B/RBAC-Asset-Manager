@@ -359,35 +359,35 @@ router.post("/createReport/:id", upload.single('image'), async (req, res) => {
     }
   }
   if (typeof user === 'string') {
-      try {
-          user = JSON.parse(user);
-      } catch (err) {
-        return res.status(400).json({ message: "Invalid JSON format for user." });
-      }
+    try {
+      user = JSON.parse(user);
+    } catch (err) {
+      return res.status(400).json({ message: "Invalid JSON format for user." });
+    }
   }
   if (!validateParams({ id }, res)) {
-      return res.status(400).json({ message: "Incomplete data" });
+    return res.status(400).json({ message: "Incomplete data" });
   }
   try {
-      const item = await itemFunc.checkItemExist(id);
-      if (!item) return res.status(404).json({ message: "Item not found" });
+    const item = await itemFunc.checkItemExist(id);
+    if (!item) return res.status(404).json({ message: "Item not found" });
 
-      if (item.status === "fixing")
-          return res.status(400).json({ message: "Item is already in fixing" });
-      const report = await reportFunc.createReport(
-          item.client_id,
-          item.client_branch_id,
-          id,
-          data,
-          req.file
-      );
-      await itemFunc.updateStatus([id], "reporting");
-      await logItemFunc.createLog([item.item_id, "reporting", user.username, user.role]);
-      await activityLogFunc.createLog(["reporting", user.username, user.role]);
+    if (item.status === "fixing")
+      return res.status(400).json({ message: "Item is already in fixing" });
+    const report = await reportFunc.createReport(
+      item.client_id,
+      item.client_branch_id,
+      id,
+      data,
+      req.file
+    );
+    await itemFunc.updateStatus([id], "reporting");
+    await logItemFunc.createLog([item.item_id, "reporting", user.username, user.role]);
+    await activityLogFunc.createLog(["reporting", user.username, user.role]);
 
-      res.json(report);
+    res.json(report);
   } catch (error) {
-      handleError(res, "Error creating report", error);
+    handleError(res, "Error creating report", error);
   }
 });
 
@@ -419,13 +419,13 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
       return res.status(404).json({ message: updateResult.message });
     if (status.toLowerCase() === "accepted" || status.toLowerCase() === "rejected")
       await reportFunc.deleteReport(updateResult.itemIds, "pending");
-    const updateStatusResult = await itemFunc.updateStatus(
+      const updateStatusResult = await itemFunc.updateStatus(
       updateResult.itemIds,
       updateResult.itemStatus
     );
     if (!updateStatusResult)
       return res.status(404).json({ message: "Error updating item status" });
-    await activityLogFunc.createLog([
+      await activityLogFunc.createLog([
       status.toLowerCase(),
       user.username,
       user.role,

@@ -182,11 +182,11 @@ const UnassignedWorkAdmin = () => {
   );
 
   return (
-    <div className="unassigned-work-Admin flex gap-2">
+    <div className="unassigned-work-Admin flex gap-2 ">
       {/* Worker LIST */}
-      <div className="Worker-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg">
-        <div className="Worker-list-bar bg-secondary p-2 rounded-[8px] drop-shadow flex items-center border-2 border-white justify-between sticky top-0 z-10">
-          <div className="Worker-list-header flex gap-1 justify-center items-center">
+      <div className="Worker-list flex flex-col gap-2 flex-1 bg-white p-1 drop-shadow-md rounded-lg ">
+        <div className="Worker-list-bar bg-secondary p-2 rounded-[8px] drop-shadow flex items-center border-2 border-white justify-between sticky top-0 z-10 " >
+          <div className="Worker-list-header flex gap-1 justify-center items-center ">
             <box-icon
               name="user"
               type="regular"

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet');
 @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
 :root {
     --primary-color: #2f6690;
@@ -8,18 +8,7 @@
     --light-color:#81c3d7;
     --BG-color: #D9DCD6;
 }
-@font-face {
-    font-family: 'Sukhumvit';
-    src: url(./assets/Font/sukhumvit-set-font-family/SukhumvitSet-Medium.ttf) format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
-    font-family: 'Sukhumvit';
-    src: url(./assets/Font/sukhumvit-set-font-family/SukhumvitSet-Bold.ttf) format('truetype');
-    font-weight: bold;
-    font-style: bold;
-}
+
 
 *{
     font-family: 'Kanit', sans-serif; /* หรือเปลี่ยนเป็น Prompt, Sarabun */
@@ -28,23 +17,26 @@
 
 h1{
     font-size: 34px;
-    font-family: 'Unbounded', sans-serif;
+    font-weight: bold;
+    font-family: 'Poppins';
 }
 h2{
     font-size: 24px;
-    font-family: 'Unbounded', sans-serif;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
 }
 h3{
     font-size: 20px;
-    font-family: 'Unbounded', sans-serif;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
 }
 h4{
     font-size: 16px;
-    font-family: 'Sukhumvit', sans-serif;
+    font-family: 'Kanit', sans-serif;
 }
 p{
     font-size: 14px;
-    font-family: 'Sukhumvit', sans-serif;
+    font-family: 'Kanit', sans-serif;
 }
 
 /* Mobile */

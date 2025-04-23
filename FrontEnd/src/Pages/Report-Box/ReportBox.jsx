@@ -18,7 +18,7 @@ const ReportBox = () => {
 
   useEffect(() => {
     const fetchReports = () => {
-      fetch("http://${window.location.hostname}:3000/report/getReportByStatus/pending", {
+      fetch(`http://${window.location.hostname}:3000/report/getReportByStatus/pending`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
