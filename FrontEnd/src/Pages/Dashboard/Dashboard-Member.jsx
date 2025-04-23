@@ -14,7 +14,7 @@ const fetchData = async (user) => {
         }
       })
         .then(res => res.json())
-        .then(data => data.map(item => [item.report_id, item.item_id, item.createAt, item.status])),
+        .then(data => data.map(item => [item.report_id, item.item_id, item.createAt.split("T")[0], item.createAt.split("T")[1].split(".")[0], item.status])),
 
       fetch(`http://localhost:3000/item/getItemList/${user.client}/${user.selectedBranch}`,{
         headers: {
@@ -130,7 +130,7 @@ const DashboardMember = () => {
                   tIcon="revision"
                   tName="Report Activity"
                   colIcon="import"
-                  title={["Report ID", "Item ID", "Time", "Status"]}
+                  title={["Report ID", "Item ID", "Date", "Time", "Status"]}
                   data={testActivity}
                   hasButton={false}
                   itemPerPage={4}

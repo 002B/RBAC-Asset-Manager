@@ -57,7 +57,7 @@ async function getItemBranchCount(company, branch) {
 
 async function getItemInfo(id) {
     try {
-        return await itemModel.findOne({ item_id: id }, { _id: 0 }).lean() || null;
+        return await itemModel.findOne({ item_id: id }, { _id: 0, __v: 0 }).lean() || null;
     } catch (error) {
         console.error('Error fetching item details:', error);
         return null;
