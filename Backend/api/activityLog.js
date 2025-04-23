@@ -9,7 +9,16 @@ async function getActivityLog() {
     }
 }
 
-async function getActivityLoginLogout() {
+async function getActivityLoginLogout(client) {
+    if (client) {
+        try {
+            return await activityLogModal.find({ activity: { $in: ["Log in", "Log out"] }, client: client }).lean();
+        } catch (error) {
+            console.error('Error fetching activity logs:', error);
+            return [];
+        }
+    }
+    
     try {
         return await activityLogModal.find({ activity: { $in: ["Log in", "Log out"] } }).lean();
     } catch (error) {

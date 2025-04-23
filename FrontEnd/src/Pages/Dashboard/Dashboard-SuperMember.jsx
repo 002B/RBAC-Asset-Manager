@@ -33,7 +33,7 @@ const fetchInbox = async (user) => {
   }
 };
 
-const fetchLoginActivity = async () => {
+const fetchLoginActivity = async (user) => {
   try {
     const requestOptions = {
       headers: {
@@ -43,7 +43,7 @@ const fetchLoginActivity = async () => {
       redirect: "follow",
     };
     const response = await fetch(
-      `http://${window.location.hostname}:3000/activitylog/login-logout`,
+      `http://${window.location.hostname}:3000/activitylog/login-logout/${user.client}`,
       requestOptions
     );
     const data = await response.json();
@@ -121,7 +121,7 @@ const DashboardSuperMember = () => {
   useEffect(() => {
     (async () => {
       setTestActivity(await fetchInbox(user));
-      setLoginActivity(await fetchLoginActivity());
+      setLoginActivity(await fetchLoginActivity(user));
       setBranchList(await fetchBranchWithItemCount(user));
     })();
   }, [user.client, user.selectedBranch]);

@@ -41,6 +41,26 @@ router.get('/login-logout', authSuperMember, async (req, res) => {
     }
 });
 
+router.get('/login-logout/:client_id', authSuperMember, async (req, res) => {
+    const { client_id } = req.params;
+    try {
+        const logs = await activityFunc.getActivityLoginLogout(client_id);
+        if (!logs || logs.length === 0) {
+            return res.status(404).json({ 
+                message: 'No activity logs found',
+                suggestion: 'Check if collection exists and contains data'
+            });
+        }
+        res.json(logs);
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({
+            message: 'Error fetching activity logs',
+            error: error.message
+        });
+    }
+});
+
 
 
 router.post('/create', async (req, res) => {
