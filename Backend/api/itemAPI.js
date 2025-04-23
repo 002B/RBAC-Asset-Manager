@@ -95,7 +95,7 @@ router.post("/createItem/:company/:branch/:count", authWorkerAndAdmin, async (re
     for (const itemDetail of itemDetails) {
       await logItemFunc.createLog([
         itemDetail.item_id,
-        "Created Item",
+        "created item",
         user.username,
         user.role,
       ]);
@@ -113,7 +113,7 @@ router.put("/updateItem/:id", authWorkerAndAdmin, async (req, res) => {
   try {
     const items = await itemFunc.updateItem(id, data);
     if (!items) return res.status(404).json({ message: "Item not found" });
-    await logItemFunc.createLog([items, "Updated Item", user.username, user.role]);
+    await logItemFunc.createLog([items, "updated Item", user.username, user.role]);
     res.json(items);
   } catch (error) {
     res.status(500).json({ message: "Error updating item" });
@@ -146,7 +146,7 @@ router.delete("/deleteItem/:id", authWorkerAndAdmin, async (req, res) => {
   try {
     const items = await itemFunc.deleteItem(id);
     if (!items) return res.status(404).json({ message: "Item not found" });
-    await logItemFunc.createLog([items, "Deleted Item", user.username, user.role]);
+    await logItemFunc.createLog([items, "deleted Item", user.username, user.role]);
     res.json(items);
   } catch (error) {
     console.log(error);
