@@ -137,7 +137,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold text-primary mb-4">Edit Item</h2>
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 gap-4 mb-4">
+          <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Item Location
