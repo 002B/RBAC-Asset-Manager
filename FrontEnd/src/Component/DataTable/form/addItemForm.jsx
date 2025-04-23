@@ -9,6 +9,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 
   const [companyBranchData, setCompanyBranchData] = useState({});
   const [isLoading, setIsLoading] = useState(true); 
+  const [isSubmitting, setIsSubmitting] = useState(false); // สถานะการกำลังส่งข้อมูล
   const [formData, setFormData] = useState({
     item_client: "", 
     item_client_branch: "", 
@@ -18,7 +19,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
     item_type: "foam",
     item_class: "ABC",
     item_quantity: 1,
-    item_location: "", // เพิ่มฟิลด์สำหรับที่ตั้งของถัง
+    item_location: "",
   });
 
   useEffect(() => {
@@ -81,16 +82,25 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // เช็คว่าเลือก Company และ Branch หรือยัง
     if (!formData.item_client || !formData.item_client_branch) {
       Swal.fire({
         icon: 'warning',
         title: 'Please Select Company and Branch',
         text: 'You must select both Company and Branch before proceeding.',
       });
-      return; // หยุดการส่งฟอร์มหากยังไม่เลือก
+      return;
     }
+
+    setIsSubmitting(true);
+
+    const swalLoading = Swal.fire({
+      title: 'Adding Item...',
+      html: 'Please wait while we add your item.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
 
     try {
       const requestBody = {
@@ -102,7 +112,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
         item_type: formData.item_type,
         item_class: formData.item_class,
         item_quantity: formData.item_quantity,
-        item_location: formData.item_location, // ส่งข้อมูลตำแหน่งด้วย
+        item_location: formData.item_location,
       };
 
       const response = await fetch(
@@ -116,6 +126,10 @@ const AddItemForm = ({ onClose, onSubmit }) => {
           body: JSON.stringify({"data":requestBody,"user":user}),
         }
       );
+
+
+      swalLoading.close();
+      setIsSubmitting(false);
 
       if (response.ok) {
         Swal.fire({
@@ -135,6 +149,8 @@ const AddItemForm = ({ onClose, onSubmit }) => {
       }
     } catch (error) {
       console.error("Error:", error);
+      swalLoading.close();
+      setIsSubmitting(false);
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -312,8 +328,9 @@ const AddItemForm = ({ onClose, onSubmit }) => {
             <button
               type="submit"
               className="border-2 border-primary bg-primary rounded px-4 py-2 text-white transition-all duration-300 ease-in-out hover:bg-secondary hover:border-secondary"
+              disabled={isSubmitting} 
             >
-              Add Item
+              {isSubmitting ? "Adding Item..." : "Add Item"} {/* แสดงข้อความที่ต่างกัน */}
             </button>
           </div>
         </form>
@@ -323,3 +340,4 @@ const AddItemForm = ({ onClose, onSubmit }) => {
 };
 
 export default AddItemForm;
+

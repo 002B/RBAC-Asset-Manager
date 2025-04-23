@@ -157,7 +157,6 @@ const ProductPage = ({ id }) => {
               serialNumber: id || "",
               user: guestUser // ส่ง guestUser ไปยัง CreateForm
             }}
-            // ส่งฟังก์ชันสำหรับส่งรายงานแบบ Guest
             customSubmitHandler={sendGuestReport}
           />
         </div>

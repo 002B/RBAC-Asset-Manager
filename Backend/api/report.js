@@ -10,16 +10,6 @@ async function getAllReport() {
     }
 }
 
-async function getAllReportCount() {
-    try {
-        const docs = await reportModel.find({}, { _id: 0 }).lean();
-        return docs.length;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return 0;
-    }
-}
-
 async function getAllReportByStatus(status) {
     try {
         return await reportModel.find({ status: status }, { _id: 0 }).lean();
@@ -35,16 +25,6 @@ async function getReportByCom(company) {
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
-    }
-}
-
-async function getReportByComCount(company) {
-    try {
-        const docs = await reportModel.find({ "client_id": company }, { _id: 0 }).lean();
-        return docs.length;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return 0;
     }
 }
 
@@ -235,12 +215,10 @@ async function deleteReport(id, status) {
 module.exports = {
     createReport,
     getAllReport,
-    getAllReportCount,
     getAllReportByStatus,
     getReportByBranch,
     getReportByBranchCount,
     getReportByCom,
-    getReportByComCount,
     getReportById,
     getReportByStatus,
     getReportByUser,

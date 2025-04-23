@@ -84,7 +84,7 @@ async function getLocation(company, branch) {
             { client_id: company, 'client_branch_id': branch },
             { _id: 0 }
         ).lean();
-        return [result.location.latitude, result.location.longitude];
+        return result.location;
     } catch (error) {
         console.error(`Error fetching location for ${company}/${branch}:`, error);
         return null;
