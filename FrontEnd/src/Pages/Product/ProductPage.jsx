@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CreateForm from "../../Component/CreateForm";
-import Logo from "../../assets/Logo/Logo.png";
+import Logo from "../../assets/Logo/Logo1.png";
 import placeholder from "../../assets/img/placeholder.png";
 import "./ProductPage.css";
 import "boxicons";
