@@ -1,23 +1,48 @@
 import React, { useEffect, useState } from "react";
+import useAnimatedNumber from "../useAnimatedNumber";
 import "./Status.css";
 import "boxicons";
 
 const Status = ({ role, company, branch }) => {
   const [MemberItemCount, setMemberItemCount] = useState(0);
+  const animatedMemberItemCount = useAnimatedNumber(MemberItemCount);
+  
   const [MemberReportPendingCount, setMemberReportPendingCount] = useState(0);
+  const animatedMemberReportPendingCount = useAnimatedNumber(MemberReportPendingCount);
+  
   const [MemberBadItemCount, setMemberBadItemCount] = useState(0);
-  const [MemberNextCheck, setMemberNextCheck] = useState("N/A");
+  const animatedMemberBadItemCount = useAnimatedNumber(MemberBadItemCount);
+
+  const [MemberNextCheck, setMemberNextCheck] = useState("");
 
   const [superMemberItemCount, setSuperMemberItemCount] = useState(0);
+  const animatedSuperMemberItemCount = useAnimatedNumber(superMemberItemCount);
+  
   const [superMemberReportPendingCount, setSuperMemberReportPendingCount] = useState(0);
+  const animatedSuperMemberReportPendingCount = useAnimatedNumber(superMemberReportPendingCount);
+  
   const [superMemberBadItemCount, setSuperMemberBadItemCount] = useState(0);
+  const animatedSuperMemberBadItemCount = useAnimatedNumber(superMemberBadItemCount);
+  
   const [superMemberTotalUser, setSuperMemberTotalUser] = useState(0);
+  const animatedSuperMemberTotalUser = useAnimatedNumber(superMemberTotalUser);
+  
   const [superMemberTotalBranch, setSuperMemberTotalBranch] = useState(0);
-
+  const animatedSuperMemberTotalBranch = useAnimatedNumber(superMemberTotalBranch);
+  
   const [AdminItemCount, setAdminItemCount] = useState(0);
+  const animatedAdminItemCount = useAnimatedNumber(AdminItemCount);
+  
   const [AdminReportPendingCount, setAdminReportPendingCount] = useState(0);
+  const animatedAdminReportPendingCount = useAnimatedNumber(AdminReportPendingCount);
+  
   const [AdminBadItemCount, setAdminBadItemCount] = useState(0);
+  const animatedAdminBadItemCount = useAnimatedNumber(AdminBadItemCount);
+  
   const [AdminTotalUser, AdminSetTotalUser] = useState(0);
+  const animatedAdminTotalUser = useAnimatedNumber(AdminTotalUser);
+
+  
 
   const authHeaders = {
     headers: {
@@ -93,28 +118,28 @@ const Status = ({ role, company, branch }) => {
         <div className="flex justify-between items-center status-box bg-primary ">
           <div className="count-title p-1 m-1">
             <h3>Installed</h3>
-            <h1>{MemberItemCount}</h1>
+            <h1>{animatedMemberItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Report Sent</h3>
-            <h1>{MemberReportPendingCount}</h1>
+            <h1>{animatedMemberReportPendingCount}</h1>
           </div>
           <box-icon name="send" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
-            <h1>{MemberBadItemCount}</h1>
+            <h1>{animatedMemberBadItemCount}</h1>
           </div>
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Next Check</h3>
-            <h1>{MemberNextCheck}</h1>
+            <h1>{MemberNextCheck || "N/A"}</h1>
           </div>
           <box-icon name="calendar" color="white" size="lg"></box-icon>
         </div>
@@ -128,41 +153,39 @@ const Status = ({ role, company, branch }) => {
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total Item</h3>
-            <h1>{superMemberItemCount}</h1>
+            <h1>{animatedSuperMemberItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Member</h3>
-            <h1>{superMemberTotalUser}</h1>
+            <h1>{animatedSuperMemberTotalUser}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Branch</h3>
-            <h1>{superMemberTotalBranch}</h1>
+            <h1>{animatedSuperMemberTotalBranch}</h1>
           </div>
           <box-icon name="git-branch" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">  
           <div className="count-title p-1 m-1"> 
             <h3>Report Sent</h3>
-            <h1>{superMemberReportPendingCount}</h1>
+            <h1>{animatedSuperMemberReportPendingCount}</h1>
           </div>
           <box-icon name="send" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
-            <h1>{superMemberBadItemCount}</h1>
+            <h1>{animatedSuperMemberBadItemCount}</h1>
           </div>
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
       </div>
-
-      
     );
   }
 
@@ -172,28 +195,28 @@ const Status = ({ role, company, branch }) => {
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total Installed</h3>
-            <h1>{AdminItemCount}</h1>
+            <h1>{animatedAdminItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Report</h3>
-            <h1>{AdminReportPendingCount}</h1>
+            <h1>{animatedAdminReportPendingCount}</h1>
           </div>
           <box-icon name="news" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Need Action</h3>
-            <h1>{AdminBadItemCount}</h1>
+            <h1>{animatedAdminBadItemCount}</h1>
           </div>  
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total User</h3>
-            <h1>{AdminTotalUser}</h1>
+            <h1>{animatedAdminTotalUser}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>

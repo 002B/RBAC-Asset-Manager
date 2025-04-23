@@ -58,16 +58,6 @@ function LoginPage() {
     setShow((prevShow) => !prevShow);
   };
 
-  
-  const forgotPassword = () => {
-    SweetAlert.fire({
-      icon: "question",
-      title: "Forgot Password?",
-      html: "<p>Please contact your IT-support Call: <b>02-696-6966</b></p>",
-      confirmButtonColor: "#FD6E28",
-    });
-  };
-
   return (
     
     <div className='login-background flex justify-center items-center min-h-screen bg-cover'>
@@ -125,22 +115,7 @@ function LoginPage() {
                 />
               </button>
             </div>
-            <div className="flex justify-end">
-            <b onClick={forgotPassword} className="mr-2 opacity-50 text-sm underline hover:opacity-60 w-full text-right cursor-pointer">
-                  Forgot password?
-                </b>
-            </div>
             <div className="flex gap-2 justify-center items-center flex-wrap-reverse">
-            <button
-                  className="flex flex-1 justify-center items-center bg-[#3ace01] rounded-[4px] min-w-[120px] h-[45px] text-[#fff] hover:brightness-110"
-                  type="button"
-                >
-                  <img
-                    className="w-7 h-7 relative"
-                    src={line}
-                    alt=""
-                  />
-                </button>
               <button
                 className="flex flex-1  justify-center items-center bg-secondary min-w-[120px] rounded-[4px] h-[45px] hover:brightness-110"
                 type="submit"

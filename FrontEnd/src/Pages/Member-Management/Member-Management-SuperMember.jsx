@@ -884,7 +884,7 @@ const MemberManagementSuperMember = () => {
         </div>
         {totalPages > 1 && (
           <div className="flex justify-center items-center">
-            <div className="pagination bg-white drop-shadow-sm p-1 rounded-lg">
+            <div className="pagination bg-white drop-shadow-sm p-1 rounded-lg w-full">
               <button
                 onClick={() => changePage(1)}
                 disabled={currentPage === 1}
