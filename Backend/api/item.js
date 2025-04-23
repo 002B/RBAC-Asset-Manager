@@ -10,15 +10,6 @@ async function getAllItems() {
     }
 }
 
-async function getAllItemCount() {
-    try {
-        return await itemModel.countDocuments();
-    } catch (error) {
-        console.error('Error fetching total item count:', error);
-        return 0;
-    }
-}
-
 async function getItemCompany(company) {
     try {
         return await itemModel.find({ client_id: company }, { _id: 0 }).lean();
@@ -28,30 +19,12 @@ async function getItemCompany(company) {
     }
 }
 
-async function getItemCompanyCount(company) {
-    try {
-        return await itemModel.countDocuments({ client_id: company });
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return 0;
-    }
-}
-
 async function getItemCompanyBranch(company, branch) {
     try {
         return await itemModel.find({ client_id: company, client_branch_id: branch }, { _id: 0 }).lean();
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
-    }
-}
-
-async function getItemBranchCount(company, branch) {
-    try {
-        return await itemModel.countDocuments({ client_id: company, client_branch_id: branch });
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return 0;
     }
 }
 
@@ -173,11 +146,8 @@ async function updateStatus(itemIds, itemStatus) {
 
 module.exports = {
     getAllItems,
-    getAllItemCount,
     getItemCompany,
-    getItemCompanyCount,
     getItemCompanyBranch,
-    getItemBranchCount,
     getItemInfo,
     checkItemExist,
     createManyItem,

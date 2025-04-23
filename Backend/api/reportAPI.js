@@ -41,7 +41,7 @@ const validateParams = (params, res) => {
   return true;
 };
 
-// Admin only routes
+
 router.get("/getAllReport", authAdmin, async (req, res) => {
   try {
     const data = await reportFunc.getAllReport();
@@ -53,14 +53,14 @@ router.get("/getAllReport", authAdmin, async (req, res) => {
 
 router.get("/getAllReport/count", authAdmin, async (req, res) => {
   try {
-    const count = await reportFunc.getAllReportCount();
-    res.json(count);
+    const count = await reportFunc.getAllReport();
+    res.json(count.length);
   } catch (error) {
     handleError(res, "Error fetching report count", error);
   }
 });
 
-// Worker and Admin routes
+
 router.get(
   "/getAllReportByStatus/:status",
   authWorkerAndAdmin,
@@ -152,12 +152,11 @@ router.get("/getReportByUser/:user", authWorkerAndAdmin, async (req, res) => {
   }
 });
 
-// Super Member routes with client validation
+
 router.get("/getReportByCom/:company", authSuperMember, async (req, res) => {
   const { company } = req.params;
   if (!validateParams({ company }, res)) return;
 
-  // Verify Super Member can only access their own company data
   if (req.user.role === "Super Member" && req.user.client !== company) {
     return res
       .status(403)
@@ -186,20 +185,19 @@ router.get(
     }
 
     try {
-      const count = await reportFunc.getReportByComCount(company);
-      res.json(count);
+      const count = await reportFunc.getReportByCom(company);
+      res.json(count.length);
     } catch (error) {
       handleError(res, "Error fetching report count by company", error);
     }
   }
 );
 
-// Authenticated routes (all roles)
+
 router.get("/getReportByBranch/:company/:branch", auth, async (req, res) => {
   const { company, branch } = req.params;
   if (!validateParams({ company, branch }, res)) return;
 
-  // Verify user has access to this branch
   if (req.user.role === "Super Member" && req.user.client !== company) {
     return res
       .status(403)
@@ -226,7 +224,6 @@ router.get(
     const { company, status } = req.params;
     if (!validateParams({ company, status }, res)) return;
 
-    // Verify Super Member can only access their own company data and Super Member can only access their own company data
     if (req.user.role === "Super Member" && req.user.client !== company) {
       return res
         .status(403)
@@ -275,7 +272,6 @@ router.get(
     const { company, branch, status } = req.params;
     if (!validateParams({ company, branch, status }, res)) return;
 
-    // Verify user has access to this branch
     if (req.user.role === "Super Member" && req.user.client !== company) {
       return res
         .status(403)
@@ -310,7 +306,6 @@ router.get(
     const { company, branch, status } = req.params;
     if (!validateParams({ company, branch, status }, res)) return;
 
-    // Verify user has access to this branch
     if (req.user.role === "Super Member" && req.user.client !== company) {
       return res
         .status(403)
@@ -338,7 +333,7 @@ router.get(
   }
 );
 
-// Worker and Admin routes
+
 router.get("/getReportById/:id", authWorkerAndAdmin, async (req, res) => {
   const { id } = req.params;
   if (!validateParams({ id }, res)) return;
@@ -364,39 +359,39 @@ router.post("/createReport/:id", upload.single('image'), async (req, res) => {
     }
   }
   if (typeof user === 'string') {
-      try {
-          user = JSON.parse(user);
-      } catch (err) {
-        return res.status(400).json({ message: "Invalid JSON format for user." });
-      }
+    try {
+      user = JSON.parse(user);
+    } catch (err) {
+      return res.status(400).json({ message: "Invalid JSON format for user." });
+    }
   }
   if (!validateParams({ id }, res)) {
-      return res.status(400).json({ message: "Incomplete data" });
+    return res.status(400).json({ message: "Incomplete data" });
   }
   try {
-      const item = await itemFunc.checkItemExist(id);
-      if (!item) return res.status(404).json({ message: "Item not found" });
+    const item = await itemFunc.checkItemExist(id);
+    if (!item) return res.status(404).json({ message: "Item not found" });
 
-      if (item.status === "fixing")
-          return res.status(400).json({ message: "Item is already in fixing" });
-      const report = await reportFunc.createReport(
-          item.client_id,
-          item.client_branch_id,
-          id,
-          data,
-          req.file
-      );
-      await itemFunc.updateStatus([id], "reporting");
-      await logItemFunc.createLog([item.item_id, "reporting", user.username, user.role]);
-      await activityLogFunc.createLog(["reporting", user.username, user.role]);
+    if (item.status === "fixing")
+      return res.status(400).json({ message: "Item is already in fixing" });
+    const report = await reportFunc.createReport(
+      item.client_id,
+      item.client_branch_id,
+      id,
+      data,
+      req.file
+    );
+    await itemFunc.updateStatus([id], "reporting");
+    await logItemFunc.createLog([item.item_id, "reporting", user.username, user.role]);
+    await activityLogFunc.createLog(["reporting", user.username, user.role]);
 
-      res.json(report);
+    res.json(report);
   } catch (error) {
-      handleError(res, "Error creating report", error);
+    handleError(res, "Error creating report", error);
   }
 });
 
-// Worker and Admin routes
+
 router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
   const { status } = req.params;
   const { ids, send_to } = req.body;
@@ -424,13 +419,13 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
       return res.status(404).json({ message: updateResult.message });
     if (status.toLowerCase() === "accepted" || status.toLowerCase() === "rejected")
       await reportFunc.deleteReport(updateResult.itemIds, "pending");
-    const updateStatusResult = await itemFunc.updateStatus(
+      const updateStatusResult = await itemFunc.updateStatus(
       updateResult.itemIds,
       updateResult.itemStatus
     );
     if (!updateStatusResult)
       return res.status(404).json({ message: "Error updating item status" });
-    await activityLogFunc.createLog([
+      await activityLogFunc.createLog([
       status.toLowerCase(),
       user.username,
       user.role,

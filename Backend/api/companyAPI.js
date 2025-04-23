@@ -78,7 +78,7 @@ router.get('/getLocation/:company/:branch', auth, async (req, res) => {
     }
 });
 
-router.post('/createCompany/:company/:branch', authWorkerAndAdmin, async (req, res) => {
+router.post('/createCompany/:company/:branch', authAdmin, async (req, res) => {
     const { company, branch } = req.params;
     const { location } = req.body;
     try {
