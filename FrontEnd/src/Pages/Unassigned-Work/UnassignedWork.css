@@ -138,7 +138,11 @@ filter: brightness(0.9);}
   .unassigned-work-card .edit-button:hover {
     background-color: var(--primary-color);
   }
-  
+  /* ซ่อน scroll bar ทั้งแนวนอนและแนวตั้ง */
+::-webkit-scrollbar {
+  display: none;
+}
+
   /* Tablet */
   
   @media screen and (min-width: 768px) and (max-width: 1023px) {
