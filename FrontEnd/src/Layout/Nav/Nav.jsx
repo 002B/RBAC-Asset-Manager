@@ -19,6 +19,12 @@ const navList = [
     iconType: "solid",
   },
   {
+    name: "Client Management",
+    path: "client-management",
+    icon: "buildings",
+    iconType: "solid",
+  },
+  {
     name: "Member Management",
     path: "Member-management",
     icon: "group",
@@ -69,11 +75,11 @@ function getNavListByRole(userRole) {
     case "Super Member":
       return navList.filter(item => ["Dashboard", "Inventory", "Member Management", "Setting"].includes(item.name));
     case "Worker":
-      return navList.filter(item => ["Dashboard", "Inventory" , "Unassigned Work", "Setting"].includes(item.name));
+      return navList.filter(item => ["Dashboard", "Inventory","Client Management", "Unassigned Work", "Setting"].includes(item.name));
     case "Admin":
-      return navList.filter(item => ["Dashboard", "Inventory", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log","Item Log", "Setting"].includes(item.name));
+      return navList.filter(item => ["Dashboard", "Inventory", "Client Management", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log","Item Log", "Setting"].includes(item.name));
     case "Super Admin":
-      return navList.filter(item => ["Dashboard", "Data Analysis", "Inventory", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log", "Setting"].includes(item.name));
+      return navList.filter(item => ["Dashboard", "Data Analysis", "Inventory","Client Management", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log", "Setting"].includes(item.name));
     default:
       return [];
   }
