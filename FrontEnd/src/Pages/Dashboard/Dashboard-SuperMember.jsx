@@ -24,7 +24,8 @@ const fetchInbox = async (user) => {
     return data.map((item) => [
       item.report_id,
       item.item_id,
-      item.createAt,
+      item.createAt.split("T")[0],
+      item.createAt.split("T")[1].split(".")[0],
       item.status,
     ]);
   } catch (error) {
@@ -151,7 +152,7 @@ const DashboardSuperMember = () => {
                 tIcon="revision"
                 colIcon="send"
                 tName="Report Activity"
-                title={["Report ID", "Item ID", "Time", "Status"]}
+                title={["Report ID", "Item ID", "Date", "Time", "Status"]}
                 data={testActivity}
                 hasButton={false}
                 itemPerPage={4}

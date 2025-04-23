@@ -595,6 +595,7 @@ const MemberManagementAdmin = () => {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             body: JSON.stringify(formData),
           }
@@ -629,6 +630,9 @@ const MemberManagementAdmin = () => {
             `http://localhost:3000/users/deleteUser/${user.username}`,
             {
               method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
             }
           );
 

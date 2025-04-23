@@ -217,7 +217,7 @@ function getItemStatusByReportStatus(reportStatus) {
         case 'done':
         case 'rejected':
         default:
-            return 'OK';
+            return 'available';
     }
 }
 

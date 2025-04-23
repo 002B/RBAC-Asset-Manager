@@ -56,9 +56,9 @@ const InventoryWorker = () => {
 
   return (
     <div className="flex flex-col w-full drop-shadow rounded-[8px]">
-      {/* <div className="bg-white rounded-[8px] drop-shadow">
+      <div className="bg-white rounded-[8px] drop-shadow">
         <Status role={user.role} company={user.client} branch={user.selectedBranch} />
-      </div> */}
+      </div>
       <div className="mt-4 bg-white p-1 rounded-[8px] drop-shadow">
         <DataTable
           tIcon={"spray-can"}
