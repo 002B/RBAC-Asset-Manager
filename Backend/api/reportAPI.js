@@ -371,9 +371,9 @@ router.post("/createReport/:id", upload.single('image'), async (req, res) => {
   try {
     const item = await itemFunc.checkItemExist(id);
     if (!item) return res.status(404).json({ message: "Item not found" });
-
-    if (item.status === "fixing")
+    if (item.item_status === "fixing" || item.item_status === "bad"){
       return res.status(400).json({ message: "Item is already in fixing" });
+    } 
     const report = await reportFunc.createReport(
       item.client_id,
       item.client_branch_id,
@@ -415,10 +415,8 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
       status.toLowerCase(),
       send_to
     );
-    if (!updateResult.success)
-      return res.status(404).json({ message: updateResult.message });
-    if (status.toLowerCase() === "accepted" || status.toLowerCase() === "rejected")
-      await reportFunc.deleteReport(updateResult.itemIds, "pending");
+    if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
+    if (status.toLowerCase() === "accepted" || status.toLowerCase() === "rejected") await reportFunc.deleteReport(updateResult.itemIds, "pending");
       const updateStatusResult = await itemFunc.updateStatus(
       updateResult.itemIds,
       updateResult.itemStatus

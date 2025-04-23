@@ -70,7 +70,7 @@ const ReportBox = () => {
 
       if (response.ok) {
         SweetAlert.fire("Success", data.message, "success");
-        const newReports = await fetch("http://${window.location.hostname}:3000/report/getReportByStatus/pending", {
+        const newReports = await fetch(`http://${window.location.hostname}:3000/report/getReportByStatus/pending`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
