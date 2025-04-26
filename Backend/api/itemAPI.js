@@ -8,6 +8,7 @@ const {
   authWorkerAndAdmin,
 } = require("./auth");
 
+
 router.get("/getAllItem", authWorkerAndAdmin, async (req, res) => {
   try {
     const items = await itemFunc.getAllItems();

@@ -194,7 +194,7 @@ const DashboardMember = () => {
               colIcon="spray-can"
               title={["Serial Number", "Brand", "Status"]}
               data={inventory}
-              hasButton={false}
+              hasButton={true}
               itemPerPage={10}
               hasSearch={false}
             />

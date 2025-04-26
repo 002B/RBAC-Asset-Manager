@@ -3,6 +3,7 @@ const router = express.Router();
 const companyFunc = require('./company');
 const {auth, authSuperMember, authWorkerAndAdmin, authAdmin} = require('./auth');
 const CompanyModel = require('./DB/client.js');
+const itemModel = require("./DB/item.js");
 
 router.get('/getAllCompany', authWorkerAndAdmin, async (req, res) => {
     try {
@@ -135,6 +136,7 @@ router.delete('/deleteCompany/:company/:branch', authAdmin, async (req, res) => 
     try {
         const deleteCompany = await companyFunc.deleteCompany(company, branch);
         if (deleteCompany) {
+            await itemModel.deleteMany({ client_id: company, client_branch_id: branch });
             res.json({ message: `Company ${company} ${branch} deleted successfully` });
         } else {
             res.status(500).json({ message: `Error deleting company ${company} ${branch}` });

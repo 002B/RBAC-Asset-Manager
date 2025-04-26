@@ -47,7 +47,8 @@ const InventoryMember = () => {
       await fetchData();
     }, 1000);
     return () => clearInterval(intervalId);
-  }, [user.company, user.selectedBranch]);
+  // }, [user.company, user.selectedBranch]);
+  },[]);
 
   if (loading) return <div>Loading...</div>;
 

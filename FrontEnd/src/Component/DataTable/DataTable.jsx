@@ -208,13 +208,8 @@ const DataTable = (props) => {
           )}
           {hasSearch && (
             <div className="search-bar">
-              <box-icon
-                name="filter"
-                type="regular"
-                size="sm"
-                color="#FF6700"
-              ></box-icon>
               <input
+              className="px-2"
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
