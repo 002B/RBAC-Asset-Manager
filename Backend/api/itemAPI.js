@@ -61,6 +61,7 @@ router.get("/getItemList/:company/:branch", auth, async (req, res) => {
 
 router.get("/getItemList/count/:company/:branch", auth, async (req, res) => {
   const { company, branch } = req.params;
+  
   try {
     const count = await itemFunc.getItemCompanyBranch(company, branch);
     if (!count) return res.status(404).json(count);

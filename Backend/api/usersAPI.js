@@ -183,7 +183,7 @@ router.get("/getUser/:username", authAdmin, async (req, res) => {
   }
 });
 
-router.post("/createUser", authAdmin, async (req, res) => {
+router.post("/createUser", async (req, res) => {
   try {
     const userData = req.body;
     const newUser = await createUser(userData);
