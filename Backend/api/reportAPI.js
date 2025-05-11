@@ -413,7 +413,8 @@ router.put("/updateReport/:status", authWorkerAndAdmin, async (req, res) => {
     const updateResult = await reportFunc.updateReport(
       ids,
       status.toLowerCase(),
-      send_to
+      send_to,
+      req.body.note
     );
     if (!updateResult.success) return res.status(404).json({ message: updateResult.message });
     if (status.toLowerCase() === "accepted" || status.toLowerCase() === "rejected") await reportFunc.deleteReport(updateResult.itemIds, "pending");

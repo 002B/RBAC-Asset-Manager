@@ -1,0 +1,5 @@
+MONGODB_URI=mongodb+srv://kittiposmek:LndCpxVUjFvxIYjK@fireextinguisher-db.wepn9uj.mongodb.net/FEMS-New?retryWrites=true&w=majority
+JWT_SECRET=a2179ab1c00163fd83fd68f4a5dc3e3d749749672ba93f63e4e09d6ecde528ff
+JWT_EXPIRES_IN=8h
+PORT=3000
+NODE_ENV=development

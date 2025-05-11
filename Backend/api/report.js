@@ -141,8 +141,10 @@ async function createReport(company, branch, id, data, file) {
             createAt: new Date().toISOString(),
             status: "pending",
             send_by: data.user.username,
+            send_to: data.send_to,
             problem: data.problem,
-            image: filePath
+            image: filePath,
+            note: data.note
         });
 
         return newReport ? true : false;
@@ -153,7 +155,7 @@ async function createReport(company, branch, id, data, file) {
 }
 
 
-async function updateReport(ids, status, send_to) {
+async function updateReport(ids, status, send_to, note) {
     try {
         const docs = await reportModel.find({ "report_id": { $in: ids } });
         if (!docs.length) {
@@ -171,7 +173,8 @@ async function updateReport(ids, status, send_to) {
                 "status": status,
                 "send_by": doc.send_by,
                 "send_to": send_to || doc["send_to"],
-                "problem": doc.problem
+                "problem": doc.problem,
+                "note": note || doc.note
             });
 
             await doc.save();

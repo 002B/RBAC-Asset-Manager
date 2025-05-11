@@ -149,73 +149,82 @@ const DashboardWorker = () => {
   
   
 
-  const handleSubmit = async (reportId) => {
-    SweetAlert.fire({
-      title: "Are you sure?",
-      text: "You need to submit work?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#FD6E28",
-      cancelButtonColor: "#B3B4AD",
-      confirmButtonText: "Sure",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.put(
-            "http://localhost:3000/report/updateReport/done",
-            {
-              ids: [reportId],
-              user: user,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          setWorkList((prevList) =>
-            prevList.filter((item) => item.report_id !== reportId)
-          );
-
-          SweetAlert.fire({
-            title: "Congratulations!",
-            text: "Your work has been submitted!",
-            icon: "success",
-            confirmButtonColor: "#FD6E28",
-          });
-          // ลบรายการที่ submit แล้วออกจาก list
-          try {
-            const res = await axios.get(
-              `http://localhost:3000/report/getReportByUserFixing/${user.username}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              }
-            );
-            const transformed = res.data.map((report) => ({
-              report_id: report.report_id,
-              serial: report.item_id,
-              company: report.client_id,
-              branch: report.client_branch_id,
-              date: new Date(report.createAt).toLocaleDateString(),
-            }));
-            setWorkList(transformed);
-          } catch (error) {
-            console.error("Error fetching report data:", error);
-          }
-        } catch (error) {
-          console.error("Error submitting report:", error);
-          SweetAlert.fire({
-            title: "Error",
-            text: "Failed to submit the report.",
-            icon: "error",
-            confirmButtonColor: "#FD6E28",
-          });
-        }
+ const handleSubmit = async (reportId) => {
+  const result = await SweetAlert.fire({
+    title: "Are you sure?",
+    text: "You need to submit work?",
+    icon: "question",
+    input: "text",
+    inputLabel: "Note (optional)",
+    inputPlaceholder: "Enter your note here...",
+    showCancelButton: true,
+    confirmButtonColor: "#FD6E28",
+    cancelButtonColor: "#B3B4AD",
+    confirmButtonText: "Sure",
+    preConfirm: (note) => {
+      if (note.length > 255) {
+        SweetAlert.showValidationMessage("Note is too long (max 255 characters)");
+        return false;
       }
+      return note;
+    },
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    const note = result.value || ""; // ค่า note จาก input
+
+    await axios.put(
+      "http://localhost:3000/report/updateReport/done",
+      {
+        ids: [reportId],
+        user: user,
+        note: note, 
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    const res = await axios.get(
+      `http://localhost:3000/report/getReportByUserFixing/${user.username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    const transformed = res.data.map((report) => ({
+      report_id: report.report_id,
+      serial: report.item_id,
+      company: report.client_id,
+      branch: report.client_branch_id,
+      date: new Date(report.createAt).toLocaleDateString(),
+    }));
+
+    setWorkList(transformed);
+
+    SweetAlert.fire({
+      title: "Congratulations!",
+      text: "Your work has been submitted!",
+      icon: "success",
+      confirmButtonColor: "#FD6E28",
     });
-  };
+
+  } catch (error) {
+    console.error("Error submitting or fetching report:", error);
+    SweetAlert.fire({
+      title: "Error",
+      text: "Failed to submit the report.",
+      icon: "error",
+      confirmButtonColor: "#FD6E28",
+    });
+  }
+};
+
 
   return (
     <div className="flex flex-col gap-2">
