@@ -75,7 +75,7 @@ function getNavListByRole(userRole) {
     case "Super Member":
       return navList.filter(item => ["Dashboard", "Inventory", "Member Management", "Setting"].includes(item.name));
     case "Worker":
-      return navList.filter(item => ["Dashboard", "Inventory","Client Management", "Unassigned Work", "Setting"].includes(item.name));
+      return navList.filter(item => ["Dashboard", "Inventory","Client Management", "Unassigned Work","Activity Log","Item Log", "Setting"].includes(item.name));
     case "Admin":
       return navList.filter(item => ["Dashboard", "Inventory", "Client Management", "Member Management", "Report Box", "Unassigned Work", "Submitted Work", "Activity Log","Item Log", "Setting"].includes(item.name));
     case "Super Admin":

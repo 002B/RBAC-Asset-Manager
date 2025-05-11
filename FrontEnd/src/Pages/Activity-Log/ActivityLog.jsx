@@ -7,35 +7,56 @@ const ActivityLog = () => {
   const { user } = useAuth();
   const [activityLog, setActivityLog] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
       try {
-        const response = await fetch(`http://localhost:3000/activitylog/all`, {
+        const endpoint =
+          user.role === "Admin" || user.role === "Super Admin"
+            ? "http://localhost:3000/activitylog/all"
+            : "http://localhost:3000/activitylog/worker";
+
+        const response = await fetch(endpoint, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
+
         const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          console.error("Unexpected response format:", data);
+          return;
+        }
+
         const formattedData = data.map((item) => [
           item.log_id,
-          item.date.split("T")[0],
-          item.date.split("T")[1].split(".")[0],
+          item.date?.split("T")[0] ?? "-",
+          item.date?.split("T")[1]?.split(".")[0] ?? "-",
           item.activity,
           item.username,
           item.role,
         ]);
+
         setActivityLog(formattedData);
       } catch (error) {
-        console.error("Error fetching inventory data:", error);
+        console.error("Error fetching activity log:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [user.role]);
 
   if (loading) return <div>Loading...</div>;
+
   return (
     <div className="flex flex-col gap-2 w-full h-fit rounded drop-shadow">
       <div className="w-full rounded drop-shadow">

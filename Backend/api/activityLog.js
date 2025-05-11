@@ -9,6 +9,15 @@ async function getActivityLog() {
     }
 }
 
+async function getActivityByUsername(username) {
+    try {
+        return await activityLogModal.find({ username }).lean();
+    } catch (error) {
+        console.error('Error fetching activity logs for user:', error);
+        return [];
+    }
+}
+
 async function getActivityLoginLogout(client) {
     if (client) {
         try {
@@ -49,5 +58,6 @@ async function createLog(data) {
 module.exports = {
     getActivityLog,
     getActivityLoginLogout,
-    createLog
+    createLog,
+    getActivityByUsername
 };

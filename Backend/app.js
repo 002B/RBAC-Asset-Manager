@@ -1,4 +1,5 @@
 const express = require('express');
+const responseHandler = require('./middleware/responseHandler');
 const cors = require('cors');
 const connectDB = require('./api/DB/DB');
 const app = express();
@@ -21,6 +22,7 @@ const getImg = require('./api/getImg');
 
 app.use(cors());
 app.use(express.json());
+app.use(responseHandler);
 app.use('/users', users);
 app.use('/company', company);
 app.use('/item', item);
