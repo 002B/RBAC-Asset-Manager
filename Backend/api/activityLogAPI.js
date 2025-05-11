@@ -22,6 +22,26 @@ router.get('/all', authAdmin, async (req, res) => {
     }
 });
 
+router.get('/worker', authWorkerAndAdmin, async (req, res) => {
+    try {
+        const username = req.user.username;
+        const logs = await activityFunc.getActivityByUsername(username);
+        if (!logs || logs.length === 0) {
+            return res.status(404).json({ 
+                message: 'No activity logs found for this worker',
+                suggestion: 'Ensure this user has logged some activities'
+            });
+        }
+        res.json(logs);
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({
+            message: 'Error fetching activity logs',
+            error: error.message
+        });
+    }
+});
+
 router.get('/login-logout', authSuperMember, async (req, res) => {
     try {
         const logs = await activityFunc.getActivityLoginLogout();

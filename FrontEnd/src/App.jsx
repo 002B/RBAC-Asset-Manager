@@ -133,7 +133,7 @@ const router = createBrowserRouter(
         {
           path: "/activity-log",
           element: (
-            <ProtectedRoute allowedRoles={["Super Admin", "Admin"]}>
+            <ProtectedRoute allowedRoles={["Super Admin", "Admin", "Worker"]}>
               <ActivityLog />
             </ProtectedRoute>
           ),
@@ -141,7 +141,7 @@ const router = createBrowserRouter(
         {
           path: "/item-log",
           element: (
-            <ProtectedRoute allowedRoles={["Super Admin", "Admin"]}>
+            <ProtectedRoute allowedRoles={["Super Admin", "Admin","Worker"]}>
               <ItemLog />
             </ProtectedRoute>
           ),
