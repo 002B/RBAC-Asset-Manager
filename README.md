@@ -10,7 +10,7 @@ This is an enterprise-grade **Asset Management Platform** designed to track and 
 **Business Value:** Replaces manual spreadsheet tracking with a centralized, real-time dashboard that ensures fire safety compliance and audit readiness.
 
 ## 🚀 Key Features
-* **Advanced RBAC (6 Roles):** Granular permission settings for Admin, Manager, Inspector, Technician, Viewer, and Auditor.
+* **Advanced RBAC (6 Roles):** Granular permission settings for Super Admin, Admin, Worker, Super Member,Member, and Guest.
 * **B2B Multi-Tenancy:** Engineered a hierarchical permission system allowing client companies (Super Members) to self-manage their staff and branches while maintaining strict data isolation from other clients.
 * **Guest Reporting Mode:** Allows unauthenticated users (Guests) to scan QR codes on physical assets and submit incident reports without compromising system security.
 * **Secure Data Isolation:** Implemented middleware to ensure users can only access data relevant to their specific branch or clearance level.
