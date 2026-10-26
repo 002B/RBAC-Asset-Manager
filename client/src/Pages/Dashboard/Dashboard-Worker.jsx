@@ -5,6 +5,7 @@ import "boxicons";
 import "./Dashboard-Worker.css";
 import { useAuth } from "../../Auth/AuthProvider";
 import placeholderImg from "../../assets/img/placeholder.png";
+import { API_URL } from "../../config/api";
 
 const DashboardWorker = () => {
   const { user } = useAuth();
@@ -29,7 +30,7 @@ const DashboardWorker = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/report/getReportByUserFixing/${user.username}`, {
+        `${API_URL}/report/getReportByUserFixing/${user.username}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -74,7 +75,7 @@ const DashboardWorker = () => {
       let locationData = null;
   
       try {
-        const res = await fetch(`http://localhost:3000/getImage/${report.report_id}`);
+        const res = await fetch(`${API_URL}/getImage/${report.report_id}`);
         if (res.ok) {
           const blob = await res.blob();
           imageUrl = URL.createObjectURL(blob);
@@ -85,7 +86,7 @@ const DashboardWorker = () => {
   
       try {
         const locationRes = await fetch(
-          `http://localhost:3000/company/getLocation/${report.company}/${report.branch}`,
+          `${API_URL}/company/getLocation/${report.company}/${report.branch}`,
           {
             method: 'GET',
             headers: {
@@ -176,7 +177,7 @@ const DashboardWorker = () => {
     const note = result.value || ""; // ค่า note จาก input
 
     await axios.put(
-      "http://localhost:3000/report/updateReport/done",
+      `${API_URL}/report/updateReport/done`,
       {
         ids: [reportId],
         user: user,
@@ -189,7 +190,7 @@ const DashboardWorker = () => {
       }
     );
     const res = await axios.get(
-      `http://localhost:3000/report/getReportByUserFixing/${user.username}`,
+      `${API_URL}/report/getReportByUserFixing/${user.username}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

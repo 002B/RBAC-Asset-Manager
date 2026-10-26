@@ -3,6 +3,7 @@ import "boxicons";
 import DataTable from "../../Component/DataTable/DataTable.jsx";
 import Status from "../../Component/Status/Status.jsx";
 import { useAuth } from "../../Auth/AuthProvider.jsx";
+import { API_URL } from "../../config/api";
 
 const fetchReport = async () => {
   try {
@@ -14,7 +15,7 @@ const fetchReport = async () => {
       redirect: "follow",
     };
     const response = await fetch(
-      `http://${window.location.hostname}:3000/report/getReportByStatus/pending`,
+      `${API_URL}/report/getReportByStatus/pending`,
       requestOptions
     );
     const data = await response.json();
@@ -41,7 +42,7 @@ const fetchAccepted = async () => {
       redirect: "follow",
     };
     const response = await fetch(
-      `http://${window.location.hostname}:3000/report/getReportByStatus/done`,
+      `${API_URL}/report/getReportByStatus/done`,
       requestOptions
     );
     const data = await response.json();

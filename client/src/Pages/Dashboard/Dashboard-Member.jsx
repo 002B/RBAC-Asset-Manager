@@ -4,11 +4,12 @@ import DataTable from "../../Component/DataTable/DataTable";
 import CreateForm from "../../Component/CreateForm";
 import Status from "../../Component/Status/Status";
 import { useAuth } from "../../Auth/AuthProvider";
+import { API_URL } from "../../config/api";
 
 const fetchData = async (user) => {
   try {
     const [inbox, inventory, nextCheck, lastCheck] = await Promise.all([
-      fetch(`http://${window.location.hostname}:3000/report/getReportByBranch/${user.client}/${user.selectedBranch}`, {
+      fetch(`${API_URL}/report/getReportByBranch/${user.client}/${user.selectedBranch}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -16,7 +17,7 @@ const fetchData = async (user) => {
         .then(res => res.json())
         .then(data => data.map(item => [item.report_id, item.item_id, item.createAt.split("T")[0], item.createAt.split("T")[1].split(".")[0], item.status])),
 
-      fetch(`http://${window.location.hostname}:3000/item/getItemList/${user.client}/${user.selectedBranch}`,{
+      fetch(`${API_URL}/item/getItemList/${user.client}/${user.selectedBranch}`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -24,7 +25,7 @@ const fetchData = async (user) => {
         .then(res => res.json())
         .then(data => data.map(item => [item.item_id, item.item_brand, item.item_status])),
 
-      fetch(`http://${window.location.hostname}:3000/company/getNextCheck/${user.client}/${user.selectedBranch}`,{
+      fetch(`${API_URL}/company/getNextCheck/${user.client}/${user.selectedBranch}`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -36,7 +37,7 @@ const fetchData = async (user) => {
           return Math.ceil((receivedDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
         }),
 
-      fetch(`http://${window.location.hostname}:3000/company/getLastCheck/${user.client}/${user.selectedBranch}`,{
+      fetch(`${API_URL}/company/getLastCheck/${user.client}/${user.selectedBranch}`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -84,7 +85,7 @@ const DashboardMember = () => {
 
   const handleFormSubmit = async (formData) => {
     try {
-      const response = await fetch("http://localhost:3000/report/create", {
+      const response = await fetch(`${API_URL}/report/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

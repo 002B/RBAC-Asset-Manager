@@ -5,6 +5,7 @@ import axios from "axios";
 import "boxicons";
 import "./UnassignedWork.css";
 import placeholderImg from "../../assets/img/placeholder.png";
+import { API_URL } from "../../config/api";
 
 const UnassignedWork = () => {
   const filterBoxRef = useRef();
@@ -18,7 +19,7 @@ const UnassignedWork = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/report/getReportByStatus/accepted", {
+      .get(`${API_URL}/report/getReportByStatus/accepted`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -92,7 +93,7 @@ const UnassignedWork = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.put("http://localhost:3000/report/updateReport/fixing", {
+        await axios.put(`${API_URL}/report/updateReport/fixing`, {
           ids: [id],
           send_to: user.username,
           user: user,

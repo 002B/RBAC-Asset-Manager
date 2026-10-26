@@ -6,6 +6,7 @@ import ExportExcel from "../ExcelExport";
 import AddItemForm from "./form/addItemForm";
 import EditItemForm from "./form/editItemForm";
 import QRCodeModal from "./form/QRCodeModal";
+import { API_URL } from "../../config/api";
 
 const DataTable = (props) => {
   const {
@@ -133,7 +134,7 @@ const DataTable = (props) => {
   
   const handleFormSubmit = async (formData) => {
     try {
-      const response = await fetch("http://localhost:3000/report/create", {
+      const response = await fetch(`${API_URL}/report/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

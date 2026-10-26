@@ -2,6 +2,7 @@ import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./Member-Management.css";
 import { useEffect, useRef, useState } from "react";
+import { API_URL } from "../../config/api";
 
 function Confirm() {
   SweetAlert.fire({
@@ -28,7 +29,7 @@ function Confirm() {
 async function getBranchList(company) {
   try {
     const response = await fetch(
-      `http://localhost:3000/company/getAllBranch/${company}`, {
+      `${API_URL}/company/getAllBranch/${company}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -46,7 +47,7 @@ async function getBranchList(company) {
 
 async function getAllUsers() {
   try {
-    const data = fetch("http://localhost:3000/users/getAllUsers", {
+    const data = fetch(`${API_URL}/users/getAllUsers`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -91,7 +92,7 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers }) => {
       setLoadingCompanies(true);
       try {
         const response = await fetch(
-          "http://localhost:3000/company/getAllCompany", {
+          `${API_URL}/company/getAllCompany`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             }
@@ -189,7 +190,7 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers }) => {
         return false;
       }
 
-      const response = await fetch("http://localhost:3000/users/createUser", {
+      const response = await fetch(`${API_URL}/users/createUser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -588,7 +589,7 @@ const MemberManagementAdmin = () => {
     const handleSubmit = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/users/updateUser/${user.username}`,
+          `${API_URL}/users/updateUser/${user.username}`,
           {
             method: "PUT",
             headers: {
@@ -625,7 +626,7 @@ const MemberManagementAdmin = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:3000/users/deleteUser/${user.username}`,
+            `${API_URL}/users/deleteUser/${user.username}`,
             {
               method: "DELETE",
               headers: {

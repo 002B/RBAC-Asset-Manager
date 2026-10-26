@@ -4,6 +4,7 @@ import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./CreateForm.css";
 import { useAuth } from "../Auth/AuthProvider";
+import { API_URL } from "../config/api";
 
 const commonProblems = [
   "Fire extinguisher expired",
@@ -31,7 +32,7 @@ async function sendReport(data, user) {
     };
 
     const res = await fetch(
-      `http://localhost:3000/report/createReport/${data.serialNumber}`,
+      `${API_URL}/report/createReport/${data.serialNumber}`,
       {
         method: "POST",
         headers,

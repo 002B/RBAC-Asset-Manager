@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Header.css";
 import { useAuth } from "../../Auth/AuthProvider";
 import axios from "axios";
+import { API_URL } from "../../config/api";
 
 const Header = () => {
   const [allBranches, setAllBranches] = useState([]);
@@ -26,7 +27,7 @@ const Header = () => {
       const fetchBranches = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:3000/company/getAllBranch/${user.client}`,{
+            `${API_URL}/company/getAllBranch/${user.client}`,{
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               }

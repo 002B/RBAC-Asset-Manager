@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useAnimatedNumber from "../useAnimatedNumber";
 import "./Status.css";
 import "boxicons";
+import { API_URL } from "../../config/api";
 
 const Status = ({ role, company, branch }) => {
   const [MemberItemCount, setMemberItemCount] = useState(0);
@@ -54,54 +55,54 @@ const Status = ({ role, company, branch }) => {
     const fetchData = async () => {
       try {
         if (role === "Member" && branch !== "All Branches") {
-          const itemInBranchCount = await fetch(`http://localhost:3000/item/getItemList/count/${company}/${branch}`, authHeaders);
+          const itemInBranchCount = await fetch(`${API_URL}/item/getItemList/count/${company}/${branch}`, authHeaders);
           setMemberItemCount(parseInt(await itemInBranchCount.text()));
 
-          const reportPendingCount = await fetch(`http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/pending`, authHeaders);
+          const reportPendingCount = await fetch(`${API_URL}/report/getReportStatusByBranch/count/${company}/${branch}/pending`, authHeaders);
           setMemberReportPendingCount(parseInt(await reportPendingCount.text()));
 
-          const badItemCount = await fetch(`http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/accepted`, authHeaders);
+          const badItemCount = await fetch(`${API_URL}/report/getReportStatusByBranch/count/${company}/${branch}/accepted`, authHeaders);
           setMemberBadItemCount(parseInt(await badItemCount.text()));
 
-          const nextCheck = await fetch(`http://localhost:3000/company/getNextCheck/${company}/${branch}`, authHeaders);
+          const nextCheck = await fetch(`${API_URL}/company/getNextCheck/${company}/${branch}`, authHeaders);
           setMemberNextCheck((await nextCheck.text()).replace(/"/g, ""));
         }
 
         else if (role === "Super Member") {
 
-          const itemInBranchCount = await fetch(`http://localhost:3000/item/getItemList/count/${company}`, authHeaders);
+          const itemInBranchCount = await fetch(`${API_URL}/item/getItemList/count/${company}`, authHeaders);
           setSuperMemberItemCount(parseInt(await itemInBranchCount.text()));
 
           const reportPendingURL = branch !== "All Branches"
-            ? `http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/pending`
-            : `http://localhost:3000/report/getReportStatusByCom/count/${company}/pending`;
+            ? `${API_URL}/report/getReportStatusByBranch/count/${company}/${branch}/pending`
+            : `${API_URL}/report/getReportStatusByCom/count/${company}/pending`;
           const reportPending = await fetch(reportPendingURL, authHeaders);
           setSuperMemberReportPendingCount(parseInt(await reportPending.text()));
 
           const badItemURL = branch !== "All Branches"
-            ? `http://localhost:3000/report/getReportStatusByBranch/count/${company}/${branch}/accepted`
-            : `http://localhost:3000/report/getReportStatusByCom/count/${company}/accepted`;
+            ? `${API_URL}/report/getReportStatusByBranch/count/${company}/${branch}/accepted`
+            : `${API_URL}/report/getReportStatusByCom/count/${company}/accepted`;
           const badItem = await fetch(badItemURL, authHeaders);
           setSuperMemberBadItemCount(parseInt(await badItem.text()));
 
-          const totalUser = await fetch(`http://localhost:3000/users/getUsersCount/${company}`, authHeaders);
+          const totalUser = await fetch(`${API_URL}/users/getUsersCount/${company}`, authHeaders);
           setSuperMemberTotalUser(parseInt(await totalUser.text()));
 
-          const branches = await fetch(`http://localhost:3000/company/getAllBranch/${company}`, authHeaders);
+          const branches = await fetch(`${API_URL}/company/getAllBranch/${company}`, authHeaders);
           setSuperMemberTotalBranch((await branches.json()).length);
         }
 
         else if (role === "Admin") {
-          const itemCount = await fetch(`http://localhost:3000/item/getAllItem/count`, authHeaders);
+          const itemCount = await fetch(`${API_URL}/item/getAllItem/count`, authHeaders);
           setAdminItemCount(parseInt(await itemCount.text()));
 
-          const reportCount = await fetch(`http://localhost:3000/report/getAllReportByStatus/count/pending`, authHeaders);
+          const reportCount = await fetch(`${API_URL}/report/getAllReportByStatus/count/pending`, authHeaders);
           setAdminReportPendingCount(parseInt(await reportCount.text()));
 
-          const badItemCount = await fetch(`http://localhost:3000/report/getAllReportByStatus/count/accepted`, authHeaders);
+          const badItemCount = await fetch(`${API_URL}/report/getAllReportByStatus/count/accepted`, authHeaders);
           setAdminBadItemCount(parseInt(await badItemCount.text()));
 
-          const totalUsers = await fetch(`http://localhost:3000/users/getAllUsers`, authHeaders);
+          const totalUsers = await fetch(`${API_URL}/users/getAllUsers`, authHeaders);
           AdminSetTotalUser((await totalUsers.json()).length);
         }
       } catch (error) {

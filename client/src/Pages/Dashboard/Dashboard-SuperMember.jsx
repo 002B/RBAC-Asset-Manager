@@ -4,6 +4,7 @@ import Status from "../../Component/Status/Status";
 import DataTable from "../../Component/DataTable/DataTable";
 import CreateForm from "../../Component/CreateForm";
 import { useAuth } from "../../Auth/AuthProvider";
+import { API_URL } from "../../config/api";
 
 const fetchInbox = async (user) => {
   try {
@@ -16,8 +17,8 @@ const fetchInbox = async (user) => {
     };
     const url =
       user.selectedBranch === "All Branches" || !user.selectedBranch
-        ? `http://localhost:3000/report/getReportByCom/${user.client}`
-        : `http://localhost:3000/report/getReportByBranch/${user.client}/${user.selectedBranch}`;
+        ? `${API_URL}/report/getReportByCom/${user.client}`
+        : `${API_URL}/report/getReportByBranch/${user.client}/${user.selectedBranch}`;
     const response = await fetch(url, requestOptions);
     const data = await response.json();
     return data.map((item) => [
@@ -43,7 +44,7 @@ const fetchLoginActivity = async (user) => {
       redirect: "follow",
     };
     const response = await fetch(
-      `http://${window.location.hostname}:3000/activitylog/login-logout/${user.client}`,
+      `${API_URL}/activitylog/login-logout/${user.client}`,
       requestOptions
     );
     const data = await response.json();
@@ -68,7 +69,7 @@ const fetchLoginActivity = async (user) => {
 async function fetchBranchWithItemCount(user) {
   try {
     const branchResponse = await fetch(
-      `http://${window.location.hostname}:3000/company/getAllBranch/${user.client}`,
+      `${API_URL}/company/getAllBranch/${user.client}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -83,7 +84,7 @@ async function fetchBranchWithItemCount(user) {
       branches.map(async (branch) => {
         try {
           const itemRes = await fetch(
-            `http://${window.location.hostname}:3000/item/getItemList/count/${user.client}/${branch.client_branch_id}`,
+            `${API_URL}/item/getItemList/count/${user.client}/${branch.client_branch_id}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,

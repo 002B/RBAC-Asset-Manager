@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../Component/DataTable/DataTable";
 import Status from "../../Component/Status/Status";
 import { useAuth } from "../../Auth/AuthProvider";
+import { API_URL } from "../../config/api";
 
 const ActivityLog = () => {
   const { user } = useAuth();
@@ -19,8 +20,8 @@ const ActivityLog = () => {
       try {
         const endpoint =
           user.role === "Admin" || user.role === "Super Admin"
-            ? "http://localhost:3000/activitylog/all"
-            : "http://localhost:3000/activitylog/worker";
+            ? `${API_URL}/activitylog/all`
+            : `${API_URL}/activitylog/worker`;
 
         const response = await fetch(endpoint, {
           headers: {

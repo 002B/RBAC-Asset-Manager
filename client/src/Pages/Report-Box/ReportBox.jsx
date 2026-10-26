@@ -3,6 +3,7 @@ import { useAuth } from "../../Auth/AuthProvider";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./ReportBox.css";
+import { API_URL } from "../../config/api";
 
 const ReportBox = () => {
   const { user } = useAuth();
@@ -18,7 +19,7 @@ const ReportBox = () => {
 
   useEffect(() => {
     const fetchReports = () => {
-      fetch(`http://${window.location.hostname}:3000/report/getReportByStatus/pending`, {
+      fetch(`${API_URL}/report/getReportByStatus/pending`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -45,7 +46,7 @@ const ReportBox = () => {
   const showImagePreview = (reportId) => {
     SweetAlert.fire({
 
-      imageUrl: `http://${window.location.hostname}:3000/getImage/${reportId}`,
+      imageUrl: `${API_URL}/getImage/${reportId}`,
       imageWidth: 250,
       imageHeight: 250,
       imageAlt: "Image Preview",
@@ -56,7 +57,7 @@ const ReportBox = () => {
   const updateReportStatus = async (status) => {
     const selectedIds = Object.keys(checkedItems).filter((id) => checkedItems[id]);
     try {
-      const response = await fetch(`http://${window.location.hostname}:3000/report/updateReport/${status}`, {
+      const response = await fetch(`${API_URL}/report/updateReport/${status}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +70,7 @@ const ReportBox = () => {
 
       if (response.ok) {
         SweetAlert.fire("Success", data.message, "success");
-        const newReports = await fetch(`http://${window.location.hostname}:3000/report/getReportByStatus/pending`, {
+        const newReports = await fetch(`${API_URL}/report/getReportByStatus/pending`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

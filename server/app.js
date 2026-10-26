@@ -1,9 +1,10 @@
 const express = require('express');
+require('dotenv').config();
 const responseHandler = require('./middleware/responseHandler');
 const cors = require('cors');
 const connectDB = require('./api/DB/DB');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
@@ -23,16 +24,24 @@ const getImg = require('./api/getImg');
 app.use(cors());
 app.use(express.json());
 app.use(responseHandler);
-app.use('/users', users);
-app.use('/company', company);
-app.use('/item', item);
-app.use('/report', report);
-app.use('/itemlog', log);
-app.use('/activitylog', activityLog);
-app.use('/getImage', getImg);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+const apiRouter = express.Router();
+apiRouter.use('/users', users);
+apiRouter.use('/company', company);
+apiRouter.use('/item', item);
+apiRouter.use('/report', report);
+apiRouter.use('/itemlog', log);
+apiRouter.use('/activitylog', activityLog);
+apiRouter.use('/getImage', getImg);
+apiRouter.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Mount routes at both /api and root / to support both prefixed and direct access
+app.use('/api', apiRouter);
+app.use('/', apiRouter);
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${port}/`);
-  console.log('Swagger UI available on http://localhost:3000/api-docs');
+  console.log(`Swagger UI available on http://localhost:${port}/api-docs`);
 });
+
+module.exports = app;

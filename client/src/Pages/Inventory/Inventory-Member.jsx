@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Auth/AuthProvider";
 import DataTable from "../../Component/DataTable/DataTable";
 import Status from "../../Component/Status/Status";
+import { API_URL } from "../../config/api";
 
 const InventoryMember = () => {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ const InventoryMember = () => {
           ? user.selectedBranch
           : (user.selectedBranch = user.client_access[0]);
         const response = await fetch(
-          `http://${window.location.hostname}:3000/item/getItemList/${user.client}/${user.selectedBranch}`, {
+          `${API_URL}/item/getItemList/${user.client}/${user.selectedBranch}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             }

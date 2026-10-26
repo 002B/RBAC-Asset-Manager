@@ -4,6 +4,7 @@ import Logo from "../../assets/Logo/Logo1.png";
 import placeholder from "../../assets/img/placeholder.png";
 import "./ProductPage.css";
 import "boxicons";
+import { API_URL } from "../../config/api";
 
 const ProductPage = ({ id }) => {
   const [showForm, setShowForm] = useState(false);
@@ -19,7 +20,7 @@ const ProductPage = ({ id }) => {
   };
 
   useEffect(() => {
-    fetch(`http://${window.location.hostname}:3000/item/getItemInfo/${id}`)
+    fetch(`${API_URL}/item/getItemInfo/${id}`)
       .then((response) => response.json())
       .then((result) => setSelectedData(result))
       .catch((error) => console.error(error));
@@ -41,7 +42,7 @@ const ProductPage = ({ id }) => {
   const sendGuestReport = async (formData) => {
     try {
       const response = await fetch(
-        `http://${window.location.hostname}:3000/report/createReport/${formData.serialNumber}`,
+        `${API_URL}/report/createReport/${formData.serialNumber}`,
         {
           method: "POST",
           headers: {

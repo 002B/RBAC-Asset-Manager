@@ -3,6 +3,7 @@ import { useAuth } from "../../Auth/AuthProvider";
 import DataTable from "../../Component/DataTable/DataTable";
 import Status from "../../Component/Status/Status";
 import "boxicons";
+import { API_URL } from "../../config/api";
 
 const InventoryWorker = () => {
   const { user } = useAuth();
@@ -20,7 +21,7 @@ const InventoryWorker = () => {
           redirect: "follow",
         };
         const response = await fetch(
-          `http://${window.location.hostname}:3000/item/getAllItem`,
+          `${API_URL}/item/getAllItem`,
           requestOptions
         );
         const data = await response.json();

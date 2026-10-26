@@ -4,6 +4,7 @@ import { useAuth } from "../../Auth/AuthProvider";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "../Report-Box/ReportBox.css";
+import { API_URL } from "../../config/api";
 
 const SubmittedWork = () => {
   const {user} = useAuth();
@@ -21,7 +22,7 @@ const SubmittedWork = () => {
   const fetchReports = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/report/getAllReportByStatus/done`,{
+        `${API_URL}/report/getAllReportByStatus/done`,{
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../../Component/DataTable/DataTable';
 import Status from '../../Component/Status/Status';
 import { useAuth } from '../../Auth/AuthProvider';
+import { API_URL } from '../../config/api';
 
 const ItemLog = () => {
     const { user } = useAuth();
@@ -11,7 +12,7 @@ const ItemLog = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:3000/itemlog/getAllLog`, {
+                    `${API_URL}/itemlog/getAllLog`, {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
                           },

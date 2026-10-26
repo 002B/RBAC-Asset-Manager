@@ -3,11 +3,12 @@ import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./Member-Management.css";
 import { useAuth } from "../../Auth/AuthProvider";
+import { API_URL } from "../../config/api";
 
 async function getAllUsers(company) {
   try {
     const response = await fetch(
-      `http://localhost:3000/users/getClientUser/${company}`,
+      `${API_URL}/users/getClientUser/${company}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -27,7 +28,7 @@ async function getAllUsers(company) {
 async function getBranchList(company) {
   try {
     const response = await fetch(
-      `http://localhost:3000/company/getAllBranch/${company}`,{
+      `${API_URL}/company/getAllBranch/${company}`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -114,7 +115,7 @@ const CreateUserCard = ({ setShowCreateUser, setTestUsers, company }) => {
         submitData.client_access = branches;
       }
 
-      const response = await fetch("http://localhost:3000/users/createClientUser", {
+      const response = await fetch(`${API_URL}/users/createClientUser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -464,7 +465,7 @@ const MemberManagementSuperMember = () => {
         }
 
         const response = await fetch(
-          `http://localhost:3000/users/updateClientUser/${user.username}`,
+          `${API_URL}/users/updateClientUser/${user.username}`,
           {
             method: "PUT",
             headers: {
@@ -516,7 +517,7 @@ const MemberManagementSuperMember = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:3000/users/deleteClientUser/${user.username}`,
+            `${API_URL}/users/deleteClientUser/${user.username}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,

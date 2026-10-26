@@ -2,10 +2,20 @@ const express = require("express");
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+
+const uploadDir = path.join(__dirname, '../img');
+if (!fs.existsSync(uploadDir)) {
+  try {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  } catch (err) {
+    console.error("Error creating upload directory:", err);
+  }
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'img');
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     const reportId = `${Date.now()}`;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../Auth/AuthProvider";
 import Swal from "sweetalert2"; // นำเข้า SweetAlert2
+import { API_URL } from "../../../config/api";
 
 const EditItemForm = ({ onClose, onSubmit, initialData }) => {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
       const { item_id, ...requestBody } = formData;
 
       const response = await fetch(
-        `http://localhost:3000/item/updateItem/${formData.item_id}`,
+        `${API_URL}/item/updateItem/${formData.item_id}`,
         {
           method: "PUT",
           headers: {
@@ -85,7 +86,7 @@ const EditItemForm = ({ onClose, onSubmit, initialData }) => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:3000/item/deleteItem/${formData.item_id}`,
+            `${API_URL}/item/deleteItem/${formData.item_id}`,
             {
               method: "DELETE",
               headers: {

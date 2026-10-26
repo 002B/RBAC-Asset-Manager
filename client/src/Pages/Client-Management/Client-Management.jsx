@@ -3,6 +3,7 @@ import { useAuth } from "../../Auth/AuthProvider";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "../Unassigned-Work/UnassignedWork.css";
+import { API_URL } from "../../config/api";
 
 const ClientManagement = () => {
   const { user } = useAuth();
@@ -49,7 +50,7 @@ const ClientManagement = () => {
   });
 
   useEffect(() => {
-    fetch("http://localhost:3000/company/getAllCompany/", {
+    fetch(`${API_URL}/company/getAllCompany/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -63,7 +64,7 @@ const ClientManagement = () => {
 
   useEffect(() => {
     if (selectedClient) {
-      fetch(`http://localhost:3000/company/getCompanyInfo/${selectedClient}`, {
+      fetch(`${API_URL}/company/getCompanyInfo/${selectedClient}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -87,7 +88,7 @@ const ClientManagement = () => {
 
   const getItemBranchCount = (clientId, branchId) => {
     fetch(
-      `http://localhost:3000/item/getItemList/count/${clientId}/${branchId}`,
+      `${API_URL}/item/getItemList/count/${clientId}/${branchId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -275,7 +276,7 @@ const ClientManagement = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         fetch(
-          `http://localhost:3000/company/deleteCompany/${selectedClient}/${branchId}`,
+          `${API_URL}/company/deleteCompany/${selectedClient}/${branchId}`,
           {
             method: "DELETE",
             headers: {
@@ -304,7 +305,7 @@ const ClientManagement = () => {
               // Auto-fetch after successful deletion
               if (selectedClient) {
                 fetch(
-                  `http://localhost:3000/company/getCompanyInfo/${selectedClient}`,
+                  `${API_URL}/company/getCompanyInfo/${selectedClient}`,
                   {
                     headers: {
                       Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -323,7 +324,7 @@ const ClientManagement = () => {
                     });
                   });
               } else {
-                fetch("http://localhost:3000/company/getAllCompany/", {
+                fetch(`${API_URL}/company/getAllCompany/`, {
                   headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                   },
@@ -387,7 +388,7 @@ const ClientManagement = () => {
     };
 
     fetch(
-      `http://localhost:3000/company/updateCompany/${selectedClient}/${editBranch.client_branch_id}`,
+      `${API_URL}/company/updateCompany/${selectedClient}/${editBranch.client_branch_id}`,
       {
         method: "PUT",
         headers: {
@@ -430,7 +431,7 @@ const ClientManagement = () => {
         // Auto-fetch after successful edit
         if (selectedClient) {
           fetch(
-            `http://localhost:3000/company/getCompanyInfo/${selectedClient}`,
+            `${API_URL}/company/getCompanyInfo/${selectedClient}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -446,7 +447,7 @@ const ClientManagement = () => {
               });
             });
         } else {
-          fetch("http://localhost:3000/company/getAllCompany/", {
+          fetch(`${API_URL}/company/getAllCompany/`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -519,7 +520,7 @@ const ClientManagement = () => {
     }
 
     fetch(
-      `http://localhost:3000/company/createCompany/${createFormData.client_id}/${createFormData.client_branch_id}`,
+      `${API_URL}/company/createCompany/${createFormData.client_id}/${createFormData.client_branch_id}`,
       {
         method: "POST",
         headers: {
@@ -565,7 +566,7 @@ const ClientManagement = () => {
         // Auto-fetch after successful creation
         if (selectedClient) {
           fetch(
-            `http://localhost:3000/company/getCompanyInfo/${selectedClient}`,
+            `${API_URL}/company/getCompanyInfo/${selectedClient}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -581,7 +582,7 @@ const ClientManagement = () => {
               });
             });
         } else {
-          fetch("http://localhost:3000/company/getAllCompany/", {
+          fetch(`${API_URL}/company/getAllCompany/`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },

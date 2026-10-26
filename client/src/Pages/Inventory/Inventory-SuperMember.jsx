@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Auth/AuthProvider";
 import DataTable from "../../Component/DataTable/DataTable";
 import Status from "../../Component/Status/Status";
+import { API_URL } from "../../config/api";
 
 const InventorySuperMember = () => {
   const { user } = useAuth();
@@ -18,8 +19,8 @@ const InventorySuperMember = () => {
           redirect: "follow",
         };
         const url = user.selectedBranch === "All Branches" || !user.selectedBranch
-          ? `http://${window.location.hostname}:3000/item/getItemList/${user.client}`
-          : `http://${window.location.hostname}:3000/item/getItemList/${user.client}/${user.selectedBranch}`;
+          ? `${API_URL}/item/getItemList/${user.client}`
+          : `${API_URL}/item/getItemList/${user.client}/${user.selectedBranch}`;
         const response = await fetch(
           url,
           requestOptions

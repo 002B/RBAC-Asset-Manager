@@ -3,6 +3,7 @@ import { useAuth } from "../../Auth/AuthProvider";
 import SweetAlert from "sweetalert2";
 import "boxicons";
 import "./UnassignedWork.css";
+import { API_URL } from "../../config/api";
 
 const UnassignedWorkAdmin = () => {
   const { user } = useAuth();
@@ -22,7 +23,7 @@ const UnassignedWorkAdmin = () => {
       for (const worker of workerList) {
         try {
           const res = await fetch(
-            `http://localhost:3000/report/getReportByUserFixing/${worker.username}`,
+            `${API_URL}/report/getReportByUserFixing/${worker.username}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -49,7 +50,7 @@ const UnassignedWorkAdmin = () => {
   
 
   useEffect(() => {
-    fetch("http://localhost:3000/report/getReportByStatus/accepted", {
+    fetch(`${API_URL}/report/getReportByStatus/accepted`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -60,7 +61,7 @@ const UnassignedWorkAdmin = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/users/getWorkerUser", {
+    fetch(`${API_URL}/users/getWorkerUser`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -122,7 +123,7 @@ const UnassignedWorkAdmin = () => {
           (report_id) => checkedItems[report_id]
         );
 
-        fetch("http://localhost:3000/report/updateReport/fixing", {
+        fetch(`${API_URL}/report/updateReport/fixing`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

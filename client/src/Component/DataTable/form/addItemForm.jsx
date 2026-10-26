@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../Auth/AuthProvider";
 import Swal from "sweetalert2"; // นำเข้า SweetAlert2
+import { API_URL } from "../../../config/api";
 
 const AddItemForm = ({ onClose, onSubmit }) => {
   const { user } = useAuth();
@@ -25,7 +26,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
   useEffect(() => {
     const fetchCompanyBranches = async () => {
       try {
-        const response = await fetch("http://localhost:3000/company/getCompanyBranch",{
+        const response = await fetch(`${API_URL}/company/getCompanyBranch`,{
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           }
@@ -116,7 +117,7 @@ const AddItemForm = ({ onClose, onSubmit }) => {
       };
 
       const response = await fetch(
-        `http://localhost:3000/item/createItem/${company}/${branch}/${formData.item_quantity}`,
+        `${API_URL}/item/createItem/${company}/${branch}/${formData.item_quantity}`,
         {
           method: "POST",
           headers: {
