@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 require('dotenv').config();
 const responseHandler = require('./middleware/responseHandler');
 const cors = require('cors');
@@ -7,7 +9,6 @@ const app = express();
 const port = process.env.PORT || 3000;
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
-const path = require('path');
 
 connectDB();
 const swaggerDocument = YAML.load(path.join(__dirname, './api/Swaggak.yaml'));
@@ -39,9 +40,11 @@ apiRouter.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api', apiRouter);
 app.use('/', apiRouter);
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running at http://localhost:${port}/`);
-  console.log(`Swagger UI available on http://localhost:${port}/api-docs`);
-});
+if (require.main === module) {
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running at http://localhost:${port}/`);
+    console.log(`Swagger UI available on http://localhost:${port}/api-docs`);
+  });
+}
 
 module.exports = app;
