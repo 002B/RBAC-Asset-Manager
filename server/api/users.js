@@ -144,7 +144,7 @@ async function login(username, password) {
     return [200, { user: userResponse, token }];
   } catch (error) {
     console.error("Error in login:", error);
-    return [500, { message: "Error logging in" }];
+    return [500, { message: "Error logging in", error: error.message }];
   }
 }
 
