@@ -43,6 +43,18 @@ const Status = ({ role, company, branch }) => {
   const [AdminTotalUser, AdminSetTotalUser] = useState(0);
   const animatedAdminTotalUser = useAnimatedNumber(AdminTotalUser);
 
+  const [superAdminItemCount, setSuperAdminItemCount] = useState(0);
+  const animatedSuperAdminItemCount = useAnimatedNumber(superAdminItemCount);
+
+  const [superAdminCompanyCount, setSuperAdminCompanyCount] = useState(0);
+  const animatedSuperAdminCompanyCount = useAnimatedNumber(superAdminCompanyCount);
+
+  const [superAdminTotalUser, setSuperAdminTotalUser] = useState(0);
+  const animatedSuperAdminTotalUser = useAnimatedNumber(superAdminTotalUser);
+
+  const [superAdminActionCount, setSuperAdminActionCount] = useState(0);
+  const animatedSuperAdminActionCount = useAnimatedNumber(superAdminActionCount);
+
   
 
   const authHeaders = {
@@ -94,16 +106,33 @@ const Status = ({ role, company, branch }) => {
 
         else if (role === "Admin") {
           const itemCount = await fetch(`${API_URL}/item/getAllItem/count`, authHeaders);
-          setAdminItemCount(parseInt(await itemCount.text()));
+          setAdminItemCount(parseInt(await itemCount.text()) || 0);
 
           const reportCount = await fetch(`${API_URL}/report/getAllReportByStatus/count/pending`, authHeaders);
-          setAdminReportPendingCount(parseInt(await reportCount.text()));
+          setAdminReportPendingCount(parseInt(await reportCount.text()) || 0);
 
           const badItemCount = await fetch(`${API_URL}/report/getAllReportByStatus/count/accepted`, authHeaders);
-          setAdminBadItemCount(parseInt(await badItemCount.text()));
+          setAdminBadItemCount(parseInt(await badItemCount.text()) || 0);
 
           const totalUsers = await fetch(`${API_URL}/users/getAllUsers`, authHeaders);
-          AdminSetTotalUser((await totalUsers.json()).length);
+          const userData = await totalUsers.json();
+          AdminSetTotalUser(Array.isArray(userData) ? userData.length : 0);
+        }
+
+        else if (role === "Super Admin") {
+          const itemCount = await fetch(`${API_URL}/item/getAllItem/count`, authHeaders);
+          setSuperAdminItemCount(parseInt(await itemCount.text()) || 0);
+
+          const companyRes = await fetch(`${API_URL}/company/getAllCompany`, authHeaders);
+          const companyData = await companyRes.json();
+          setSuperAdminCompanyCount(Array.isArray(companyData) ? companyData.length : 0);
+
+          const totalUsers = await fetch(`${API_URL}/users/getAllUsers`, authHeaders);
+          const userData = await totalUsers.json();
+          setSuperAdminTotalUser(Array.isArray(userData) ? userData.length : 0);
+
+          const reportPending = await fetch(`${API_URL}/report/getAllReportByStatus/count/pending`, authHeaders);
+          setSuperAdminActionCount(parseInt(await reportPending.text()) || 0);
         }
       } catch (error) {
         console.error("Fetch error in Status component:", error);
@@ -231,28 +260,28 @@ const Status = ({ role, company, branch }) => {
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total Installed</h3>
-            <h1>{getAllItemCompanyCount()}</h1>
+            <h1>{animatedSuperAdminItemCount}</h1>
           </div>
           <box-icon name="spray-can" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Client</h3>
-            <h1>{getCompanyCount()}</h1>
+            <h1>{animatedSuperAdminCompanyCount}</h1>
           </div>
           <box-icon name="buildings" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-primary">
           <div className="count-title p-1 m-1">
             <h3>Total User</h3>
-            <h1>{getAllUserCount()}</h1>
+            <h1>{animatedSuperAdminTotalUser}</h1>
           </div>
           <box-icon name="user" color="white" size="lg"></box-icon>
         </div>
         <div className="flex justify-between items-center status-box bg-secondary">
           <div className="count-title p-1 m-1">
             <h3>Total Actions</h3>
-            <h1>{getAllLogReportPendingCount()}</h1>
+            <h1>{animatedSuperAdminActionCount}</h1>
           </div>  
           <box-icon name="wrench" color="white" size="lg"></box-icon>
         </div>
